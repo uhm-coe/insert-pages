@@ -2,15 +2,15 @@
 
 /*
 Plugin Name: Insert Pages
-Plugin URI: http://www.hawaii.edu/coe/dcdc/wordpress/insert-pages
-Description: Plugin that lets you embed any WordPress Content Types (e.g., pages, posts, custom post types) into other WordPress Content Types using the Shortcode API. To enable, first activate the plugin, then use the included TinyMCE toolbar button to insert your content.
-Author: Paul Aumer-Ryan, Systems Programmer, Distance Course Design & Consulting (DCDC), College of Education, University of Hawai'i at Manoa
+Plugin URI: http://dcdc.coe.hawaii.edu/wordpress/insert-pages
+Description: Insert Pages lets you embed any WordPress content (e.g., pages, posts, custom post types) into other WordPress content using the Shortcode API.
+Author: Paul Ryan
 Version: 1.0
-Author URI: http://combinelabs.com/paul
+Author URI: http://www.linkedin.com/in/paulrryan
 License: GPL2
 */
 
-/*  Copyright 2011 Paul Aumer-Ryan (email: prar@hawaii.edu)
+/*  Copyright 2011 Paul Ryan (email: prar@hawaii.edu)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License, version 2, as 
