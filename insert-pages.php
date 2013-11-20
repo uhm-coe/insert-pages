@@ -55,7 +55,7 @@ if (!class_exists('InsertPagesPlugin')) {
       // Add TinyMCE toolbar button filters only if current user has permissions
       if (current_user_can('edit_posts') && current_user_can('edit_pages') && get_user_option('rich_editing')=='true') {
         
-        wp_register_script('wpinsertpages', plugins_url('/js/wpinsertpages.js', __FILE__), array(), '20110919'); // Register the TinyMCE toolbar button script
+        wp_register_script('wpinsertpages', plugins_url('/assets/js/wpinsertpages.js', __FILE__), array(), '20110919'); // Register the TinyMCE toolbar button script
         wp_enqueue_script('wpinsertpages');
       	wp_localize_script( 'wpinsertpages', 'wpInsertPagesL10n', array(
       		'update' => __('Update'),
@@ -65,7 +65,7 @@ if (!class_exists('InsertPagesPlugin')) {
   	     	'l10n_print_after' => 'try{convertEntities(wpLinkL10n);}catch(e){};',
   	    ));
         
-        wp_register_style('wpinsertpagescss', plugins_url('/css/wpinsertpages.css', __FILE__), array(), '20110919'); // Register the TinyMCE toolbar button script
+        wp_register_style('wpinsertpagescss', plugins_url('/assets/css/wpinsertpages.css', __FILE__), array(), '20110919'); // Register the TinyMCE toolbar button script
         wp_enqueue_style('wpinsertpagescss');
         
         add_filter('mce_buttons', array($this, 'insertPages_handleFilter_mceButtons'));
@@ -155,7 +155,7 @@ if (!class_exists('InsertPagesPlugin')) {
     
     // Filter hook: Load the javascript for our custom toolbar button
     function insertPages_handleFilter_mceExternalPlugins($plugins) {
-      $plugins['wpInsertPages'] = plugin_dir_url(__FILE__).'js/wpinsertpages_plugin.js';
+      $plugins['wpInsertPages'] = plugin_dir_url(__FILE__).'assets/js/wpinsertpages_plugin.js';
       return $plugins;
     }
     
