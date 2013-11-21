@@ -60,7 +60,7 @@ Examples:
 * `[insert page='your-page-slug' display='your-custom-template.php']`
 * `[insert page='123' display='all']`
 
-= Anything I should be careful of?
+= Anything I should be careful of? =
 
 Just one! The plugin prevents you from embedding a page in itself, but you can totally create a loop that will prevent a page from rendering. Say on page A you embed page B, but on page B you also embed page A. As the plugin tries to render either page, it will keep going down the rabbit hole until your server runs out of memory. Future versions should have a way to prevent this behavior!
 
