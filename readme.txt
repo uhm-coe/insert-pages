@@ -27,6 +27,9 @@ To enable, first activate the plugin, then use the included toolbar button to in
 
 == Changelog ==
 
+= 1.2 =
+* Add retina toolbar icon.
+
 = 1.1 =
 * Minor changes to documentation.
 
