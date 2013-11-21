@@ -15,17 +15,20 @@ Insert Pages lets you embed any WordPress content (e.g., pages, posts, custom po
 
 To enable, first activate the plugin, then use the included toolbar button to insert your content when editing any page or post.
 
+== Installation ==
+
+1. Upload "insert-pages" to the "/wp-content/plugins/" directory.
+1. Activate the plugin through the "Plugins" menu in WordPress.
+1. Use the toolbar button while editing any page to insert any other page.
+
 == Screenshots ==
 
 1. Insert Pages toolbar button.
 
-== Installation ==
-
-1. Upload \"insert-pages\" to the \"/wp-content/plugins/\" directory.
-1. Activate the plugin through the \"Plugins\" menu in WordPress.
-1. Use the toolbar button while editing any page to insert any other page.
-
 == Changelog ==
+
+= 1.1 =
+* Minor changes to documentation.
 
 = 1.0 =
 * Initial release.
