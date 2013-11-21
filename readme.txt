@@ -41,5 +41,8 @@ To enable, first activate the plugin, then use the included toolbar button to in
 
 == Upgrade Notice ==
 
+= 1.2 =
+Added retina toolbar icon.
+
 = 1.0 =
 Upgrade to v1.0 to get the first stable version.
