@@ -18,8 +18,8 @@ var wpInsertPages;
 			inputs.slug = $('#insertpage-slug-field'); // Slug
 			inputs.pageID = $('#insertpage-pageID');
 			inputs.parentPageID = $('#insertpage-parent-pageID');
-      inputs.format = $('#insertpage-format-select'); // Format field (title, link, content, all, choose a custom template ->)
-      inputs.template = $('#insertpage-template-select'); // Custom template select field
+			inputs.format = $('#insertpage-format-select'); // Format field (title, link, content, all, choose a custom template ->)
+			inputs.template = $('#insertpage-template-select'); // Custom template select field
 			inputs.search = $('#insertpage-search-field');
 			// Build RiverInsertPagess
 			rivers.search = new RiverInsertPages( $('#insertpage-search-results') );
@@ -43,21 +43,21 @@ var wpInsertPages;
 			inputs.dialog.bind('wpdialogrefresh', wpInsertPages.refresh);
 			
 			inputs.format.change(function() {
-			  if (inputs.format.val()=='template') {
-			    inputs.template.removeAttr('disabled');
-          inputs.template.focus();
-			  } else {
-          inputs.template.attr('disabled', 'disabled');
-        }
+				if (inputs.format.val()=='template') {
+					inputs.template.removeAttr('disabled');
+					inputs.template.focus();
+				} else {
+					inputs.template.attr('disabled', 'disabled');
+				}
 			});
 			
 			/* for this to work, inputs.slug needs to populate inputs.pageID with id when it changes
 			inputs.pageID.change(function() {
-			  if (inputs.pageID.val() == inputs.parentPageID.val()) { // trying to embed a page in itself
-			    inputs.submit.attr('disabled','disabled');
-        } else {
-          inputs.submit.removeAttr('disabled');
-        }
+				if (inputs.pageID.val() == inputs.parentPageID.val()) { // trying to embed a page in itself
+					inputs.submit.attr('disabled','disabled');
+				} else {
+					inputs.submit.removeAttr('disabled');
+				}
 			});
 			*/
 		},
@@ -72,7 +72,7 @@ var wpInsertPages;
 
 			tinyMCEPopup.restoreSelection();
 
-  		wpInsertPages.setDefaultValues();
+			wpInsertPages.setDefaultValues();
 			// Update save prompt.
 			inputs.submit.val( wpInsertPagesL10n.save );
 
@@ -116,10 +116,10 @@ var wpInsertPages;
 			}
 
 			tinyMCEPopup.execCommand("mceBeginUndoLevel");
-      ed.selection.setContent("[insert " +
-        "page='" + attrs.page +"' " +
-        "display='" + attrs.display + "'" +
-        "]");
+			ed.selection.setContent("[insert " +
+				"page='" + attrs.page +"' " +
+				"display='" + attrs.display + "'" +
+				"]");
 			tinyMCEPopup.execCommand("mceEndUndoLevel");
 			tinyMCEPopup.close();
 		},
