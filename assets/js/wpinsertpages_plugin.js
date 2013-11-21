@@ -1,3 +1,14 @@
+function isRetinaDisplay() {
+  if (window.matchMedia) {
+    var mq = window.matchMedia("only screen and (-moz-min-device-pixel-ratio: 1.3), only screen and (-o-min-device-pixel-ratio: 2.6/2), only screen and (-webkit-min-device-pixel-ratio: 1.3), only screen  and (min-device-pixel-ratio: 1.3), only screen and (min-resolution: 1.3dppx)");
+    if (mq && mq.matches || (window.devicePixelRatio > 1)) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+}
+
 (function() { // Start a new namespace to avoid collisions
   
   // Create plugin
@@ -6,6 +17,9 @@
     // Initializes the plugin
     init: function(ed, url) {
       //var disabled = true;
+      var toolbar_icon = isRetinaDisplay() ?
+        url + '/../img/insertpages_toolbar_icon-2x.png' :
+        url + '/../img/insertpages_toolbar_icon.png';
 
       // Register the command
       ed.addCommand('WP_InsertPages', function() {
@@ -24,7 +38,7 @@
       // Register the button
       ed.addButton('wpInsertPages_button', {
         title: 'Insert Page',
-        image: url+'/../img/insertpages_toolbar_icon.gif',
+        image: toolbar_icon,
         cmd: 'WP_InsertPages'
       });
       
