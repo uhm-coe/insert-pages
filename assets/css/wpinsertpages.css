@@ -1,25 +1,3 @@
-/*------------------------------------------------------------------------------
- wp-insertpage (modeled after #wp-link)
-------------------------------------------------------------------------------*/
-
-#wp-insertpage-wrap {
-	display: none;
-	background-color: #fff;
-	-webkit-box-shadow: 0 3px 6px rgba(0,0,0,.3);
-	box-shadow: 0 3px 6px rgba(0,0,0,.3);
-	width: 500px;
-	height: 430px;
-	overflow: hidden;
-	margin-left: -250px;
-	margin-top: -250px;
-	position: fixed;
-	top: 50%;
-	left: 50%;
-	z-index: 100105;
-	-webkit-transition: height .2s,margin-top .2s;
-	transition: height .2s,margin-top .2s;
-}
-
 #wp-insertpage-backdrop {
 	display: none;
 	position: fixed;
@@ -34,64 +12,27 @@
 	z-index: 100100;
 }
 
+#wp-insertpage-wrap {
+	display: none;
+	background-color: #fff;
+	-webkit-box-shadow: 0 3px 6px rgba(0,0,0,.3);
+	box-shadow: 0 3px 6px rgba(0,0,0,.3);
+	width: 500px;
+	height: 470px;
+	overflow: hidden;
+	margin-left: -250px;
+	margin-top: -125px;
+	position: fixed;
+	top: 50%;
+	left: 50%;
+	z-index: 100105;
+	-webkit-transition: height .2s,margin-top .2s;
+	transition: height .2s,margin-top .2s;
+}
+
 #wp-insertpage {
-	position: relative;
-	height: 100%;
-}
-
-#wp-insertpage-wrap.options-panel-visible {
-	height: 500px;
-	margin-top: -250px;
-}
-
-#insertpage-modal-title {
-	background: #fcfcfc;
-	border-bottom: 1px solid #dfdfdf;
-	height: 36px;
-	font-size: 18px;
-	font-weight: 600;
-	line-height: 36px;
-	padding: 0 36px 0 16px;
-	top: 0;
-	right: 0;
-	left: 0;
-}
-
-#wp-insertpage-close {
-	color: #666;
-	cursor: pointer;
-	padding: 0;
-	position: absolute;
-	top: 0;
-	right: 0;
-	width: 36px;
-	height: 36px;
-	text-align: center;
-}
-
-#wp-insertpage-close:before {
-	font: normal 20px/36px 'dashicons';
-	vertical-align: top;
-	speak: none;
-	-webkit-font-smoothing: antialiased;
-	-moz-osx-font-smoothing: grayscale;
-	width: 36px;
-	height: 36px;
-	content: '\f158';
-}
-
-#wp-insertpage-close:hover,
-#wp-insertpage-close:focus {
-	color: #2ea2cc;
-}
-
-#insertpage-selector {
-	padding: 0 16px;
-	position: absolute;
-	top: 36px;
-	left: 0;
-	right: 0;
-	bottom: 44px;
+	line-height: 1.4em;
+	font-size: 12px;
 }
 
 #wp-insertpage ol,
@@ -101,88 +42,96 @@
 	padding: 0;
 }
 
-#insertpage-options-toggle::after {
-	font: normal 20px/1 'dashicons';
-	vertical-align: top;
-	speak: none;
-	-webkit-font-smoothing: antialiased;
-	-moz-osx-font-smoothing: grayscale;
-	content: '\f140';
-}
-
-.options-panel-visible #insertpage-options-toggle::after {
-	content: '\f142';
-}
-
 #wp-insertpage input[type="text"] {
 	-webkit-box-sizing: border-box;
-	-moz-box-sizing: border-box;
-	box-sizing: border-box;
+}
+
+#wp-insertpage input[type="text"],
+#wp-insertpage textarea {
+	border-width: 1px;
+	border-style: solid;
+	-moz-border-radius: 4px;
+	-khtml-border-radius: 4px;
+	-webkit-border-radius: 4px;
+	border-radius: 4px;
+	font-size: 12px;
+	margin: 1px;
+	padding: 3px;
 }
 
 #wp-insertpage #insertpage-options {
-	padding: 8px 0 12px;
+	padding: 0 0 14px;
+	border-bottom: 1px solid #dfdfdf;
+	margin: 0 6px 14px;
 }
-
-#wp-insertpage p.howto {
-	margin: 285px 0 3px;
-}
-
-#insertpage-options-toggle {
+#wp-insertpage #insertpage-internal-toggle {
+	display: inline-block;
 	cursor: pointer;
+	padding-left: 18px;
 }
-
-#insertpage-options-panel .insertpage-format {
-	margin-top: 5px;
+#wp-insertpage .toggle-arrow {
+	background: transparent url( '../img/toggle-arrow.png' ) top left no-repeat;
+	height: 23px;
+	line-height: 23px;
 }
-
+#wp-insertpage .toggle-arrow-active {
+	background-position: center left;
+}
 #wp-insertpage label input[type="text"] {
+	width: 360px;
 	margin-top: 5px;
-	width: 77%;
 }
-
-#wp-insertpage #insertpage-search-panel label span.search-label {
+#wp-insertpage label span {
 	display: inline-block;
 	width: 80px;
 	text-align: right;
 	padding-right: 5px;
-	max-width: 24%;
 }
-
-#wp-insertpage .insertpage-search-field {
-	float: left;
-	width: 250px;
-	max-width: 70%;
+#wp-insertpage-wrap.search-panel-visible #insertpage-search-panel {
+	display: block;
 }
-
 #wp-insertpage .insertpage-search-wrapper {
 	margin: 5px 0 9px;
 	display: block;
 	overflow: hidden;
 }
-
 #wp-insertpage .insertpage-search-wrapper span {
 	float: left;
 	margin-top: 4px;
 }
-
+#wp-insertpage .insertpage-search-wrapper input[type="text"] {
+	float: left;
+	width: 320px;
+}
 #wp-insertpage .insertpage-search-wrapper .spinner {
 	display: none;
 	vertical-align: text-bottom;
 }
-
+#wp-insertpage #insertpage-search-panel label span.search-label {
+	display: inline-block;
+	width: 120px;
+	text-align: right;
+	padding-right: 5px;
+	max-width: 24%;
+}
+#wp-insertpage .insertpage-search-field {
+	float: left;
+	width: 250px;
+	max-width: 70%;
+}
+#wp-insertpage .insertpage-format {
+	width: auto;
+	padding: 10px 0 0;
+	margin: 0 0 0 40px;
+}
 #wp-insertpage .query-results {
 	border: 1px #dfdfdf solid;
-	margin: 0;
+	margin: 0 5px 5px;
 	background: #fff;
+	height: 185px;
 	overflow: auto;
-	position: absolute;
-	left: 16px;
-	right: 16px;
-	top: 38px;
-	height: 265px;
+	position: relative;
 }
-
 #wp-insertpage li,
 #wp-insertpage .query-notice {
 	clear: both;
@@ -193,176 +142,65 @@
 	cursor: pointer;
 	position: relative;
 }
-
 #wp-insertpage li:hover {
 	background: #eaf2fa;
 	color: #151515;
 }
-
 #wp-insertpage li.unselectable {
 	border-bottom: 1px solid #dfdfdf;
 }
-
 #wp-insertpage li.unselectable:hover {
 	background: #fff;
 	cursor: auto;
 	color: #333;
 }
-
 #wp-insertpage li.selected {
 	background: #ddd;
 	color: #333;
 }
-
 #wp-insertpage li.selected .item-title {
 	font-weight: bold;
 }
-
-#wp-insertpage li:last-child {
-	border: none;
-}
-
 #wp-insertpage .item-title {
 	display: inline-block;
 	width: 80%;
-	width: -webkit-calc(100% - 68px);
-	width: calc(100% - 68px);
 }
-
 #wp-insertpage .item-info {
 	text-transform: uppercase;
 	color: #666;
 	font-size: 11px;
 	position: absolute;
-	right: 5px;
-	top: 5px;
+	right: 12px;
+	top: 4px;
+	bottom: 0;
 }
-
-#wp-insertpage #insertpage-options-panel {
+#wp-insertpage #insertpage-search-results {
 	display: none;
 }
-
-#wp-insertpage-wrap.options-panel-visible #insertpage-options-panel {
-	display: block;
+#wp-insertpage  #insertpage-search-panel {
+	float: left;
+	width: 100%;
 }
-
 #wp-insertpage .river-waiting {
 	display: none;
 	padding: 10px 0;
 }
-
 #wp-insertpage .river-waiting .spinner {
 	margin: 0 auto;
 	display: block;
 	float: none;
 }
-
 #wp-insertpage .submitbox {
-	padding: 8px 16px;
-	background: #fcfcfc;
-	border-top: 1px solid #dfdfdf;
-	position: absolute;
-	bottom: 0;
-	left: 0;
-	right: 0;
+	padding: 5px 10px;
+	font-size: 11px;
+	overflow: auto;
+	height: 29px;
 }
-
 #wp-insertpage-cancel {
 	line-height: 25px;
+	float: left;
 }
-
 #wp-insertpage-update {
 	line-height: 23px;
 	float: right;
-}
-
-#wp-insertpage-submit {
-	float: right;
-	margin-bottom: 0;
-}
-
-@media screen and ( max-width: 782px ) {
-	#wp-insertpage-wrap {
-		height: 450px;
-		margin-top: -250px;
-	}
-
-	#wp-insertpage-wrap.options-panel-visible {
-		height: 530px;
-	}
-
-	#wp-insertpage-wrap .query-results {
-		top: 48px;
-	}
-
-	#insertpage-selector {
-		padding: 0 16px 60px;
-	}
-
-	#wp-insertpage-wrap.options-panel-visible #insertpage-selector {
-		bottom: 52px;
-	}
-
-	#wp-insertpage-cancel {
-		line-height: 32px;
-	}
-}
-
-@media screen and ( max-width: 520px ) {
-	#wp-insertpage-wrap {
-		width: auto;
-		margin-left: 0;
-		left: 10px;
-		right: 10px;
-		max-width: 500px;
-	}
-
-	#wp-insertpage-wrap.options-panel-visible {
-		height: 550px;
-	}
-}
-
-@media screen and ( max-height: 520px ) {
-	#wp-insertpage-wrap {
-		-webkit-transition: none;
-		transition: none;
-	}
-
-	#wp-insertpage-wrap,
-	#wp-insertpage-wrap.options-panel-visible {
-		height: auto;
-		margin-top: 0;
-		top: 10px;
-		bottom: 10px;
-	}
-
-	#insertpage-selector,
-	.options-panel-visible #insertpage-selector {
-		overflow: auto;
-	}
-
-	#search-panel .query-results,
-	.options-panel-visible #search-panel .query-results {
-		position: static;
-	}
-}
-
-@media screen and ( max-height: 290px ) {
-	#wp-insertpage-wrap {
-		height: auto;
-		margin-top: 0;
-		top: 10px;
-		bottom: 10px;
-	}
-
-	#insertpage-selector {
-		overflow: auto;
-		height: -webkit-calc(100% - 92px);
-		height: calc(100% - 92px);
-		padding-bottom: 2px;
-	}
-
-	#search-panel .query-results {
-		position: static;
-	}
 }
