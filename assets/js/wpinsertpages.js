@@ -1,10 +1,9 @@
-// Modified from WordPress Advanced Link dialog 
-// /wp-includes/js/tinymce/plugins/wplink/js/wplink.dev.js
-
+// Modified from WordPress Advanced Link dialog, wp-includes/js/wplink.js
+/* global ajaxurl, tinymce, wpLinkL10n, setUserSetting, wpActiveEditor */
 var wpInsertPages;
 
 (function($){
-	var inputs = {}, rivers = {}, ed, RiverInsertPages, QueryInsertPages;
+	var inputs = {}, rivers = {}, editor, searchTimer, RiverInsertPages, QueryInsertPages;
 
 	wpInsertPages = {
 		timeToTriggerRiverInsertPages: 150,
@@ -12,45 +11,62 @@ var wpInsertPages;
 		riverBottomThreshold: 5,
 		keySensitivity: 100,
 		lastSearch: '',
+		textarea: '',
+
 		init : function() {
-			inputs.dialog = $('#wp-insertpage');
-			inputs.submit = $('#wp-insertpage-submit');
-			inputs.slug = $('#insertpage-slug-field'); // Slug
-			inputs.pageID = $('#insertpage-pageID');
-			inputs.parentPageID = $('#insertpage-parent-pageID');
-			inputs.format = $('#insertpage-format-select'); // Format field (title, link, content, all, choose a custom template ->)
-			inputs.template = $('#insertpage-template-select'); // Custom template select field
-			inputs.search = $('#insertpage-search-field');
+			inputs.wrap = $( '#wp-insertpage-wrap' );
+			inputs.dialog = $( '#wp-insertpage' );
+			inputs.backdrop = $( '#wp-insertpage-backdrop' );
+			inputs.submit = $('#wp-insertpage-submit' );
+			inputs.close = $( '#wp-insertpage-close' );
+			// Page info
+			inputs.slug = $( '#insertpage-slug-field' );
+			inputs.pageID = $( '#insertpage-pageID' );
+			inputs.parentPageID = $( '#insertpage-parent-pageID' );
+			// Format field (title, link, content, all, choose a custom template ->)
+			inputs.format = $( '#insertpage-format-select' );
+			// Custom template select field
+			inputs.template = $( '#insertpage-template-select' );
+			inputs.search = $( '#insertpage-search-field' );
 			// Build RiverInsertPagess
-			rivers.search = new RiverInsertPages( $('#insertpage-search-results') );
-			rivers.recent = new RiverInsertPages( $('#insertpage-most-recent-results') );
-			rivers.elements = $('.query-results', inputs.dialog);
+			rivers.search = new RiverInsertPages( $( '#insertpage-search-results' ) );
+			rivers.recent = new RiverInsertPages( $( '#insertpage-most-recent-results' ) );
+			rivers.elements = inputs.dialog.find( '.query-results' );
 
 			// Bind event handlers
 			inputs.dialog.keydown( wpInsertPages.keydown );
 			inputs.dialog.keyup( wpInsertPages.keyup );
-			inputs.submit.click( function(e){
+			inputs.submit.click( function( event ){
+				event.preventDefault();
 				wpInsertPages.update();
-				e.preventDefault();
 			});
-			$('#wp-insertpage-cancel').click( wpInsertPages.cancel );
-			$('#insertpage-internal-toggle').click( wpInsertPages.toggleInternalLinking );
+			inputs.close.add( inputs.backdrop ).add( '#wp-insertpage-cancel a' ).click( function( event ) {
+				event.preventDefault();
+				wpInsertPages.close();
+			});
 
-			rivers.elements.bind('river-select', wpInsertPages.updateFields );
+			$( '#insertpage-internal-toggle' ).click( wpInsertPages.toggleInternalLinking );
 
-			inputs.search.keyup( wpInsertPages.searchInternalLinks );
+			rivers.elements.on('river-select', wpInsertPages.updateFields );
 
-			inputs.dialog.bind('wpdialogrefresh', wpInsertPages.refresh);
-			
-			inputs.format.change(function() {
-				if (inputs.format.val()=='template') {
-					inputs.template.removeAttr('disabled');
+			inputs.format.change( function() {
+				if ( inputs.format.val() == 'template' ) {
+					inputs.template.removeAttr( 'disabled' );
 					inputs.template.focus();
 				} else {
-					inputs.template.attr('disabled', 'disabled');
+					inputs.template.attr( 'disabled', 'disabled' );
 				}
 			});
-			
+
+			inputs.search.keyup( function() {
+				var self = this;
+
+				window.clearTimeout( searchTimer );
+				searchTimer = window.setTimeout( function() {
+					wpInsertPages.searchInternalLinks.call( self );
+				}, 500 );
+			});
+
 			/* for this to work, inputs.slug needs to populate inputs.pageID with id when it changes
 			inputs.pageID.change(function() {
 				if (inputs.pageID.val() == inputs.parentPageID.val()) { // trying to embed a page in itself
@@ -62,66 +78,199 @@ var wpInsertPages;
 			*/
 		},
 
-		refresh : function() {
-			var e;
-			ed = tinyMCEPopup.editor;
+		open: function( editorId ) {
+			var ed, node, bookmark, cursorPosition = -1;
+			
+			wpInsertPages.range = null;
 
+			if ( editorId ) {
+				window.wpActiveEditor = editorId;
+			}
+
+			if ( ! window.wpActiveEditor ) {
+				return;
+			}
+
+			this.textarea = $( '#' + window.wpActiveEditor ).get( 0 );
+
+			if ( typeof tinymce !== 'undefined' ) {
+				ed = tinymce.get( wpActiveEditor );
+
+				if ( ed && ! ed.isHidden() ) {
+					editor = ed;
+
+					// Get cursor state (used later to determine if we're in an existing shortcode)
+					node = editor.selection.getNode();
+					bookmark = editor.selection.getBookmark( 0 );
+					cursorPosition = node.innerHTML.indexOf( '<span data-mce-type="bookmark"' );
+					editor.selection.moveToBookmark( bookmark );
+
+				} else {
+					editor = null;
+				}
+
+				if ( editor && tinymce.isIE ) {
+					editor.windowManager.bookmark = editor.selection.getBookmark();
+				}
+			}
+
+			if ( ! wpInsertPages.isMCE() && document.selection ) {
+				this.textarea.focus();
+				this.range = document.selection.createRange();
+			}
+
+			inputs.wrap.show();
+			inputs.backdrop.show();
+
+			wpInsertPages.refresh( cursorPosition );
+		},
+
+		isMCE: function() {
+			return editor && ! editor.isHidden();
+		},
+
+		refresh: function( cursorPosition ) {
 			// Refresh rivers (clear links, check visibility)
 			rivers.search.refresh();
 			rivers.recent.refresh();
 
-			tinyMCEPopup.restoreSelection();
+			if ( wpInsertPages.isMCE() )
+				wpInsertPages.mceRefresh( cursorPosition );
+			else
+				wpInsertPages.setDefaultValues();
 
-			wpInsertPages.setDefaultValues();
-			// Update save prompt.
-			inputs.submit.val( wpInsertPagesL10n.save );
-
-			tinyMCEPopup.storeSelection();
-			// Focus the URL field and highlight its contents.
+			// Focus the Slug field and highlight its contents.
 			//     If this is moved above the selection changes,
 			//     IE will show a flashing cursor over the dialog.
 			inputs.slug.focus()[0].select();
+
 			// Load the most recent results if this is the first time opening the panel.
 			if ( ! rivers.recent.ul.children().length )
 				rivers.recent.ajax();
 		},
 
-		cancel : function() {
-			tinyMCEPopup.close();
+		mceRefresh: function( cursorPosition ) {
+			var shortcode, bookmark, regexp, match, matches;
+
+			// Get the existing shortcode the cursor is in (or get the entire node if cursor not in one)
+			shortcode = '';
+			content = editor.selection.getNode().innerHTML;
+			if ( content.indexOf( '[insert page=' ) >= 0 ) {
+				// Find occurrences of shortcode in current node and see if the cursor
+				// position is inside one of them.
+				regexp = /\[insert page=[^\]]*]/g;
+				while ( ( match = regexp.exec( content ) ) != null ) {
+					startPos = match.index;
+					endPos = startPos + match[0].length;
+					if ( cursorPosition > startPos && cursorPosition < endPos ) {
+						shortcode = match[0];
+						break;
+					}
+				}
+			}
+
+			// Expand selection to the entire shortcode that the cursor is inside
+			range = editor.selection.getRng();
+			node = editor.selection.getNode();
+			selectedChild = null;
+			offset = 0;
+			for ( i = 0; i < node.childNodes.length; i++ ) {
+				selectedChild = node.childNodes[i];
+				length = ( selectedChild.outerHTML ) ? selectedChild.outerHTML.length : selectedChild.textContent.length;
+				if ( cursorPosition < offset + length ) {
+					break;
+				}
+				offset += length;
+			}
+			range.setStart( selectedChild, startPos - offset );
+			range.setEnd( selectedChild, endPos - offset );
+			editor.selection.setRng( range );
+
+			// If cursor is in a shortcode, set the proper values.
+			if ( shortcode.indexOf( '[insert page=' ) == 0 ) {
+				// Set slug/id (also set the slug as the search term)
+				regexp = /page=['"]([^['"]*)['"]/;
+				matches = regexp.exec( shortcode );
+				if ( matches.length > 1 ) {
+					inputs.slug.val( matches[1] );
+					inputs.search.val( matches[1] );
+					inputs.search.keyup();
+				}
+
+				regexp = /display=['"]([^['"]*)['"]/;
+				matches = regexp.exec( shortcode );
+				if ( matches.length > 1 ) {
+					if ( matches[1] == 'title' || matches[1] == 'link' || matches[1] == 'content' || matches[1] == 'all' ) {
+						inputs.format.val( matches[1] );
+						inputs.template.val( 'all' );
+					} else {
+						inputs.format.val( 'template' );
+						inputs.template.val( matches[1] );
+					}
+					inputs.format.change();
+				}
+
+				// Update save prompt.
+				inputs.submit.val( 'Update' );
+
+			// If there's no link, set the default values.
+			} else {
+				wpInsertPages.setDefaultValues();
+			}
+		},
+
+		close: function() {
+			if ( ! wpInsertPages.isMCE() ) {
+				wpInsertPages.textarea.focus();
+
+				if ( wpInsertPages.range ) {
+					wpInsertPages.range.moveToBookmark( wpInsertPages.range.getBookmark() );
+					wpInsertPages.range.select();
+				}
+			} else {
+				editor.focus();
+			}
+
+			inputs.backdrop.hide();
+			inputs.wrap.hide();
+		},
+
+		getAttrs: function() {
+			return {
+				page: inputs.slug.val(),
+				pageID: inputs.pageID.val(),
+				display: inputs.format.val()=='template' ? inputs.template.val() : inputs.format.val(),
+			};
 		},
 
 		update : function() {
-			var ed = tinyMCEPopup.editor,
-				attrs = {
-					page : inputs.slug.val(),
-					pageID : inputs.pageID.val(),
-					display: inputs.format.val()=='template' ? inputs.template.val() : inputs.format.val(),
-					//title : inputs.title.html(),
-					//target : inputs.useCustomTemplate.attr('checked') ? '_blank' : ''
-				}, e, b;
+			var link,
+				attrs = wpInsertPages.getAttrs(),
+				b;
 
-			tinyMCEPopup.restoreSelection();
+			wpInsertPages.close();
+			editor.focus();
 
-			// If the values are empty, unlink and return
+			if ( tinymce.isIE ) {
+				editor.selection.moveToBookmark( editor.windowManager.bookmark );
+			}
+
+			// If the values are empty, undo and return
 			if ( ! attrs.page || attrs.page == '' ) {
-				if ( e ) {
-					tinyMCEPopup.execCommand("mceBeginUndoLevel");
-					b = ed.selection.getBookmark();
-					ed.selection.setContent('');
-					ed.selection.moveToBookmark(b);
-					tinyMCEPopup.execCommand("mceEndUndoLevel");
-					tinyMCEPopup.close();
-				}
+				editor.execCommand("mceBeginUndoLevel");
+				b = editor.selection.getBookmark();
+				editor.selection.setContent('');
+				editor.selection.moveToBookmark(b);
+				editor.execCommand("mceEndUndoLevel");
 				return;
 			}
 
-			tinyMCEPopup.execCommand("mceBeginUndoLevel");
-			ed.selection.setContent("[insert " +
+			editor.execCommand("mceBeginUndoLevel");
+			editor.selection.setContent("[insert " +
 				"page='" + attrs.page +"' " +
 				"display='" + attrs.display + "'" +
 				"]");
-			tinyMCEPopup.execCommand("mceEndUndoLevel");
-			tinyMCEPopup.close();
+			editor.execCommand("mceEndUndoLevel");
 		},
 
 		updateFields : function( e, li, originalEvent ) {
@@ -136,6 +285,7 @@ var wpInsertPages;
 			inputs.slug.val('');
 			inputs.pageID.val('');
 			inputs.format.val('title');
+			inputs.format.change();
 			inputs.template.val('all');
 		},
 
@@ -152,10 +302,12 @@ var wpInsertPages;
 					return;
 
 				wpInsertPages.lastSearch = search;
-				waiting = t.siblings('img.waiting').show();
+				waiting = t.parent().find( '.spinner' ).show();
 
 				rivers.search.change( search );
-				rivers.search.ajax( function(){ waiting.hide(); });
+				rivers.search.ajax( function() {
+					waiting.hide();
+				});
 			} else {
 				rivers.search.hide();
 				rivers.recent.show();
@@ -261,14 +413,19 @@ var wpInsertPages;
 	RiverInsertPages = function( element, search ) {
 		var self = this;
 		this.element = element;
-		this.ul = element.children('ul');
+		this.ul = element.children( 'ul' );
+		this.contentHeight = element.children( '#link-selector-height' );
 		this.waiting = element.find('.river-waiting');
 
 		this.change( search );
 		this.refresh();
 
-		element.scroll( function(){ self.maybeLoad(); });
-		element.delegate('li', 'click', function(e){ self.select( $(this), e ); });
+		$( '#wp-insertpage .query-results, #wp-insertpage #link-selector' ).scroll( function() {
+			self.maybeLoad();
+		});
+		element.on( 'click', 'li', function( event ) {
+			self.select( $( this ), event );
+		});
 	};
 
 	$.extend( RiverInsertPages.prototype, {
@@ -398,7 +555,9 @@ var wpInsertPages;
 				self.waiting.show();
 				el.scrollTop( newTop + self.waiting.outerHeight() );
 
-				self.ajax( function() { self.waiting.hide(); });
+				self.ajax( function() {
+					self.waiting.hide();
+				});
 			}, wpInsertPages.timeToTriggerRiverInsertPages );
 		}
 	});
@@ -417,7 +576,7 @@ var wpInsertPages;
 		ajax: function( callback ) {
 			var self = this,
 				query = {
-					//action : 'wp-link-ajax',
+					//action : 'wp-insertpage-ajax',
 					action : 'insertpage',
 					page : this.page,
 					'_ajax_inserting_nonce' : $('#_ajax_inserting_nonce').val()

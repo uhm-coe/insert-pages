@@ -1,72 +1,70 @@
-function isRetinaDisplay() {
-	if (window.matchMedia) {
-		var mq = window.matchMedia("only screen and (-moz-min-device-pixel-ratio: 1.3), only screen and (-o-min-device-pixel-ratio: 2.6/2), only screen and (-webkit-min-device-pixel-ratio: 1.3), only screen  and (min-device-pixel-ratio: 1.3), only screen and (min-resolution: 1.3dppx)");
-		if (mq && mq.matches || (window.devicePixelRatio > 1)) {
-			return true;
-		} else {
-			return false;
-		}
-	}
-}
-
 (function() { // Start a new namespace to avoid collisions
 
-	// Create plugin
-	tinymce.create('tinymce.plugins.wpInsertPages', {
+	function isRetinaDisplay() {
+		if (window.matchMedia) {
+			var mq = window.matchMedia("only screen and (-moz-min-device-pixel-ratio: 1.3), only screen and (-o-min-device-pixel-ratio: 2.6/2), only screen and (-webkit-min-device-pixel-ratio: 1.3), only screen  and (min-device-pixel-ratio: 1.3), only screen and (min-resolution: 1.3dppx)");
+			if (mq && mq.matches || (window.devicePixelRatio > 1)) {
+				return true;
+			} else {
+				return false;
+			}
+		}
+	}
 
-		// Initializes the plugin
-		init: function(ed, url) {
-			//var disabled = true;
-			var toolbar_icon = isRetinaDisplay() ?
-				url + '/../img/insertpages_toolbar_icon-2x.png' :
-				url + '/../img/insertpages_toolbar_icon.png';
+	tinymce.PluginManager.add( 'wpInsertPages', function( editor, url ) {
+		var insertPagesButton;
 
-			// Register the command
-			ed.addCommand('WP_InsertPages', function() {
-				//if (disabled) return;
-				ed.windowManager.open({
-					id: 'wp-insertpage',
-					width: 480,
-					height: 'auto',
-					wpDialog: true,
-					title: 'Insert Page'
-				}, {
-					plugin_url: url // Plugin absolute url
-				});
-			});
+		// Register a command so that it can be invoked by using tinyMCE.activeEditor.execCommand( 'WP_InsertPages' );
+		editor.addCommand( 'WP_InsertPages', function() {
+			if ( ( ! insertPagesButton || ! insertPagesButton.disabled() ) && typeof window.wpInsertPages !== 'undefined' ) {
+				window.wpInsertPages.open( editor.id );
+			}
+		})
 
-			// Register the button
-			ed.addButton('wpInsertPages_button', {
-				title: 'Insert Page',
-				image: toolbar_icon,
-				cmd: 'WP_InsertPages'
-			});
+		function setState( button, node ) {
+			var parentIsShortcode = false,
+				bookmark, cursorPosition, regexp, match, startPos, endPos,
+				parentIsAnchor = editor.dom.getParent( node, 'a' ),
+				parentIsImg = editor.dom.getParent( node, 'img' );
 
-			// enable when something other than an anchor element is selected
-			//ed.onNodeChange.add(function(ed, cm, n, co) {
-			//  disabled = co && n.nodeName != 'A';
-			//});
-		},
+			// Get whether cursor is in an existing shortcode
+			content = node.innerHTML;
+			if ( content.indexOf( '[insert page=' ) >= 0 ) {
+				// Find the cursor position in the current node.
+				bookmark = editor.selection.getBookmark( 0 );
+				cursorPosition = node.innerHTML.indexOf( '<span data-mce-type="bookmark"' );
+				editor.selection.moveToBookmark( bookmark );
 
-		// Create control
-		createControl: function(id, controlManager) {
-			return null;
-		},
+				// Find occurrences of shortcode in current node and see if the cursor
+				// position is inside one of them.
+				regexp = /\[insert page=[^\]]*]/g;
+				while ( ( match = regexp.exec( content ) ) != null ) {
+					startPos = match.index;
+					endPos = startPos + match[0].length;
+					if ( cursorPosition > startPos && cursorPosition < endPos ) {
+						parentIsShortcode = true;
+						break;
+					}
+				}
+			}
 
-		// Returns info about the plugin as a name/value array
-		getInfo: function() {
-			return {
-				longname: 'WordPress Insert Page Dialog',
-				author: 'Paul Aumer-Ryan',
-				authorurl: 'http://combinelabs.com/paul',
-				infourl: 'http://www.hawaii.edu/coe/dcdc/wordpress/insert-pages',
-				version: '1.0'
-			};
+			button.disabled( parentIsAnchor || parentIsImg );
+			button.active( parentIsShortcode );
 		}
 
-	});
+		editor.addButton( 'wpInsertPages_button', {
+			image: url + '/../img/insertpages_toolbar_icon' + ( isRetinaDisplay() ? '-2x' : '' ) + '.png',
+			tooltip: 'Insert page',
+			cmd: 'WP_InsertPages',
 
-	// Register plugin
-	tinymce.PluginManager.add('wpInsertPages', tinymce.plugins.wpInsertPages);
+			onPostRender: function() {
+				insertPagesButton = this;
 
-})();
+				editor.on( 'nodechange', function( event ) {
+					setState( insertPagesButton, event.element );
+				});
+			}
+		});
+	})
+
+} )();
