@@ -169,25 +169,25 @@ var wpInsertPages;
 				}
 			}
 
-			// Expand selection to the entire shortcode that the cursor is inside
-			range = editor.selection.getRng();
-			node = editor.selection.getNode();
-			selectedChild = null;
-			offset = 0;
-			for ( i = 0; i < node.childNodes.length; i++ ) {
-				selectedChild = node.childNodes[i];
-				length = ( selectedChild.outerHTML ) ? selectedChild.outerHTML.length : selectedChild.textContent.length;
-				if ( cursorPosition < offset + length ) {
-					break;
-				}
-				offset += length;
-			}
-			range.setStart( selectedChild, startPos - offset );
-			range.setEnd( selectedChild, endPos - offset );
-			editor.selection.setRng( range );
-
 			// If cursor is in a shortcode, set the proper values.
 			if ( shortcode.indexOf( '[insert page=' ) == 0 ) {
+				// Expand selection to the entire shortcode that the cursor is inside
+				range = editor.selection.getRng();
+				node = editor.selection.getNode();
+				selectedChild = null;
+				offset = 0;
+				for ( i = 0; i < node.childNodes.length; i++ ) {
+					selectedChild = node.childNodes[i];
+					length = ( selectedChild.outerHTML ) ? selectedChild.outerHTML.length : selectedChild.textContent.length;
+					if ( cursorPosition < offset + length ) {
+						break;
+					}
+					offset += length;
+				}
+				range.setStart( selectedChild, startPos - offset );
+				range.setEnd( selectedChild, endPos - offset );
+				editor.selection.setRng( range );
+
 				// Set slug/id (also set the slug as the search term)
 				regexp = /page=['"]([^['"]*)['"]/;
 				matches = regexp.exec( shortcode );
@@ -217,6 +217,18 @@ var wpInsertPages;
 			} else {
 				wpInsertPages.setDefaultValues();
 			}
+		},
+
+		setDefaultValues : function() {
+			// Set URL and description to defaults.
+			// Leave the new tab setting as-is.
+			inputs.slug.val('');
+			inputs.pageID.val('');
+			inputs.format.val('title');
+			inputs.format.change();
+			inputs.template.val('all');
+			inputs.search.val( '' );
+			inputs.search.keyup();
 		},
 
 		close: function() {
@@ -278,15 +290,6 @@ var wpInsertPages;
 			inputs.pageID.val( li.children('.item-id').val() );
 			if ( originalEvent && originalEvent.type == "click" )
 				inputs.slug.focus();
-		},
-		setDefaultValues : function() {
-			// Set URL and description to defaults.
-			// Leave the new tab setting as-is.
-			inputs.slug.val('');
-			inputs.pageID.val('');
-			inputs.format.val('title');
-			inputs.format.change();
-			inputs.template.val('all');
 		},
 
 		searchInternalLinks : function() {
