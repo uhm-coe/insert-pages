@@ -5,7 +5,7 @@ Plugin Name: Insert Pages
 Plugin URI: https://bitbucket.org/figureone/insert-pages
 Description: Insert Pages lets you embed any WordPress content (e.g., pages, posts, custom post types) into other WordPress content using the Shortcode API.
 Author: Paul Ryan
-Version: 1.3
+Version: 1.4
 Author URI: http://www.linkedin.com/in/paulrryan
 License: GPL2
 */
@@ -55,8 +55,13 @@ if (!class_exists('InsertPagesPlugin')) {
 			// Add TinyMCE toolbar button filters only if current user has permissions
 			if (current_user_can('edit_posts') && current_user_can('edit_pages') && get_user_option('rich_editing')=='true') {
 
-				wp_register_script('wpinsertpages', plugins_url('/assets/js/wpinsertpages.js', __FILE__), array(), '20110919'); // Register the TinyMCE toolbar button script
-				wp_enqueue_script('wpinsertpages');
+				// Register the TinyMCE toolbar button script
+				wp_enqueue_script(
+					'wpinsertpages',
+					plugins_url( '/assets/js/wpinsertpages.js', __FILE__ ),
+					array( 'wpdialogs' ),
+					'20140819'
+				);
 				wp_localize_script( 'wpinsertpages', 'wpInsertPagesL10n', array(
 					'update' => __('Update'),
 					'save' => __('Insert Page'),
@@ -65,11 +70,16 @@ if (!class_exists('InsertPagesPlugin')) {
 					'l10n_print_after' => 'try{convertEntities(wpLinkL10n);}catch(e){};',
 				));
 
-				wp_register_style('wpinsertpagescss', plugins_url('/assets/css/wpinsertpages.css', __FILE__), array(), '20110919'); // Register the TinyMCE toolbar button script
-				wp_enqueue_style('wpinsertpagescss');
+				// Register the TinyMCE toolbar button styles
+				wp_enqueue_style(
+					'wpinsertpagescss',
+					plugins_url( '/assets/css/wpinsertpages.css', __FILE__ ),
+					array( 'wp-jquery-ui-dialog' ),
+					'20140819'
+				);
 
-				add_filter('mce_buttons', array($this, 'insertPages_handleFilter_mceButtons'));
-				add_filter('mce_external_plugins', array($this, 'insertPages_handleFilter_mceExternalPlugins'));
+				add_filter( 'mce_external_plugins', array( $this, 'insertPages_handleFilter_mceExternalPlugins' ) );
+				add_filter( 'mce_buttons', array( $this, 'insertPages_handleFilter_mceButtons' ) );
 
 				//load_plugin_textdomain('insert-pages', false, dirname(plugin_basename(__FILE__)).'/languages/');
 			}
@@ -148,14 +158,14 @@ if (!class_exists('InsertPagesPlugin')) {
 
 
 		// Filter hook: Add a button to the TinyMCE toolbar for our insert page tool
-		function insertPages_handleFilter_mceButtons($buttons) {
-			array_push($buttons, '|', 'wpInsertPages_button'); // add a separator and button to toolbar
+		function insertPages_handleFilter_mceButtons( $buttons ) {
+			array_push( $buttons, 'wpInsertPages_button' ); // add a separator and button to toolbar
 			return $buttons;
 		}
 
 		// Filter hook: Load the javascript for our custom toolbar button
-		function insertPages_handleFilter_mceExternalPlugins($plugins) {
-			$plugins['wpInsertPages'] = plugin_dir_url(__FILE__).'assets/js/wpinsertpages_plugin.js';
+		function insertPages_handleFilter_mceExternalPlugins( $plugins ) {
+			$plugins['wpInsertPages'] = plugins_url( '/assets/js/wpinsertpages_plugin.js', __FILE__ );
 			return $plugins;
 		}
 
@@ -165,30 +175,39 @@ if (!class_exists('InsertPagesPlugin')) {
 		 * @since 3.1.0
 		 */
 		function insertPages_wp_tinymce_dialog() {
+			$search_panel_visible = '1' == get_user_setting( 'wplink', '0' ) ? ' search-panel-visible' : '';
+
+			// display: none is required here, see #WP27605
 			?>
+			<div id="wp-insertpage-backdrop" style="display: none"></div>
+			<div id="wp-insertpage-wrap" class="wp-core-ui<?php echo $search_panel_visible; ?>" style="display: none">
 			<form id="wp-insertpage" tabindex="-1">
 			<?php wp_nonce_field( 'internal-inserting', '_ajax_inserting_nonce', false ); ?>
 			<input type="hidden" id="insertpage-parent-pageID" value="<?php echo $_GET['post'] ?>" />
+			<div id="link-modal-title">
+				<?php _e( 'Insert page' ) ?>
+				<div id="wp-insertpage-close" tabindex="0"></div>
+	 		</div>
 			<div id="insertpage-selector">
 				<div id="insertpage-search-panel">
 					<div class="insertpage-search-wrapper">
-						<label for="insertpage-search-field">
-							<span><?php _e( 'Search' ); ?></span>
-							<input type="text" id="insertpage-search-field" class="insertpage-search-field" tabindex="60" autocomplete="off" />
-							<img class="waiting" src="<?php echo esc_url( admin_url( 'images/wpspin_light.gif' ) ); ?>" alt="" />
+						<label>
+							<span class="search-label"><?php _e( 'Search' ); ?></span>
+							<input type="search" id="insertpage-search-field" class="insertpage-search-field" autocomplete="off" />
+							<span class="spinner"></span>
 						</label>
 					</div>
 					<div id="insertpage-search-results" class="query-results">
 						<ul></ul>
 						<div class="river-waiting">
-							<img class="waiting" src="<?php echo esc_url( admin_url( 'images/wpspin_light.gif' ) ); ?>" alt="" />
+							<span class="spinner"></span>
 						</div>
 					</div>
 					<div id="insertpage-most-recent-results" class="query-results">
 						<div class="query-notice"><em><?php _e( 'No search term specified. Showing recent items.' ); ?></em></div>
 						<ul></ul>
 						<div class="river-waiting">
-							<img class="waiting" src="<?php echo esc_url( admin_url( 'images/wpspin_light.gif' ) ); ?>" alt="" />
+							<span class="spinner"></span>
 						</div>
 					</div>
 				</div>
@@ -219,14 +238,15 @@ if (!class_exists('InsertPagesPlugin')) {
 				</div>
 			</div>
 			<div class="submitbox">
+				<div id="wp-insertpage-update">
+					<input type="submit" value="<?php esc_attr_e( 'Insert Page' ); ?>" class="button button-primary" id="wp-insertpage-submit" name="wp-insertpage-submit">
+				</div>
 				<div id="wp-insertpage-cancel">
 					<a class="submitdelete deletion" href="#"><?php _e( 'Cancel' ); ?></a>
 				</div>
-				<div id="wp-insertpage-update">
-					<?php submit_button( __('Update'), 'primary', 'wp-insertpage-submit', false, array('tabindex' => 100)); ?>
-				</div>
 			</div>
 			</form>
+			</div>
 			<?php
 		}
 
@@ -319,7 +339,7 @@ if (class_exists('InsertPagesPlugin')) {
 if (isset($insertPages_plugin)) {
 	// Actions
 	add_action('init', array($insertPages_plugin, 'insertPages_init'), 1); // Register Shortcodes here
-	add_action('admin_init', array($insertPages_plugin, 'insertPages_admin_init'), 1); // Add TinyMCE buttons here
+	add_action('admin_head', array($insertPages_plugin, 'insertPages_admin_init'), 1); // Add TinyMCE buttons here
 	add_action('before_wp_tiny_mce', array($insertPages_plugin, 'insertPages_wp_tinymce_dialog'), 1); // Preload TinyMCE popup
 	add_action('wp_ajax_insertpage', array($insertPages_plugin, 'insertPages_insert_page_callback')); // Populate page search in TinyMCE button popup in this ajax call 
 }
