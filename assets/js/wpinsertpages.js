@@ -45,7 +45,7 @@ var wpInsertPages;
 				wpInsertPages.close();
 			});
 
-			$( '#insertpage-internal-toggle' ).click( wpInsertPages.toggleInternalLinking );
+			$( '#insertpage-options-toggle' ).click( wpInsertPages.toggleInternalLinking );
 
 			rivers.elements.on('river-select', wpInsertPages.updateFields );
 
@@ -384,32 +384,11 @@ var wpInsertPages;
 		},
 
 		toggleInternalLinking : function( event ) {
-			var panel = $('#insertpage-options'),
-				widget = inputs.dialog.wpdialog('widget'),
-				// We're about to toggle visibility; it's currently the opposite
-				visible = !panel.is(':visible'),
-				win = $(window);
+			var visible = inputs.wrap.hasClass( 'options-panel-visible');
 
-			$(this).toggleClass('toggle-arrow-active', visible);
-
-			inputs.dialog.height('auto');
-			panel.slideToggle( 300, function() {
-				setUserSetting('wpInsertPages', visible ? '1' : '0');
-				inputs[ visible ? 'slug' : 'search' ].focus();
-
-				// Move the box if the box is now expanded, was opened in a collapsed state,
-				// and if it needs to be moved. (Judged by bottom not being positive or
-				// bottom being smaller than top.)
-				var scroll = win.scrollTop(),
-					top = widget.offset().top,
-					bottom = top + widget.outerHeight(),
-					diff = bottom - win.height();
-
-				if ( diff > scroll ) {
-					widget.animate({'top': diff < top ?  top - diff : scroll }, 200);
-				}
-			});
-			event.preventDefault();
+			inputs.wrap.toggleClass( 'options-panel-visible', ! visible );
+			setUserSetting( 'wpinsertpage', visible ? '0' : '1' );
+			inputs[ visible ? 'search' : 'slug' ].focus();
 		}
 	}
 
