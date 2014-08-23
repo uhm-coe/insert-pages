@@ -72,6 +72,10 @@ Just one! The plugin prevents you from embedding a page in itself, but you can t
 
 == Changelog ==
 
+= 1.5 =
+* Fix for options button toggle in tinymce popup;
+* Fix popup display on small screen sizes (mobile-friendly).
+
 = 1.4 =
 * Update for WordPress 3.9 (update to work under tinymce4);
 * Can now edit existing shortcodes (click inside them, then click the toolbar button).
