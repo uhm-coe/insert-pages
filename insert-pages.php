@@ -175,16 +175,16 @@ if (!class_exists('InsertPagesPlugin')) {
 		 * @since 3.1.0
 		 */
 		function insertPages_wp_tinymce_dialog() {
-			$search_panel_visible = '1' == get_user_setting( 'wplink', '0' ) ? ' search-panel-visible' : '';
+			$options_panel_visible = '1' == get_user_setting( 'wplink', '0' ) ? ' options-panel-visible' : '';
 
 			// display: none is required here, see #WP27605
 			?>
 			<div id="wp-insertpage-backdrop" style="display: none"></div>
-			<div id="wp-insertpage-wrap" class="wp-core-ui<?php echo $search_panel_visible; ?>" style="display: none">
+			<div id="wp-insertpage-wrap" class="wp-core-ui<?php echo $options_panel_visible; ?>" style="display: none">
 			<form id="wp-insertpage" tabindex="-1">
 			<?php wp_nonce_field( 'internal-inserting', '_ajax_inserting_nonce', false ); ?>
 			<input type="hidden" id="insertpage-parent-pageID" value="<?php echo $_GET['post'] ?>" />
-			<div id="link-modal-title">
+			<div id="insertpage-modal-title">
 				<?php _e( 'Insert page' ) ?>
 				<div id="wp-insertpage-close" tabindex="0"></div>
 	 		</div>
@@ -211,17 +211,18 @@ if (!class_exists('InsertPagesPlugin')) {
 						</div>
 					</div>
 				</div>
-				<?php $show_internal = '1' == get_user_setting( 'wpInsertPages', '0' ); ?>
-				<p class="howto toggle-arrow <?php if ( $show_internal ) echo 'toggle-arrow-active'; ?>" id="insertpage-internal-toggle"><?php _e( 'Options' ); ?></p>
-				<div id="insertpage-options"<?php if ( ! $show_internal ) echo ' style="display:none"'; ?>>
-					<div>
-						<label for="insertpage-slug-field"><span><?php _e( 'Slug or ID' ); ?></span>
+				<p class="howto" id="insertpage-options-toggle"><?php _e( 'Options' ); ?></p>
+				<div id="insertpage-options-panel">
+					<div class="insertpage-options-wrapper">
+						<label for="insertpage-slug-field">
+							<span><?php _e( 'Slug or ID' ); ?></span>
 							<input id="insertpage-slug-field" type="text" tabindex="10" autocomplete="off" />
 							<input id="insertpage-pageID" type="hidden" />
 						</label>
 					</div>
 					<div class="insertpage-format">
-						<label for="insertpage-format-select"><?php _e( 'Display' ); ?>
+						<label for="insertpage-format-select">
+							<?php _e( 'Display' ); ?>
 							<select name="insertpage-format-select" id="insertpage-format-select">
 								<option value='title'>Title</option>
 								<option value='link'>Link</option>
