@@ -13,7 +13,7 @@ License: GPL2
 /*  Copyright 2011 Paul Ryan (email: prar@hawaii.edu)
 
 	This program is free software; you can redistribute it and/or modify
-	it under the terms of the GNU General Public License, version 2, as 
+	it under the terms of the GNU General Public License, version 2, as
 	published by the Free Software Foundation.
 
 	This program is distributed in the hope that it will be useful,
@@ -55,7 +55,7 @@ if (!class_exists('InsertPagesPlugin')) {
 			// Add TinyMCE toolbar button filters only if current user has permissions
 			if (current_user_can('edit_posts') && current_user_can('edit_pages') && get_user_option('rich_editing')=='true') {
 
-				// Register the TinyMCE toolbar button script
+				// Register the TinyMCE toolbar button scrip
 				wp_enqueue_script(
 					'wpinsertpages',
 					plugins_url( '/assets/js/wpinsertpages.js', __FILE__ ),
@@ -87,7 +87,7 @@ if (!class_exists('InsertPagesPlugin')) {
 		}
 
 
-		// Shortcode hook: Replace the [insert ...] shortcode with the inserted page's content
+		// Shortcode hook: Replace the [insert ...] shortcode with the inserted page's conten
 		function insertPages_handleShortcode_insert($atts, $content=null) {
 			global $wp_query, $post;
 			extract(shortcode_atts(array(
@@ -187,7 +187,7 @@ if (!class_exists('InsertPagesPlugin')) {
 			<div id="insertpage-modal-title">
 				<?php _e( 'Insert page' ) ?>
 				<div id="wp-insertpage-close" tabindex="0"></div>
-	 		</div>
+			</div>
 			<div id="insertpage-selector">
 				<div id="insertpage-search-panel">
 					<div class="insertpage-search-wrapper">
@@ -331,7 +331,7 @@ if (!class_exists('InsertPagesPlugin')) {
 	}
 }
 
-// Initialize InsertPagesPlugin object
+// Initialize InsertPagesPlugin objec
 if (class_exists('InsertPagesPlugin')) {
 	$insertPages_plugin = new InsertPagesPlugin();
 }
@@ -342,7 +342,7 @@ if (isset($insertPages_plugin)) {
 	add_action('init', array($insertPages_plugin, 'insertPages_init'), 1); // Register Shortcodes here
 	add_action('admin_head', array($insertPages_plugin, 'insertPages_admin_init'), 1); // Add TinyMCE buttons here
 	add_action('before_wp_tiny_mce', array($insertPages_plugin, 'insertPages_wp_tinymce_dialog'), 1); // Preload TinyMCE popup
-	add_action('wp_ajax_insertpage', array($insertPages_plugin, 'insertPages_insert_page_callback')); // Populate page search in TinyMCE button popup in this ajax call 
+	add_action('wp_ajax_insertpage', array($insertPages_plugin, 'insertPages_insert_page_callback')); // Populate page search in TinyMCE button popup in this ajax call
 }
 
 
