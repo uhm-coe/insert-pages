@@ -55,7 +55,7 @@ if (!class_exists('InsertPagesPlugin')) {
 			// Add TinyMCE toolbar button filters only if current user has permissions
 			if (current_user_can('edit_posts') && current_user_can('edit_pages') && get_user_option('rich_editing')=='true') {
 
-				// Register the TinyMCE toolbar button script
+				// Register the TinyMCE toolbar button scrip
 				wp_enqueue_script(
 					'wpinsertpages',
 					plugins_url( '/assets/js/wpinsertpages.js', __FILE__ ),
@@ -87,7 +87,7 @@ if (!class_exists('InsertPagesPlugin')) {
 		}
 
 
-		// Shortcode hook: Replace the [insert ...] shortcode with the inserted page's content
+		// Shortcode hook: Replace the [insert ...] shortcode with the inserted page's conten
 		function insertPages_handleShortcode_insert($atts, $content=null) {
 			global $wp_query, $post;
 			extract(shortcode_atts(array(
@@ -331,7 +331,7 @@ if (!class_exists('InsertPagesPlugin')) {
 	}
 }
 
-// Initialize InsertPagesPlugin object
+// Initialize InsertPagesPlugin objec
 if (class_exists('InsertPagesPlugin')) {
 	$insertPages_plugin = new InsertPagesPlugin();
 }
