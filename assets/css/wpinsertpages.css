@@ -134,6 +134,7 @@
 
 #insertpage-options-panel .insertpage-format {
 	margin-top: 5px;
+	white-space: nowrap;
 }
 
 #wp-insertpage label input[type="text"] {
