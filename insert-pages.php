@@ -27,7 +27,7 @@ License: GPL2
 */
 
 /*  Shortcode Format:
-	[insert page='{slug}|{id}' display='title|link|content|all|{custom-template.php}']
+	[insert page='{slug}|{id}' display='title|link|excerpt|content|all|{custom-template.php}']
 */
 
 // Define the InsertPagesPlugin class (variables and functions)
@@ -98,7 +98,7 @@ if (!class_exists('InsertPagesPlugin')) {
 			// Validation checks
 			if ($page==='0')
 				return $content;
-			//if (!preg_match('/_(title|link|content|all|.*\.tpl\.php/)', $display, $matches))
+			//if (!preg_match('/_(title|link|excerpt|content|all|.*\.tpl\.php/)', $display, $matches))
 			//  return $content;
 			if ($page==$post->ID || $page==$post->post_name) // trying to embed same page in itself
 				return $content;
@@ -124,6 +124,12 @@ if (!class_exists('InsertPagesPlugin')) {
 						break;
 					case "link":
 						the_post();
+						echo "<a href='"; the_permalink(); echo "'>"; echo the_title(); echo "</a>";
+						break;
+					case "excerpt":
+						the_post();
+						echo "<h1>"; the_title(); echo "</h1>";
+						echo the_excerpt();
 						echo "<a href='"; the_permalink(); echo "'>"; echo the_title(); echo "</a>";
 						break;
 					case "content":
@@ -226,6 +232,7 @@ if (!class_exists('InsertPagesPlugin')) {
 							<select name="insertpage-format-select" id="insertpage-format-select">
 								<option value='title'>Title</option>
 								<option value='link'>Link</option>
+								<option value='excerpt'>Excerpt</option>
 								<option value='content'>Content</option>
 								<option value='all'>All (includes custom fields)</option>
 								<option value='template'>Use a custom template &raquo;</option>
@@ -345,8 +352,3 @@ if (isset($insertPages_plugin)) {
 	add_action('wp_ajax_insertpage', array($insertPages_plugin, 'insertPages_insert_page_callback')); // Populate page search in TinyMCE button popup in this ajax call
 }
 
-
-
-
-
-?>
