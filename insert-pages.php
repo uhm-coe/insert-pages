@@ -119,33 +119,32 @@ if (!class_exists('InsertPagesPlugin')) {
 				// Show either the title, link, content, everything, or everything via a custom template
 				switch ($display) {
 					case "title":
-						the_post();
-						echo "<h1>"; the_title(); echo "</h1>";
-						break;
+						the_post(); ?>
+						<h1><?php the_title(); ?></h1>
+						<?php break;
 					case "link":
-						the_post();
-						echo "<a href='"; the_permalink(); echo "'>"; echo the_title(); echo "</a>";
-						break;
+						the_post(); ?>
+						<a href="<?php the_permalink(); ?>"><?php the_title(); ?></a>
+						<?php break;
 					case "excerpt":
-						the_post();
-						echo "<h1>"; the_title(); echo "</h1>";
-						echo the_excerpt();
-						echo "<a href='"; the_permalink(); echo "'>"; echo the_title(); echo "</a>";
-						break;
+						the_post(); ?>
+						<h1><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a></h1>
+						<?php the_excerpt(); ?>
+						<?php break;
 					case "content":
-						the_post();
-						echo the_content();
-						break;
+						the_post(); ?>
+						<?php the_content(); ?>
+						<?php break;
 					case "all":
-						the_post();
-						echo "<h1>"; the_title(); echo "</h1>";
-						echo the_content();
-						echo the_meta();
-						break;
+						the_post(); ?>
+						<h1><?php the_title(); ?></h1>
+						<?php the_content(); ?>
+						<?php the_meta(); ?>
+						<?php break;
 					default: // display is either invalid, or contains a template file to use
-						$template = locate_template($display);
-						if (strlen($template) > 0) {
-							include($template); // execute the template code
+						$template = locate_template( $display );
+						if ( strlen( $template ) > 0 ) {
+							include( $template ); // execute the template code
 						}
 						break;
 				}
