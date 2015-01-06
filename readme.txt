@@ -2,7 +2,7 @@
 Contributors: figureone, the_magician
 Tags: insert, pages, shortcode, embed
 Requires at least: 3.0.1
-Tested up to: 4.0
+Tested up to: 4.1
 Stable tag: trunk
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -71,6 +71,10 @@ Just one! The plugin prevents you from embedding a page in itself, but you can t
 3. Insert Pages shortcode example.
 
 == Changelog ==
+
+= 1.7 =
+* Tested and works on WordPress 4.1;
+* New display format: excerpt. Props to bitbucket user grzegorzdrozd for the pull request. https://bitbucket.org/grzegorzdrozd/insert-pages-with-excerpt/commits/8f053de4dd882f9ab9953076c29cdd7b626c1053
 
 = 1.6 =
 * Fix for long page template names causing Display field to wrap in the tinymce popup;

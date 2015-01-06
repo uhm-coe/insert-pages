@@ -5,7 +5,7 @@ Plugin Name: Insert Pages
 Plugin URI: https://bitbucket.org/figureone/insert-pages
 Description: Insert Pages lets you embed any WordPress content (e.g., pages, posts, custom post types) into other WordPress content using the Shortcode API.
 Author: Paul Ryan
-Version: 1.6
+Version: 1.7
 Author URI: http://www.linkedin.com/in/paulrryan
 License: GPL2
 */
@@ -27,7 +27,7 @@ License: GPL2
 */
 
 /*  Shortcode Format:
-	[insert page='{slug}|{id}' display='title|link|content|all|{custom-template.php}']
+	[insert page='{slug}|{id}' display='title|link|excerpt|content|all|{custom-template.php}']
 */
 
 // Define the InsertPagesPlugin class (variables and functions)
@@ -98,7 +98,7 @@ if (!class_exists('InsertPagesPlugin')) {
 			// Validation checks
 			if ($page==='0')
 				return $content;
-			//if (!preg_match('/_(title|link|content|all|.*\.tpl\.php/)', $display, $matches))
+			//if (!preg_match('/_(title|link|excerpt|content|all|.*\.tpl\.php/)', $display, $matches))
 			//  return $content;
 			if ($page==$post->ID || $page==$post->post_name) // trying to embed same page in itself
 				return $content;
@@ -119,27 +119,32 @@ if (!class_exists('InsertPagesPlugin')) {
 				// Show either the title, link, content, everything, or everything via a custom template
 				switch ($display) {
 					case "title":
-						the_post();
-						echo "<h1>"; the_title(); echo "</h1>";
-						break;
+						the_post(); ?>
+						<h1><?php the_title(); ?></h1>
+						<?php break;
 					case "link":
-						the_post();
-						echo "<a href='"; the_permalink(); echo "'>"; echo the_title(); echo "</a>";
-						break;
+						the_post(); ?>
+						<a href="<?php the_permalink(); ?>"><?php the_title(); ?></a>
+						<?php break;
+					case "excerpt":
+						the_post(); ?>
+						<h1><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a></h1>
+						<?php the_excerpt(); ?>
+						<?php break;
 					case "content":
-						the_post();
-						echo the_content();
-						break;
+						the_post(); ?>
+						<?php the_content(); ?>
+						<?php break;
 					case "all":
-						the_post();
-						echo "<h1>"; the_title(); echo "</h1>";
-						echo the_content();
-						echo the_meta();
-						break;
+						the_post(); ?>
+						<h1><?php the_title(); ?></h1>
+						<?php the_content(); ?>
+						<?php the_meta(); ?>
+						<?php break;
 					default: // display is either invalid, or contains a template file to use
-						$template = locate_template($display);
-						if (strlen($template) > 0) {
-							include($template); // execute the template code
+						$template = locate_template( $display );
+						if ( strlen( $template ) > 0 ) {
+							include( $template ); // execute the template code
 						}
 						break;
 				}
@@ -226,6 +231,7 @@ if (!class_exists('InsertPagesPlugin')) {
 							<select name="insertpage-format-select" id="insertpage-format-select">
 								<option value='title'>Title</option>
 								<option value='link'>Link</option>
+								<option value='excerpt'>Excerpt</option>
 								<option value='content'>Content</option>
 								<option value='all'>All (includes custom fields)</option>
 								<option value='template'>Use a custom template &raquo;</option>
@@ -345,8 +351,3 @@ if (isset($insertPages_plugin)) {
 	add_action('wp_ajax_insertpage', array($insertPages_plugin, 'insertPages_insert_page_callback')); // Populate page search in TinyMCE button popup in this ajax call
 }
 
-
-
-
-
-?>
