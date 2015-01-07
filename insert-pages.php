@@ -5,7 +5,7 @@ Plugin Name: Insert Pages
 Plugin URI: https://bitbucket.org/figureone/insert-pages
 Description: Insert Pages lets you embed any WordPress content (e.g., pages, posts, custom post types) into other WordPress content using the Shortcode API.
 Author: Paul Ryan
-Version: 1.7
+Version: 1.8
 Author URI: http://www.linkedin.com/in/paulrryan
 License: GPL2
 */
@@ -106,11 +106,26 @@ if (!class_exists('InsertPagesPlugin')) {
 			// Get page object from slug or id
 			$temp_query = clone $wp_query; // we're starting a new loop within the main loop, so save the main query
 			$temp_post = $wp_query->get_queried_object(); // see: http://codex.wordpress.org/The_Loop#Multiple_Loops_Example_2
-			if (is_numeric($page)) {
-				query_posts("p=".intval($page)."&post_type=any");
-			} else {
-				query_posts("name=".esc_attr($page)."&post_type=any");
+
+			// Convert slugs to page IDs to standardize query_posts() lookup below.
+			if ( ! is_numeric( $page ) ) {
+				$page_object = get_page_by_path( $page, OBJECT, get_post_types() );
+				$page = $page_object ? $page_object->ID : $page;
 			}
+
+			if ( is_numeric( $page ) ) {
+				$args = array(
+					'p' => intval( $page ),
+					'post_type' => get_post_types(),
+				);
+			} else {
+				$args = array(
+					'name' => esc_attr($page),
+					'post_type' => get_post_types(),
+				);
+			}
+
+			query_posts( $args );
 
 			// Start our new Loop
 			while (have_posts()) {

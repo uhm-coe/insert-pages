@@ -72,6 +72,9 @@ Just one! The plugin prevents you from embedding a page in itself, but you can t
 
 == Changelog ==
 
+= 1.8 =
+* Fix for custom post types marked as exclude_from_search not inserting correctly.
+
 = 1.7 =
 * Tested and works on WordPress 4.1;
 * New display format: excerpt. Props to bitbucket user grzegorzdrozd for the pull request. https://bitbucket.org/figureone/insert-pages/commits/0f6402c98058858f76f3f865bb3f8c5aba4cda65
