@@ -73,7 +73,7 @@ Just one! The plugin prevents you from embedding a page in itself, but you can t
 == Changelog ==
 
 = 1.9 =
-* Add data-post-id attribute to div container for each inserted page, now you can reference via jQuery with .data( 'post-id' ). Props to Robert Payne for the pull request, thanks!
+* Add data-post-id attribute to div container for each inserted page, now you can reference via jQuery with .data( 'postId' ). Props to Robert Payne for the pull request, thanks!
 
 = 1.8 =
 * Fix for custom post types marked as exclude_from_search not inserting correctly.
