@@ -27,7 +27,7 @@ License: GPL2
 */
 
 /*  Shortcode Format:
-	[insert page='{slug}|{id}' display='title|link|excerpt|content|all|{custom-template.php}']
+	[insert page='{slug}|{id}' display='title|link|excerpt|excerpt-only|content|all|{custom-template.php}']
 */
 
 // Define the InsertPagesPlugin class (variables and functions)
@@ -98,7 +98,7 @@ if (!class_exists('InsertPagesPlugin')) {
 			// Validation checks
 			if ($page==='0')
 				return $content;
-			//if (!preg_match('/_(title|link|excerpt|content|all|.*\.tpl\.php/)', $display, $matches))
+			//if (!preg_match('/_(title|link|excerpt|excerpt-only|content|all|.*\.tpl\.php/)', $display, $matches))
 			//  return $content;
 			if ($page==$post->ID || $page==$post->post_name) // trying to embed same page in itself
 				return $content;
@@ -144,6 +144,10 @@ if (!class_exists('InsertPagesPlugin')) {
 					case "excerpt":
 						the_post(); ?>
 						<h1><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a></h1>
+						<?php the_excerpt(); ?>
+						<?php break;
+					case "excerpt-only":
+						the_post(); ?>
 						<?php the_excerpt(); ?>
 						<?php break;
 					case "content":
@@ -247,6 +251,7 @@ if (!class_exists('InsertPagesPlugin')) {
 								<option value='title'>Title</option>
 								<option value='link'>Link</option>
 								<option value='excerpt'>Excerpt</option>
+								<option value='excerpt-only'>Excerpt only (no title)</option>
 								<option value='content'>Content</option>
 								<option value='all'>All (includes custom fields)</option>
 								<option value='template'>Use a custom template &raquo;</option>
