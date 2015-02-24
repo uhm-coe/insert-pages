@@ -307,10 +307,21 @@ if (!class_exists('InsertPagesPlugin')) {
 		 */
 		function insertPages_wp_query( $args = array() ) {
 			$pts = get_post_types( array( 'public' => true ), 'objects' );
-			$pt_names = array_keys( $pts );
+			$post_types = array_keys( $pts );
+
+			/**
+			 * Filter the post types that appear in the list of pages to insert.
+			 *
+			 * By default, all post types will apear.
+			 *
+			 * @since 2.0
+			 *
+			 * @param array $post_types Array of post type names to include.
+			 */
+			$post_types = apply_filters( 'insert_pages_available_post_types', $post_types );
 
 			$query = array(
-				'post_type' => $pt_names,
+				'post_type' => $post_types,
 				'suppress_filters' => true,
 				'update_post_term_cache' => false,
 				'update_post_meta_cache' => false,

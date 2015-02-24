@@ -48,6 +48,20 @@ The possibilities are endless!
 
 == Frequently Asked Questions ==
 
+= How do I limit the list of pages in the dialog to certain post types? =
+
+You can hook into the 'insert_pages_available_post_types' filter to limit the post types displayed in the dialog. Here's an example filter that just shows Posts:
+
+`/**
+ * Filter the list of post types to show in the insert pages dialog.
+ *
+ * @param $post_types Array of post type names to include in the insert pages list.
+ */
+function only_insert_posts( $post_types ) {
+    return array( 'post' );
+}
+add_filter( 'insert_pages_available_post_types', 'only_insert_posts' );`
+
 = Do I have to use the toolbar button to Insert Pages? =
 
 No! You can type out the shortcode yourself if you'd like, it's easy. Here's the format:
