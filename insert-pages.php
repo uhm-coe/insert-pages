@@ -401,6 +401,14 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 			return $results;
 		}
 
+		function insertPages_add_quicktags() {
+			if ( wp_script_is( 'quicktags' ) ) : ?>
+				<script type="text/javascript">
+					QTags.addButton( 'ed_insert_page', '[insert page]', "[insert page='your-page-slug' display='title|link|excerpt|excerpt-only|content|all']\n", '', '', 'Insert Page', 999 );
+				</script>
+			<?php endif;
+		}
+
 	}
 }
 
@@ -416,4 +424,5 @@ if ( isset( $insertPages_plugin ) ) {
 	add_action( 'admin_head', array( $insertPages_plugin, 'insertPages_admin_init' ), 1 ); // Add TinyMCE buttons here
 	add_action( 'before_wp_tiny_mce', array( $insertPages_plugin, 'insertPages_wp_tinymce_dialog' ), 1 ); // Preload TinyMCE popup
 	add_action( 'wp_ajax_insertpage', array( $insertPages_plugin, 'insertPages_insert_page_callback' ) ); // Populate page search in TinyMCE button popup in this ajax call
+	add_action( 'admin_print_footer_scripts', array( $insertPages_plugin, 'insertPages_add_quicktags' ) );
 }
