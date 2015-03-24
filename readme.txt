@@ -86,6 +86,12 @@ Just one! The plugin prevents you from embedding a page in itself, but you can t
 
 == Changelog ==
 
+= 2.1 =
+* Add quicktag button for Insert Pages to the Text Editor.
+* Fix conflict with Jetpack's Sharing widget.
+* Add stronger infinite loop protection (will stop expanding shortcodes nested within an embedded page).
+* Fix potential infinite loop if custom template can't be found.
+
 = 2.0 =
 * Add insert_pages_available_post_types filter to limit post types shown in insert pages dialog (see FAQ for example filter hook). Props @noahj for the feature request.
 * Add excerpt-only display to output the excerpt without the title above it. Props @kalico for the feature request.
