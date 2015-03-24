@@ -175,6 +175,9 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 					$template = locate_template( $display );
 					if ( strlen( $template ) > 0 ) {
 						include $template; // execute the template code
+					} else { // Couldn't find template, so fall back to printing a link to the page.
+						the_post(); ?>
+						<a href="<?php the_permalink(); ?>"><?php the_title(); ?></a><?php
 					}
 					break;
 				}
