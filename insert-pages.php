@@ -97,21 +97,32 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 
 		// Shortcode hook: Replace the [insert ...] shortcode with the inserted page's content
 		function insertPages_handleShortcode_insert( $atts, $content = null ) {
-			global $wp_query, $post;
+			global $wp_query, $post, $wp_current_filter;
 			extract( shortcode_atts( array(
 						'page' => '0',
 						'display' => 'all',
 					), $atts ) );
 
-			// Validation checks
+			// Validation checks.
 			if ( $page === '0' ) {
 				return $content;
 			}
-			// if ( !preg_match( '/_(title|link|excerpt|excerpt-only|content|all|.*\.tpl\.php/)', $display, $matches ) ) {
-			// 	return $content;
-			// }
-			if ( $page == $post->ID || $page == $post->post_name ) { // trying to embed same page in itself
+
+			// Trying to embed same page in itself.
+			if ( $page == $post->ID || $page == $post->post_name ) {
 				return $content;
+			}
+
+			// Don't allow inserted pages to be added to the_content more than once (prevent infinite loops).
+			$done = false;
+			foreach ( $wp_current_filter as $filter ) {
+				if ( 'the_content' == $filter ) {
+					if ( $done ) {
+						return $content;
+					} else {
+						$done = true;
+					}
+				}
 			}
 
 			// Get page object from slug or id
