@@ -154,6 +154,10 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 				ob_start(); // Start output buffering so we can save the output to string
 
 				// Show either the title, link, content, everything, or everything via a custom template
+				// Note: if the sharing_display filter exists, it means Jetpack is installed and Sharing is enabled;
+				// This plugin conflicts with Sharing, because Sharing assumes the_content and the_excerpt filters
+				// are only getting called once. The fix here is to disable processing of filters on the_content in
+				// the inserted page. @see https://codex.wordpress.org/Function_Reference/the_content#Alternative_Usage
 				switch ( $display ) {
 				case "title":
 					the_post(); ?>
@@ -166,20 +170,20 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 				case "excerpt":
 					the_post(); ?>
 					<h1><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a></h1>
-					<?php the_excerpt(); ?>
+					<?php if ( has_filter( 'the_content', 'sharing_display' ) ) echo get_the_excerpt(); else the_excerpt(); ?>
 					<?php break;
 				case "excerpt-only":
 					the_post(); ?>
-					<?php the_excerpt(); ?>
+					<?php if ( has_filter( 'the_content', 'sharing_display' ) ) echo get_the_excerpt(); else the_excerpt(); ?>
 					<?php break;
 				case "content":
 					the_post(); ?>
-					<?php the_content(); ?>
+					<?php if ( has_filter( 'the_content', 'sharing_display' ) ) echo get_the_content(); else the_content(); ?>
 					<?php break;
 				case "all":
 					the_post(); ?>
 					<h1><?php the_title(); ?></h1>
-					<?php the_content(); ?>
+					<?php if ( has_filter( 'the_content', 'sharing_display' ) ) echo get_the_content(); else the_content(); ?>
 					<?php the_meta(); ?>
 					<?php break;
 				default: // display is either invalid, or contains a template file to use
