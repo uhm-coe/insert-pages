@@ -31,7 +31,7 @@ License: GPL2
 */
 
 // Define the InsertPagesPlugin class (variables and functions)
-if (!class_exists('InsertPagesPlugin')) {
+if ( !class_exists( 'InsertPagesPlugin' ) ) {
 	class InsertPagesPlugin {
 		// Save the id of the page being edited
 		protected $pageID;
@@ -42,18 +42,22 @@ if (!class_exists('InsertPagesPlugin')) {
 		}
 
 		// Getter/Setter for pageID
-		function getPageID() { return $this->pageID; }
-		function setPageID($id) { return $this->pageID = $id; }
+		function getPageID() {
+			return $this->pageID;
+		}
+		function setPageID( $id ) {
+			return $this->pageID = $id;
+		}
 
 		// Action hook: Wordpress 'init'
 		function insertPages_init() {
-			add_shortcode('insert', array($this, 'insertPages_handleShortcode_insert'));
+			add_shortcode( 'insert', array( $this, 'insertPages_handleShortcode_insert' ) );
 		}
 
 		// Action hook: Wordpress 'admin_init'
 		function insertPages_admin_init() {
 			// Add TinyMCE toolbar button filters only if current user has permissions
-			if (current_user_can('edit_posts') && current_user_can('edit_pages') && get_user_option('rich_editing')=='true') {
+			if ( current_user_can( 'edit_posts' ) && current_user_can( 'edit_pages' ) && get_user_option( 'rich_editing' )=='true' ) {
 
 				// Register the TinyMCE toolbar button script
 				wp_enqueue_script(
@@ -62,13 +66,17 @@ if (!class_exists('InsertPagesPlugin')) {
 					array( 'wpdialogs' ),
 					'20140819'
 				);
-				wp_localize_script( 'wpinsertpages', 'wpInsertPagesL10n', array(
-					'update' => __('Update'),
-					'save' => __('Insert Page'),
-					'noTitle' => __('(no title)'),
-					'noMatchesFound' => __('No matches found.'),
-					'l10n_print_after' => 'try{convertEntities(wpLinkL10n);}catch(e){};',
-				));
+				wp_localize_script(
+					'wpinsertpages',
+					'wpInsertPagesL10n',
+					array(
+						'update' => __( 'Update' ),
+						'save' => __( 'Insert Page' ),
+						'noTitle' => __( '(no title)' ),
+						'noMatchesFound' => __( 'No matches found.' ),
+						'l10n_print_after' => 'try{convertEntities(wpLinkL10n);}catch(e){};',
+					)
+				);
 
 				// Register the TinyMCE toolbar button styles
 				wp_enqueue_style(
@@ -88,20 +96,23 @@ if (!class_exists('InsertPagesPlugin')) {
 
 
 		// Shortcode hook: Replace the [insert ...] shortcode with the inserted page's content
-		function insertPages_handleShortcode_insert($atts, $content=null) {
+		function insertPages_handleShortcode_insert( $atts, $content = null ) {
 			global $wp_query, $post;
-			extract(shortcode_atts(array(
-				'page' => '0',
-				'display' => 'all',
-			), $atts));
+			extract( shortcode_atts( array(
+						'page' => '0',
+						'display' => 'all',
+					), $atts ) );
 
 			// Validation checks
-			if ($page==='0')
+			if ( $page === '0' ) {
 				return $content;
-			//if (!preg_match('/_(title|link|excerpt|excerpt-only|content|all|.*\.tpl\.php/)', $display, $matches))
-			//  return $content;
-			if ($page==$post->ID || $page==$post->post_name) // trying to embed same page in itself
+			}
+			// if ( !preg_match( '/_(title|link|excerpt|excerpt-only|content|all|.*\.tpl\.php/)', $display, $matches ) ) {
+			// 	return $content;
+			// }
+			if ( $page == $post->ID || $page == $post->post_name ) { // trying to embed same page in itself
 				return $content;
+			}
 
 			// Get page object from slug or id
 			$temp_query = clone $wp_query; // we're starting a new loop within the main loop, so save the main query
@@ -120,7 +131,7 @@ if (!class_exists('InsertPagesPlugin')) {
 				);
 			} else {
 				$args = array(
-					'name' => esc_attr($page),
+					'name' => esc_attr( $page ),
 					'post_type' => get_post_types(),
 				);
 			}
@@ -128,44 +139,44 @@ if (!class_exists('InsertPagesPlugin')) {
 			query_posts( $args );
 
 			// Start our new Loop
-			while (have_posts()) {
+			while ( have_posts() ) {
 				ob_start(); // Start output buffering so we can save the output to string
 
 				// Show either the title, link, content, everything, or everything via a custom template
-				switch ($display) {
-					case "title":
-						the_post(); ?>
-						<h1><?php the_title(); ?></h1>
-						<?php break;
-					case "link":
-						the_post(); ?>
-						<a href="<?php the_permalink(); ?>"><?php the_title(); ?></a>
-						<?php break;
-					case "excerpt":
-						the_post(); ?>
-						<h1><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a></h1>
-						<?php the_excerpt(); ?>
-						<?php break;
-					case "excerpt-only":
-						the_post(); ?>
-						<?php the_excerpt(); ?>
-						<?php break;
-					case "content":
-						the_post(); ?>
-						<?php the_content(); ?>
-						<?php break;
-					case "all":
-						the_post(); ?>
-						<h1><?php the_title(); ?></h1>
-						<?php the_content(); ?>
-						<?php the_meta(); ?>
-						<?php break;
-					default: // display is either invalid, or contains a template file to use
-						$template = locate_template( $display );
-						if ( strlen( $template ) > 0 ) {
-							include( $template ); // execute the template code
-						}
-						break;
+				switch ( $display ) {
+				case "title":
+					the_post(); ?>
+					<h1><?php the_title(); ?></h1>
+					<?php break;
+				case "link":
+					the_post(); ?>
+					<a href="<?php the_permalink(); ?>"><?php the_title(); ?></a>
+					<?php break;
+				case "excerpt":
+					the_post(); ?>
+					<h1><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a></h1>
+					<?php the_excerpt(); ?>
+					<?php break;
+				case "excerpt-only":
+					the_post(); ?>
+					<?php the_excerpt(); ?>
+					<?php break;
+				case "content":
+					the_post(); ?>
+					<?php the_content(); ?>
+					<?php break;
+				case "all":
+					the_post(); ?>
+					<h1><?php the_title(); ?></h1>
+					<?php the_content(); ?>
+					<?php the_meta(); ?>
+					<?php break;
+				default: // display is either invalid, or contains a template file to use
+					$template = locate_template( $display );
+					if ( strlen( $template ) > 0 ) {
+						include $template; // execute the template code
+					}
+					break;
 				}
 
 				$content = ob_get_contents(); // Save off output buffer
@@ -196,14 +207,14 @@ if (!class_exists('InsertPagesPlugin')) {
 		/**
 		 * Modified from /wp-admin/includes/internal-linking.php, function wp_link_dialog()
 		 * Dialog for internal linking.
+		 *
 		 * @since 3.1.0
 		 */
 		function insertPages_wp_tinymce_dialog() {
 			$options_panel_visible = '1' == get_user_setting( 'wplink', '0' ) ? ' options-panel-visible' : '';
 
 			// display: none is required here, see #WP27605
-			?>
-			<div id="wp-insertpage-backdrop" style="display: none"></div>
+			?><div id="wp-insertpage-backdrop" style="display: none"></div>
 			<div id="wp-insertpage-wrap" class="wp-core-ui<?php echo $options_panel_visible; ?>" style="display: none">
 			<form id="wp-insertpage" tabindex="-1">
 			<?php wp_nonce_field( 'internal-inserting', '_ajax_inserting_nonce', false ); ?>
@@ -257,7 +268,7 @@ if (!class_exists('InsertPagesPlugin')) {
 								<option value='template'>Use a custom template &raquo;</option>
 							</select>
 							<select name="insertpage-template-select" id="insertpage-template-select" disabled="true">
-								<option value='all'><?php _e('Default Template'); ?></option>
+								<option value='all'><?php _e( 'Default Template' ); ?></option>
 								<?php page_template_dropdown(); ?>
 							</select>
 						</label>
@@ -279,6 +290,7 @@ if (!class_exists('InsertPagesPlugin')) {
 
 		/** Modified from:
 		 * Internal linking functions.
+		 *
 		 * @package WordPress
 		 * @subpackage Administration
 		 * @since 3.1.0
@@ -286,23 +298,27 @@ if (!class_exists('InsertPagesPlugin')) {
 		function insertPages_insert_page_callback() {
 			check_ajax_referer( 'internal-inserting', '_ajax_inserting_nonce' );
 			$args = array();
-			if ( isset( $_POST['search'] ) )
+			if ( isset( $_POST['search'] ) ) {
 				$args['s'] = stripslashes( $_POST['search'] );
-			$args['pagenum'] = !empty($_POST['page']) ? absint($_POST['page']) : 1;
-			$args['pageID'] =  !empty($_POST['pageID']) ? absint($_POST['pageID']) : 0;
+			}
+			$args['pagenum'] = !empty( $_POST['page'] ) ? absint( $_POST['page'] ) : 1;
+			$args['pageID'] =  !empty( $_POST['pageID'] ) ? absint( $_POST['pageID'] ) : 0;
 
 			$results = $this->insertPages_wp_query( $args );
 
-			if (!isset($results))
-				die('0');
-			echo json_encode($results);
+			if ( !isset( $results ) ) {
+				die( '0' );
+			}
+			echo json_encode( $results );
 			echo "\n";
 			die();
 		}
+
 		/** Modified from:
 		 * Performs post queries for internal linking.
+		 *
 		 * @since 3.1.0
-		 * @param array $args Optional. Accepts 'pagenum' and 's' (search) arguments.
+		 * @param array   $args Optional. Accepts 'pagenum' and 's' (search) arguments.
 		 * @return array Results.
 		 */
 		function insertPages_wp_query( $args = array() ) {
@@ -316,7 +332,7 @@ if (!class_exists('InsertPagesPlugin')) {
 			 *
 			 * @since 2.0
 			 *
-			 * @param array $post_types Array of post type names to include.
+			 * @param array   $post_types Array of post type names to include.
 			 */
 			$post_types = apply_filters( 'insert_pages_available_post_types', $post_types );
 
@@ -329,13 +345,14 @@ if (!class_exists('InsertPagesPlugin')) {
 				'order' => 'DESC',
 				'orderby' => 'post_date',
 				'posts_per_page' => 20,
-				'post__not_in' => array($args['pageID']),
+				'post__not_in' => array( $args['pageID'] ),
 			);
 
 			$args['pagenum'] = isset( $args['pagenum'] ) ? absint( $args['pagenum'] ) : 1;
 
-			if ( isset( $args['s'] ) )
+			if ( isset( $args['s'] ) ) {
 				$query['s'] = $args['s'];
+			}
 
 			$query['offset'] = $args['pagenum'] > 1 ? $query['posts_per_page'] * ( $args['pagenum'] - 1 ) : 0;
 
@@ -343,17 +360,18 @@ if (!class_exists('InsertPagesPlugin')) {
 			$get_posts = new WP_Query;
 			$posts = $get_posts->query( $query );
 			// Check if any posts were found.
-			if ( ! $get_posts->post_count )
+			if ( ! $get_posts->post_count ) {
 				return false;
+			}
 
 			// Build results.
 			$results = array();
 			foreach ( $posts as $post ) {
-				if ( 'post' == $post->post_type )
+				if ( 'post' == $post->post_type ) {
 					$info = mysql2date( __( 'Y/m/d' ), $post->post_date );
-				else
+				} else {
 					$info = $pts[ $post->post_type ]->labels->singular_name;
-
+				}
 				$results[] = array(
 					'ID' => $post->ID,
 					'title' => trim( esc_html( strip_tags( get_the_title( $post ) ) ) ),
@@ -369,16 +387,15 @@ if (!class_exists('InsertPagesPlugin')) {
 }
 
 // Initialize InsertPagesPlugin object
-if (class_exists('InsertPagesPlugin')) {
+if ( class_exists( 'InsertPagesPlugin' ) ) {
 	$insertPages_plugin = new InsertPagesPlugin();
 }
 
 // Actions and Filters handled by InsertPagesPlugin class
-if (isset($insertPages_plugin)) {
+if ( isset( $insertPages_plugin ) ) {
 	// Actions
-	add_action('init', array($insertPages_plugin, 'insertPages_init'), 1); // Register Shortcodes here
-	add_action('admin_head', array($insertPages_plugin, 'insertPages_admin_init'), 1); // Add TinyMCE buttons here
-	add_action('before_wp_tiny_mce', array($insertPages_plugin, 'insertPages_wp_tinymce_dialog'), 1); // Preload TinyMCE popup
-	add_action('wp_ajax_insertpage', array($insertPages_plugin, 'insertPages_insert_page_callback')); // Populate page search in TinyMCE button popup in this ajax call
+	add_action( 'init', array( $insertPages_plugin, 'insertPages_init' ), 1 ); // Register Shortcodes here
+	add_action( 'admin_head', array( $insertPages_plugin, 'insertPages_admin_init' ), 1 ); // Add TinyMCE buttons here
+	add_action( 'before_wp_tiny_mce', array( $insertPages_plugin, 'insertPages_wp_tinymce_dialog' ), 1 ); // Preload TinyMCE popup
+	add_action( 'wp_ajax_insertpage', array( $insertPages_plugin, 'insertPages_insert_page_callback' ) ); // Populate page search in TinyMCE button popup in this ajax call
 }
-
