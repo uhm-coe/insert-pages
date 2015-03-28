@@ -86,6 +86,17 @@ Just one! The plugin prevents you from embedding a page in itself, but you can t
 
 == Changelog ==
 
+= 2.2 =
+* Revert previous fix for conflict with Jetpack's Sharing widget (affected other users negatively).
+* New fix for conflict with Jetpack's Sharing widget. Use it in your theme like so:
+`// If Jetpack Sharing widget is enabled, disable the_content filter for inserted pages.
+function theme_init() {
+    if ( has_filter( 'the_content', 'sharing_display' ) ) {
+        add_filter( 'insert_pages_apply_the_content_filter', function ( $should_apply ) { return false; } );
+    }
+}
+add_action( 'init', 'theme_init' );`
+
 = 2.1 =
 * Add quicktag button for Insert Pages to the Text Editor.
 * Fix conflict with Jetpack's Sharing widget.
