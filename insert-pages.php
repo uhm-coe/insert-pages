@@ -99,9 +99,9 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 		function insertPages_handleShortcode_insert( $atts, $content = null ) {
 			global $wp_query, $post, $wp_current_filter;
 			extract( shortcode_atts( array(
-						'page' => '0',
-						'display' => 'all',
-					), $atts ) );
+				'page' => '0',
+				'display' => 'all',
+			), $atts ) );
 
 			// Validation checks.
 			if ( $page === '0' ) {
@@ -149,6 +149,16 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 
 			query_posts( $args );
 
+			$should_apply_the_content_filter = true;
+
+			/**
+			 * Filter the flag indicating whether to apply the_content filter to post
+			 * contents and excerpts that are being inserted.
+			 *
+			 * @param bool $apply_the_content_filter Indicates whether to apply the_content filter.
+			 */
+			$should_apply_the_content_filter = apply_filters( 'insert_pages_apply_the_content_filter', $should_apply_the_content_filter );
+
 			// Start our new Loop
 			while ( have_posts() ) {
 				ob_start(); // Start output buffering so we can save the output to string
@@ -170,20 +180,20 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 				case "excerpt":
 					the_post(); ?>
 					<h1><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a></h1>
-					<?php if ( has_filter( 'the_content', 'sharing_display' ) ) echo get_the_excerpt(); else the_excerpt(); ?>
+					<?php if ( $should_apply_the_content_filter ) the_excerpt(); else echo get_the_excerpt(); ?>
 					<?php break;
 				case "excerpt-only":
 					the_post(); ?>
-					<?php if ( has_filter( 'the_content', 'sharing_display' ) ) echo get_the_excerpt(); else the_excerpt(); ?>
+					<?php if ( $should_apply_the_content_filter ) the_excerpt(); else echo get_the_excerpt(); ?>
 					<?php break;
 				case "content":
 					the_post(); ?>
-					<?php if ( has_filter( 'the_content', 'sharing_display' ) ) echo get_the_content(); else the_content(); ?>
+					<?php if ( $should_apply_the_content_filter ) the_content(); else echo get_the_content(); ?>
 					<?php break;
 				case "all":
 					the_post(); ?>
 					<h1><?php the_title(); ?></h1>
-					<?php if ( has_filter( 'the_content', 'sharing_display' ) ) echo get_the_content(); else the_content(); ?>
+					<?php if ( $should_apply_the_content_filter ) the_content(); else echo get_the_content(); ?>
 					<?php the_meta(); ?>
 					<?php break;
 				default: // display is either invalid, or contains a template file to use
