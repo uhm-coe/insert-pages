@@ -86,6 +86,13 @@ Just one! The plugin prevents you from embedding a page in itself, but you can t
 
 == Changelog ==
 
+= 2.3 =
+* Remove insertPages_Content id from div wrapper to allow multiple pages to be embedded; replace with insert-page class. Example: `<div data-post-id='123' class='insert-page insert-page-123'>...</div>`
+* New shortcode attribute: class. You can now add custom classes to the div wrapper around your inserted page:
+`[insert page='123' display='all' class='my-class another-class']`
+This results in:
+`<div data-post-id='123' class='insert-page insert-page-123 my-class another-class'>...</div>`
+
 = 2.2 =
 * Revert previous fix for conflict with Jetpack's Sharing widget (affected other users negatively).
 * New fix for conflict with Jetpack's Sharing widget. Use it in your theme like so:
@@ -145,6 +152,10 @@ add_action( 'init', 'theme_init' );`
 * Development release.
 
 == Upgrade Notice ==
+
+= 2.3 =
+Warning: If you apply CSS rules to #insertPages_Content, this update will require you to modify those styles. The element id "insertPages_Content" was removed from the wrapper div to allow for multiple pages to be embedded on a single page. You may apply styles instead to the "insert-pages" or "insert-page-[id]" classes. For example, if you embed post id 123 into a page, the wrapper will look like so:
+`<div data-post-id='123' class='insert-page insert-page-123'>...</div>`
 
 = 1.2 =
 Added retina toolbar icon.
