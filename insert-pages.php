@@ -214,7 +214,7 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 			$wp_query = clone $temp_query; // Restore main Loop's wp_query
 			$post = $temp_post;
 
-			$content = "<div data-post-id='$page' id='insertPages_Content'>$content</div>";
+			$content = "<div data-post-id='$page' class='insert-page insert-page-$page'>$content</div>";
 			return $content;
 			//return do_shortcode($content); // careful: watch for infinite loops with nested inserts
 		}
