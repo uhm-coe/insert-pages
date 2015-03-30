@@ -27,7 +27,7 @@ License: GPL2
 */
 
 /*  Shortcode Format:
-	[insert page='{slug}|{id}' display='title|link|excerpt|excerpt-only|content|all|{custom-template.php}']
+	[insert page='{slug}|{id}' display='title|link|excerpt|excerpt-only|content|all|{custom-template.php}' class='any-classes']
 */
 
 // Define the InsertPagesPlugin class (variables and functions)
@@ -101,6 +101,7 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 			extract( shortcode_atts( array(
 				'page' => '0',
 				'display' => 'all',
+				'class' => '',
 			), $atts ) );
 
 			// Validation checks.
@@ -214,7 +215,7 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 			$wp_query = clone $temp_query; // Restore main Loop's wp_query
 			$post = $temp_post;
 
-			$content = "<div data-post-id='$page' class='insert-page insert-page-$page'>$content</div>";
+			$content = "<div data-post-id='$page' class='insert-page insert-page-$page $class'>$content</div>";
 			return $content;
 			//return do_shortcode($content); // careful: watch for infinite loops with nested inserts
 		}
