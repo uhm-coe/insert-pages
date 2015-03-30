@@ -154,8 +154,7 @@ add_action( 'init', 'theme_init' );`
 == Upgrade Notice ==
 
 = 2.3 =
-Warning: If you apply CSS rules to #insertPages_Content, this update will require you to modify those styles. The element id "insertPages_Content" was removed from the wrapper div to allow for multiple pages to be embedded on a single page. You may apply styles instead to the "insert-pages" or "insert-page-[id]" classes. For example, if you embed post id 123 into a page, the wrapper will look like so:
-`<div data-post-id='123' class='insert-page insert-page-123'>...</div>`
+Warning: If you apply CSS rules to #insertPages_Content, this update will require you to modify those styles. The element id "insertPages_Content" was removed so multiple pages can be embedded on a single page. You may apply styles instead to the "insert-page" class.
 
 = 1.2 =
 Added retina toolbar icon.
