@@ -5,7 +5,7 @@ Plugin Name: Insert Pages
 Plugin URI: https://bitbucket.org/figureone/insert-pages
 Description: Insert Pages lets you embed any WordPress content (e.g., pages, posts, custom post types) into other WordPress content using the Shortcode API.
 Author: Paul Ryan
-Version: 2.3
+Version: 2.4
 Author URI: http://www.linkedin.com/in/paulrryan
 License: GPL2
 */
@@ -114,14 +114,27 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 				return $content;
 			}
 
+			$should_apply_nesting_check = true;
+			/**
+			 * Filter the flag indicating whether to apply deep nesting check
+			 * that can prevent circular loops. Note that some use cases rely
+			 * on inserting pages that themselves have inserted pages, so this
+			 * check should be disabled for those individuals.
+			 *
+			 * @param bool $apply_the_content_filter Indicates whether to apply the_content filter.
+			 */
+			$should_apply_nesting_check = apply_filters( 'insert_pages_apply_nesting_check', $should_apply_nesting_check );
+
 			// Don't allow inserted pages to be added to the_content more than once (prevent infinite loops).
-			$done = false;
-			foreach ( $wp_current_filter as $filter ) {
-				if ( 'the_content' == $filter ) {
-					if ( $done ) {
-						return $content;
-					} else {
-						$done = true;
+			if ( $should_apply_nesting_check ) {
+				$done = false;
+				foreach ( $wp_current_filter as $filter ) {
+					if ( 'the_content' == $filter ) {
+						if ( $done ) {
+							return $content;
+						} else {
+							$done = true;
+						}
 					}
 				}
 			}
@@ -151,7 +164,6 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 			query_posts( $args );
 
 			$should_apply_the_content_filter = true;
-
 			/**
 			 * Filter the flag indicating whether to apply the_content filter to post
 			 * contents and excerpts that are being inserted.

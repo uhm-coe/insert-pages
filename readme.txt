@@ -86,6 +86,14 @@ Just one! The plugin prevents you from embedding a page in itself, but you can t
 
 == Changelog ==
 
+= 2.4 =
+* Add insert_pages_apply_nesting_check filter. Use it to disable the deep nesting check which prevents inserted pages from being embedded within other inserted pages. Example usage:
+`function theme_init() {
+    // Disable nesting check to allow inserted pages within inserted pages.
+    add_filter( 'insert_pages_apply_nesting_check', function ( $should_apply ) { return false; } );
+}
+add_action( 'init', 'theme_init' );`
+
 = 2.3 =
 * Remove insertPages_Content id from div wrapper to allow multiple pages to be embedded; replace with insert-page class. Example: `<div data-post-id='123' class='insert-page insert-page-123'>...</div>`
 * New shortcode attribute: class. You can now add custom classes to the div wrapper around your inserted page:
