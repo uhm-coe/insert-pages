@@ -62,7 +62,7 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 				// Register the TinyMCE toolbar button script
 				wp_enqueue_script(
 					'wpinsertpages',
-					plugins_url( '/assets/js/wpinsertpages.js', __FILE__ ),
+					plugins_url( '/js/wpinsertpages.js', __FILE__ ),
 					array( 'wpdialogs' ),
 					'20140819'
 				);
@@ -81,7 +81,7 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 				// Register the TinyMCE toolbar button styles
 				wp_enqueue_style(
 					'wpinsertpagescss',
-					plugins_url( '/assets/css/wpinsertpages.css', __FILE__ ),
+					plugins_url( '/css/wpinsertpages.css', __FILE__ ),
 					array( 'wp-jquery-ui-dialog' ),
 					'20140819'
 				);
@@ -241,7 +241,7 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 
 		// Filter hook: Load the javascript for our custom toolbar button
 		function insertPages_handleFilter_mceExternalPlugins( $plugins ) {
-			$plugins['wpInsertPages'] = plugins_url( '/assets/js/wpinsertpages_plugin.js', __FILE__ );
+			$plugins['wpInsertPages'] = plugins_url( '/js/wpinsertpages_plugin.js', __FILE__ );
 			return $plugins;
 		}
 
