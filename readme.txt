@@ -86,6 +86,9 @@ Just one! The plugin prevents you from embedding a page in itself, but you can t
 
 == Changelog ==
 
+= 2.5 =
+* Maintenance release: prevent infinite loops when using a custom template that doesn't call the_post().
+
 = 2.4 =
 * Add insert_pages_apply_nesting_check filter. Use it to disable the deep nesting check which prevents inserted pages from being embedded within other inserted pages. Example usage:
 `function theme_init() {
