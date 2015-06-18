@@ -5,7 +5,7 @@ Plugin Name: Insert Pages
 Plugin URI: https://bitbucket.org/figureone/insert-pages
 Description: Insert Pages lets you embed any WordPress content (e.g., pages, posts, custom post types) into other WordPress content using the Shortcode API.
 Author: Paul Ryan
-Version: 2.5
+Version: 2.6
 Author URI: http://www.linkedin.com/in/paulrryan
 License: GPL2
 */
@@ -139,10 +139,6 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 				}
 			}
 
-			// Get page object from slug or id
-			$temp_query = clone $wp_query; // we're starting a new loop within the main loop, so save the main query
-			$temp_post = $wp_query->get_queried_object(); // see: http://codex.wordpress.org/The_Loop#Multiple_Loops_Example_2
-
 			// Convert slugs to page IDs to standardize query_posts() lookup below.
 			if ( ! is_numeric( $page ) ) {
 				$page_object = get_page_by_path( $page, OBJECT, get_post_types() );
@@ -223,9 +219,8 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 				$content = ob_get_contents(); // Save off output buffer
 				ob_end_clean(); // End output buffering
 			}
-			wp_reset_postdata();
-			$wp_query = clone $temp_query; // Restore main Loop's wp_query
-			$post = $temp_post;
+
+			wp_reset_query();
 
 			$content = "<div data-post-id='$page' class='insert-page insert-page-$page $class'>$content</div>";
 			return $content;
