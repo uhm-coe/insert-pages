@@ -86,6 +86,9 @@ Just one! The plugin prevents you from embedding a page in itself, but you can t
 
 == Changelog ==
 
+= 2.7 =
+* Fix: Prevent Insert Pages from breaking tinymce if wp_editor() is called outside of an admin context.
+
 = 2.6 =
 * Fix: Query data wasn't getting reset properly when viewing a category archive containing a post with an inserted page, causing date and author information in post footers in the twentyfifteen theme to show incorrect information. This has been resolved.
 
