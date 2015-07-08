@@ -86,6 +86,14 @@ Just one! The plugin prevents you from embedding a page in itself, but you can t
 
 == Changelog ==
 
+= 2.7.1 =
+* Add filter to show a message when an inserted page cannot be found. Example usage:
+`function theme_init() {
+    // Show a message in place of an inserted page if that page cannot be found.
+    add_filter( 'insert_pages_not_found_message', function ( $content ) { return 'Page could not be found.'; } );
+}
+add_action( 'init', 'theme_init' );`
+
 = 2.7 =
 * Fix: Prevent Insert Pages from breaking tinymce if wp_editor() is called outside of an admin context.
 

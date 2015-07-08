@@ -5,7 +5,7 @@ Plugin Name: Insert Pages
 Plugin URI: https://bitbucket.org/figureone/insert-pages
 Description: Insert Pages lets you embed any WordPress content (e.g., pages, posts, custom post types) into other WordPress content using the Shortcode API.
 Author: Paul Ryan
-Version: 2.7
+Version: 2.7.1
 Author URI: http://www.linkedin.com/in/paulrryan
 License: GPL2
 */
@@ -218,6 +218,13 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 
 				$content = ob_get_contents(); // Save off output buffer
 				ob_end_clean(); // End output buffering
+			} else {
+				/**
+				 * Filter the html that should be displayed if an inserted page was not found.
+				 *
+				 * @param string $content html to be displayed. Defaults to an empty string.
+				 */
+				$content = apply_filters( 'insert_pages_not_found_message', $content );
 			}
 
 			wp_reset_query();
