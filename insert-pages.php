@@ -195,7 +195,10 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 				switch ( $display ) {
 				case "title":
 					the_post();
-					?><h1><?php the_title(); ?></h1><?php
+					$title_tag = $should_use_inline_wrapper ? 'span' : 'h1';
+					echo "<$title_tag class='insert-page-title'>";
+					the_title();
+					echo "</$title_tag>";
 					break;
 				case "link":
 					the_post();
@@ -216,7 +219,10 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 					break;
 				case "all":
 					the_post();
-					?><h1><?php the_title(); ?></h1><?php
+					$title_tag = $should_use_inline_wrapper ? 'span' : 'h1';
+					echo "<$title_tag class='insert-page-title'>";
+					the_title();
+					echo "</$title_tag>";
 					if ( $should_apply_the_content_filter ) the_content(); else echo get_the_content();
 					the_meta();
 					break;
