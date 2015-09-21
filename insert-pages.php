@@ -168,6 +168,20 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 			 */
 			$should_apply_the_content_filter = apply_filters( 'insert_pages_apply_the_content_filter', $should_apply_the_content_filter );
 
+			$should_use_inline_wrapper = false;
+			/**
+			 * Filter the flag indicating whether to wrap the inserted content in inline tags (span).
+			 *
+			 * @param bool $use_inline_wrapper Indicates whether to wrap the content in span tags.
+			 */
+			$should_use_inline_wrapper = apply_filters( 'insert_pages_use_inline_wrapper', $should_use_inline_wrapper );
+
+			// Disable the_content filter if using inline tags, since wpautop
+			// inserts p tags and we can't have any inside inline elements.
+			if ( $should_use_inline_wrapper ) {
+				$should_apply_the_content_filter = false;
+			}
+
 			// Start our new Loop (only iterate once).
 			if ( have_posts() ) {
 				ob_start(); // Start output buffering so we can save the output to string
@@ -179,39 +193,39 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 				// the inserted page. @see https://codex.wordpress.org/Function_Reference/the_content#Alternative_Usage
 				switch ( $display ) {
 				case "title":
-					the_post(); ?>
-					<h1><?php the_title(); ?></h1>
-					<?php break;
+					the_post();
+					?><h1><?php the_title(); ?></h1><?php
+					break;
 				case "link":
-					the_post(); ?>
-					<a href="<?php the_permalink(); ?>"><?php the_title(); ?></a>
-					<?php break;
+					the_post();
+					?><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a><?php
+					break;
 				case "excerpt":
-					the_post(); ?>
-					<h1><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a></h1>
-					<?php if ( $should_apply_the_content_filter ) the_excerpt(); else echo get_the_excerpt(); ?>
-					<?php break;
+					the_post();
+					?><h1><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a></h1><?php
+					if ( $should_apply_the_content_filter ) the_excerpt(); else echo get_the_excerpt();
+					break;
 				case "excerpt-only":
-					the_post(); ?>
-					<?php if ( $should_apply_the_content_filter ) the_excerpt(); else echo get_the_excerpt(); ?>
-					<?php break;
+					the_post();
+					if ( $should_apply_the_content_filter ) the_excerpt(); else echo get_the_excerpt();
+					break;
 				case "content":
-					the_post(); ?>
-					<?php if ( $should_apply_the_content_filter ) the_content(); else echo get_the_content(); ?>
-					<?php break;
+					the_post();
+					if ( $should_apply_the_content_filter ) the_content(); else echo get_the_content();
+					break;
 				case "all":
-					the_post(); ?>
-					<h1><?php the_title(); ?></h1>
-					<?php if ( $should_apply_the_content_filter ) the_content(); else echo get_the_content(); ?>
-					<?php the_meta(); ?>
-					<?php break;
+					the_post();
+					?><h1><?php the_title(); ?></h1><?php
+					if ( $should_apply_the_content_filter ) the_content(); else echo get_the_content();
+					the_meta();
+					break;
 				default: // display is either invalid, or contains a template file to use
 					$template = locate_template( $display );
 					if ( strlen( $template ) > 0 ) {
 						include $template; // execute the template code
 					} else { // Couldn't find template, so fall back to printing a link to the page.
-						the_post(); ?>
-						<a href="<?php the_permalink(); ?>"><?php the_title(); ?></a><?php
+						the_post();
+						?><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a><?php
 					}
 					break;
 				}
@@ -229,7 +243,8 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 
 			wp_reset_query();
 
-			$content = "<div data-post-id='$page' class='insert-page insert-page-$page $class'>$content</div>";
+			$wrapper_tag = $should_use_inline_wrapper ? 'span' : 'div';
+			$content = "<$wrapper_tag data-post-id='$page' class='insert-page insert-page-$page $class'>$content</$wrapper_tag>";
 			return $content;
 			//return do_shortcode($content); // careful: watch for infinite loops with nested inserts
 		}
