@@ -102,7 +102,7 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 				'page' => '0',
 				'display' => 'all',
 				'class' => '',
-				'inline' => '',
+				'inline' => false,
 			), $atts ) );
 
 			// Validation checks.
@@ -169,7 +169,7 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 			 */
 			$should_apply_the_content_filter = apply_filters( 'insert_pages_apply_the_content_filter', $should_apply_the_content_filter );
 
-			$should_use_inline_wrapper = $inline !== 'false' || array_search( 'inline', $atts ) === 0;
+			$should_use_inline_wrapper = ( $inline !== false && $inline !== 'false' ) || array_search( 'inline', $atts ) === 0;
 			/**
 			 * Filter the flag indicating whether to wrap the inserted content in inline tags (span).
 			 *
