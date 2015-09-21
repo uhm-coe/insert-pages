@@ -86,6 +86,16 @@ Just one! The plugin prevents you from embedding a page in itself, but you can t
 
 == Changelog ==
 
+= 2.7.2 =
+* Add shortcode attribute to wrap inserted content in an inline element (span) instead of a block level element (div). Example usage:
+`Lorem ipsum [insert page='my-page' display='content' inline] dolor sit amet.`
+* Add filter to wrap inserted content in an inline element (span) instead of a block level element (div). Example usage:
+`function theme_init() {
+    // Show a message in place of an inserted page if that page cannot be found.
+    add_filter( 'insert_pages_use_inline_wrapper', function ( $should_use_inline_wrapper ) { return true; } );
+}
+add_action( 'init', 'theme_init' );`
+
 = 2.7.1 =
 * Add filter to show a message when an inserted page cannot be found. Example usage:
 `function theme_init() {
