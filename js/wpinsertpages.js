@@ -80,7 +80,7 @@ var wpInsertPages;
 
 		open: function( editorId ) {
 			var ed, node, bookmark, cursorPosition = -1;
-			
+
 			wpInsertPages.range = null;
 
 			if ( editorId ) {
@@ -150,7 +150,7 @@ var wpInsertPages;
 		},
 
 		mceRefresh: function( cursorPosition ) {
-			var shortcode, bookmark, regexp, match, matches;
+			var shortcode, bookmark, regexp, match, matches, offset;
 
 			// Get the existing shortcode the cursor is in (or get the entire node if cursor not in one)
 			shortcode = '';
@@ -441,10 +441,11 @@ var wpInsertPages;
 			liTop = li.position().top;
 			elTop = this.element.scrollTop();
 
-			if ( liTop < 0 ) // Make first visible element
+			if ( liTop < 0 ) { // Make first visible element
 				this.element.scrollTop( elTop + liTop );
-			else if ( liTop + liHeight > elHeight ) // Make last visible element
+			} else if ( liTop + liHeight > elHeight ) { // Make last visible element
 				this.element.scrollTop( elTop + liTop - elHeight + liHeight );
+			}
 
 			// Trigger the river-select event
 			this.element.trigger('river-select', [ li, event, this ]);
@@ -505,14 +506,14 @@ var wpInsertPages;
 			} else {
 				$.each( results, function() {
 					classes = alt ? 'alternate' : '';
-					classes += this['title'] ? '' : ' no-title';
+					classes += this.title ? '' : ' no-title';
 					list += classes ? '<li class="' + classes + '">' : '<li>';
-					list += '<input type="hidden" class="item-permalink" value="' + this['permalink'] + '" />';
-					list += '<input type="hidden" class="item-slug" value="' + this['slug'] + '" />';
-					list += '<input type="hidden" class="item-id" value="' + this['ID'] + '" />';
+					list += '<input type="hidden" class="item-permalink" value="' + this.permalink + '" />';
+					list += '<input type="hidden" class="item-slug" value="' + this.slug + '" />';
+					list += '<input type="hidden" class="item-id" value="' + this.ID + '" />';
 					list += '<span class="item-title">';
-					list += this['title'] ? this['title'] : wpInsertPagesL10n.noTitle;
-					list += '</span><span class="item-info">' + this['info'] + '</span></li>';
+					list += this.title ? this.title : wpInsertPagesL10n.noTitle;
+					list += '</span><span class="item-info">' + this.info + '</span></li>';
 					alt = ! alt;
 				});
 			}
@@ -566,7 +567,7 @@ var wpInsertPages;
 
 			if ( this.search )
 				query.search = this.search;
-		
+
 		  query.pageID = inputs.pageID.val();
 
 			this.querying = true;
