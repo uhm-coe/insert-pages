@@ -48,7 +48,7 @@
 				}
 			}
 
-			button.disabled( parentIsAnchor || parentIsImg );
+			button.disabled( parentIsAnchor !== null || parentIsImg !== null );
 			button.active( parentIsShortcode );
 		}
 
