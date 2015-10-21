@@ -162,7 +162,7 @@ var wpInsertPages;
 				while ( ( match = regexp.exec( content ) ) != null ) {
 					startPos = match.index;
 					endPos = startPos + match[0].length;
-					if ( cursorPosition > startPos && cursorPosition < endPos ) {
+					if ( cursorPosition > startPos && cursorPosition <= endPos ) {
 						shortcode = match[0];
 						break;
 					}
@@ -179,7 +179,7 @@ var wpInsertPages;
 				for ( i = 0; i < node.childNodes.length; i++ ) {
 					selectedChild = node.childNodes[i];
 					length = ( selectedChild.outerHTML ) ? selectedChild.outerHTML.length : selectedChild.textContent.length;
-					if ( cursorPosition < offset + length ) {
+					if ( cursorPosition <= offset + length ) {
 						break;
 					}
 					offset += length;
@@ -568,7 +568,7 @@ var wpInsertPages;
 			if ( this.search )
 				query.search = this.search;
 
-		  query.pageID = inputs.pageID.val();
+			query.pageID = inputs.pageID.val();
 
 			this.querying = true;
 			$.post( ajaxurl, query, function(r) {

@@ -41,7 +41,7 @@
 				while ( ( match = regexp.exec( content ) ) != null ) {
 					startPos = match.index;
 					endPos = startPos + match[0].length;
-					if ( cursorPosition > startPos && cursorPosition < endPos ) {
+					if ( cursorPosition > startPos && cursorPosition <= endPos ) {
 						parentIsShortcode = true;
 						break;
 					}
