@@ -287,12 +287,15 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 
 			$options_panel_visible = '1' == get_user_setting( 'wplink', '0' ) ? ' options-panel-visible' : '';
 
+			// Get ID of post currently being edited.
+			$post_id = array_key_exists( 'post', $_REQUEST ) && intval( $_REQUEST['post'] ) > 0 ? intval( $_REQUEST['post'] ) : '';
+
 			// display: none is required here, see #WP27605
 			?><div id="wp-insertpage-backdrop" style="display: none"></div>
 			<div id="wp-insertpage-wrap" class="wp-core-ui<?php echo $options_panel_visible; ?>" style="display: none">
 			<form id="wp-insertpage" tabindex="-1">
 			<?php wp_nonce_field( 'internal-inserting', '_ajax_inserting_nonce', false ); ?>
-			<input type="hidden" id="insertpage-parent-pageID" value="<?php echo $_GET['post'] ?>" />
+			<input type="hidden" id="insertpage-parent-pageID" value="<?php echo $post_id; ?>" />
 			<div id="insertpage-modal-title">
 				<?php _e( 'Insert page' ) ?>
 				<div id="wp-insertpage-close" tabindex="0"></div>
