@@ -24,8 +24,8 @@
 		function setState( button, node ) {
 			var parentIsShortcode = false,
 				bookmark, cursorPosition, regexp, match, startPos, endPos,
-				parentIsAnchor = editor.dom.getParent( node, 'a' ),
-				parentIsImg = editor.dom.getParent( node, 'img' );
+				parentAnchor = editor.dom.getParent( node, 'a' ),
+				parentImg = editor.dom.getParent( node, 'img' );
 
 			// Get whether cursor is in an existing shortcode
 			content = node.innerHTML;
@@ -48,7 +48,7 @@
 				}
 			}
 
-			button.disabled( parentIsAnchor !== null || parentIsImg !== null );
+			button.disabled( parentAnchor !== null || parentImg !== null );
 			button.active( parentIsShortcode );
 		}
 
