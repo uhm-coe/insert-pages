@@ -23,29 +23,16 @@
 
 		function setState( button, node ) {
 			var parentIsShortcode = false,
-				bookmark, cursorPosition, regexp, match, startPos, endPos,
+				elementContainingCursor = editor.selection.getNode(),
+				cursorOffsetWithinElement = editor.selection.getRng(),
+				indexOfShortcodeStart = elementContainingCursor.innerHTML.indexOf( '[insert page=' ),
+				indexOfShortcodeEnd = elementContainingCursor.innerHTML.indexOf( ']', indexOfShortcodeStart ),
 				parentAnchor = editor.dom.getParent( node, 'a' ),
 				parentImg = editor.dom.getParent( node, 'img' );
 
-			// Get whether cursor is in an existing shortcode
-			content = node.innerHTML;
-			if ( content.indexOf( '[insert page=' ) >= 0 ) {
-				// Find the cursor position in the current node.
-				bookmark = editor.selection.getBookmark( 0 );
-				cursorPosition = node.innerHTML.indexOf( '<span data-mce-type="bookmark"' );
-				editor.selection.moveToBookmark( bookmark );
-
-				// Find occurrences of shortcode in current node and see if the cursor
-				// position is inside one of them.
-				regexp = /\[insert page=[^\]]*]/g;
-				while ( ( match = regexp.exec( content ) ) != null ) {
-					startPos = match.index;
-					endPos = startPos + match[0].length;
-					if ( cursorPosition > startPos && cursorPosition <= endPos ) {
-						parentIsShortcode = true;
-						break;
-					}
-				}
+			// Determine if cursor is in an existing shortcode.
+			if ( indexOfShortcodeStart >= 0 && indexOfShortcodeStart < cursorOffsetWithinElement.startOffset && indexOfShortcodeEnd + 1 >= cursorOffsetWithinElement.startOffset ) {
+				parentIsShortcode = true;
 			}
 
 			button.disabled( parentAnchor !== null || parentImg !== null );
