@@ -381,11 +381,24 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 			$args['pagenum'] = !empty( $_POST['page'] ) ? absint( $_POST['page'] ) : 1;
 			$args['pageID'] =  !empty( $_POST['pageID'] ) ? absint( $_POST['pageID'] ) : 0;
 
+			// Change search to slug or post ID if we're not doing a plaintext
+			// search (e.g., if we're editing an existing shortcode and the
+			// search field is populated with the post's slug or ID).
+			if ( array_key_exists( 'type', $_POST ) && $_POST['type'] === 'slug' ) {
+				$args['name'] = $args['s'];
+				unset( $args['s'] );
+			} else if ( array_key_exists( 'type', $_POST ) && $_POST['type'] === 'post_id' ) {
+				$args['p'] = $args['s'];
+				unset( $args['s'] );
+			}
+
 			$results = $this->insertPages_wp_query( $args );
 
-			if ( !isset( $results ) ) {
+			// Fail if our query didn't work.
+			if ( ! isset( $results ) ) {
 				die( '0' );
 			}
+
 			echo json_encode( $results );
 			echo "\n";
 			die();
@@ -426,12 +439,22 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 			);
 
 			$args['pagenum'] = isset( $args['pagenum'] ) ? absint( $args['pagenum'] ) : 1;
+			$query['offset'] = $args['pagenum'] > 1 ? $query['posts_per_page'] * ( $args['pagenum'] - 1 ) : 0;
 
+			// Search post content and post title.
 			if ( isset( $args['s'] ) ) {
 				$query['s'] = $args['s'];
 			}
 
-			$query['offset'] = $args['pagenum'] > 1 ? $query['posts_per_page'] * ( $args['pagenum'] - 1 ) : 0;
+			// Search post_name (post slugs).
+			if ( isset( $args['name'] ) ) {
+				$query['name'] = $args['name'];
+			}
+
+			// Search post ids.
+			if ( isset( $args['p'] ) ) {
+				$query['p'] = $args['p'];
+			}
 
 			// Do main query.
 			$get_posts = new WP_Query;

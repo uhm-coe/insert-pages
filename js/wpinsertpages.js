@@ -58,6 +58,12 @@ var wpInsertPages;
 				}
 			});
 
+			// Set search type to plaintext if someone types in the search field.
+			// (Might have been set to 'slug' or 'id' if editing a current shortcode.)
+			inputs.search.keydown( function () {
+				inputs.search.data( 'type', 'text' );
+			});
+
 			inputs.search.keyup( function() {
 				var self = this;
 
@@ -184,14 +190,24 @@ var wpInsertPages;
 					}
 					offset += length;
 				}
-				range.setStart( selectedChild, startPos - offset );
-				range.setEnd( selectedChild, endPos - offset );
-				editor.selection.setRng( range );
+//Uncaught IndexSizeError: Failed to execute 'setStart' on 'Range': The offset -14 is larger than or equal to the node's length (27).
+				if ( selectedChild.length >= offset ) {
+					range.setStart( selectedChild, startPos - offset );
+					range.setEnd( selectedChild, endPos - offset );
+					editor.selection.setRng( range );
+				}
 
 				// Set slug/id (also set the slug as the search term)
 				regexp = /page=['"]([^['"]*)['"]/;
 				matches = regexp.exec( shortcode );
 				if ( matches.length > 1 ) {
+					// Indicate that this search term is a slug or id.
+					if ( isNaN( parseInt( matches[1] ) ) ) {
+						inputs.search.data( 'type', 'slug' );
+					} else {
+						inputs.search.data( 'type', 'post_id' );
+					}
+
 					inputs.slug.val( matches[1] );
 					inputs.search.val( matches[1] );
 					inputs.search.keyup();
@@ -228,6 +244,7 @@ var wpInsertPages;
 			inputs.format.change();
 			inputs.template.val('all');
 			inputs.search.val( '' );
+			inputs.search.data( 'type', 'text' );
 			inputs.search.keyup();
 		},
 
@@ -294,9 +311,10 @@ var wpInsertPages;
 
 		searchInternalLinks : function() {
 			var t = $(this), waiting,
-				search = t.val();
+				search = t.val(),
+				type = t.data( 'type' );
 
-			if ( search.length > 2 ) {
+			if ( search.length > 2 || ( type === 'post_id' && search.length > 0 ) ) {
 				rivers.recent.hide();
 				rivers.search.show();
 
@@ -307,7 +325,7 @@ var wpInsertPages;
 				wpInsertPages.lastSearch = search;
 				waiting = t.parent().find( '.spinner' ).show();
 
-				rivers.search.change( search );
+				rivers.search.change( search, type );
 				rivers.search.ajax( function() {
 					waiting.hide();
 				});
@@ -394,12 +412,13 @@ var wpInsertPages;
 
 	RiverInsertPages = function( element, search ) {
 		var self = this;
+		var type = 'text';
 		this.element = element;
 		this.ul = element.children( 'ul' );
 		this.contentHeight = element.children( '#link-selector-height' );
 		this.waiting = element.find('.river-waiting');
 
-		this.change( search );
+		this.change( search, type );
 		this.refresh();
 
 		$( '#wp-insertpage .query-results, #wp-insertpage #link-selector' ).scroll( function() {
@@ -485,12 +504,12 @@ var wpInsertPages;
 
 			this.query.ajax( response );
 		},
-		change: function( search ) {
+		change: function( search, type ) {
 			if ( this.query && this._search == search )
 				return;
 
 			this._search = search;
-			this.query = new QueryInsertPages( search );
+			this.query = new QueryInsertPages( search, type );
 			this.element.scrollTop(0);
 		},
 		process: function( results, params ) {
@@ -545,11 +564,12 @@ var wpInsertPages;
 		}
 	});
 
-	QueryInsertPages = function( search ) {
+	QueryInsertPages = function( search, type ) {
 		this.page = 1;
 		this.allLoaded = false;
 		this.querying = false;
 		this.search = search;
+		this.type = type;
 	};
 
 	$.extend( QueryInsertPages.prototype, {
@@ -559,9 +579,9 @@ var wpInsertPages;
 		ajax: function( callback ) {
 			var self = this,
 				query = {
-					//action : 'wp-insertpage-ajax',
 					action : 'insertpage',
 					page : this.page,
+					type : this.type,
 					'_ajax_inserting_nonce' : $('#_ajax_inserting_nonce').val()
 				};
 
