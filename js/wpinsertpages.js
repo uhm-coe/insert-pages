@@ -190,7 +190,6 @@ var wpInsertPages;
 					}
 					offset += length;
 				}
-//Uncaught IndexSizeError: Failed to execute 'setStart' on 'Range': The offset -14 is larger than or equal to the node's length (27).
 				if ( selectedChild.length >= offset ) {
 					range.setStart( selectedChild, startPos - offset );
 					range.setEnd( selectedChild, endPos - offset );
@@ -213,10 +212,11 @@ var wpInsertPages;
 					inputs.search.keyup();
 				}
 
+				// Update display dropdown to match the selected shortcode.
 				regexp = /display=['"]([^['"]*)['"]/;
 				matches = regexp.exec( shortcode );
 				if ( matches.length > 1 ) {
-					if ( matches[1] == 'title' || matches[1] == 'link' || matches[1] == 'content' || matches[1] == 'all' ) {
+					if ( ['title', 'link', 'excerpt', 'excerpt-only', 'content', 'all', ].indexOf( matches[1] ) >= 0 ) {
 						inputs.format.val( matches[1] );
 						inputs.template.val( 'all' );
 					} else {
