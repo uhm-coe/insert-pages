@@ -31,7 +31,7 @@
 				parentImg = editor.dom.getParent( node, 'img' );
 
 			// Determine if cursor is in an existing shortcode.
-			if ( indexOfShortcodeStart >= 0 && indexOfShortcodeStart < cursorOffsetWithinElement.startOffset && indexOfShortcodeEnd + 1 >= cursorOffsetWithinElement.startOffset ) {
+			if ( indexOfShortcodeStart >= 0 && indexOfShortcodeStart <= cursorOffsetWithinElement.startOffset && indexOfShortcodeEnd + 1 >= cursorOffsetWithinElement.endOffset ) {
 				parentIsShortcode = true;
 			}
 
