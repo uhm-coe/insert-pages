@@ -168,6 +168,7 @@
 }
 
 #wp-insertpage .insertpage-search-wrapper .spinner {
+	visibility: visible;
 	display: none;
 	vertical-align: text-bottom;
 }
@@ -255,6 +256,7 @@
 #wp-insertpage .river-waiting .spinner {
 	margin: 0 auto;
 	display: block;
+	visibility: visible;
 	float: none;
 }
 
