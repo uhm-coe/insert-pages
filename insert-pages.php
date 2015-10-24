@@ -38,7 +38,8 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 
 		// Constructor
 		public function InsertPagesPlugin() {
-			//$this->pageID = '1'; echo $_GET['post'];
+			// Include the code that generates the options page.
+			require_once( dirname( __FILE__ ) . '/options.php' );
 		}
 
 		// Getter/Setter for pageID
