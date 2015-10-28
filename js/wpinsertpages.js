@@ -303,7 +303,11 @@ var wpInsertPages;
 		},
 
 		updateFields : function( e, li, originalEvent ) {
-			inputs.slug.val( li.children('.item-slug').val() );
+			if ( wpInsertPagesL10n.format === 'post_id' ) {
+				inputs.slug.val( li.children('.item-id').val() );
+			} else {
+				inputs.slug.val( li.children('.item-slug').val() );
+			}
 			inputs.pageID.val( li.children('.item-id').val() );
 			if ( originalEvent && originalEvent.type == "click" )
 				inputs.slug.focus();

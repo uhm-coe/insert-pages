@@ -73,7 +73,9 @@ function wpip_options_page() {
 
 function wpip_format_render() {
 	$options = get_option( 'wpip_settings' );
-	$options = $options === FALSE ? wpip_set_defaults() : $options;
+	if ( $options === FALSE ) {
+		$options = wpip_set_defaults();
+	}
 	?>
 	<input type='radio' name='wpip_settings[wpip_format]' <?php checked( $options['wpip_format'], 'slug' ); ?> id="wpip_format_slug" value='slug'><label for="wpip_format_slug">Use page slugs (more readable). Example: <code>[insert&nbsp;page='hello&#8209;world&#8209;post'&nbsp;display='all']</code></label><br />
 	<input type='radio' name='wpip_settings[wpip_format]' <?php checked( $options['wpip_format'], 'post_id' ); ?> id="wpip_format_id" value='post_id'><label for="wpip_format_id">Use page IDs (more compatible). Example: <code>[insert&nbsp;page='1'&nbsp;display='all']</code></label><br />
@@ -84,7 +86,9 @@ function wpip_format_render() {
 
 function wpip_wrapper_render() {
 	$options = get_option( 'wpip_settings' );
-	$options = $options === FALSE ? wpip_set_defaults() : $options;
+	if ( $options === FALSE ) {
+		$options = wpip_set_defaults();
+	}
 	?>
 	<input type='radio' name='wpip_settings[wpip_wrapper]' <?php checked( $options['wpip_wrapper'], 'block' ); ?> id="wpip_wrapper_block" value='block'><label for="wpip_wrapper_block">Use block wrapper (div). Example: <code>&lt;div data-post-id="1" class="insert-page">...&lt;/div></code></label><br />
 	<input type='radio' name='wpip_settings[wpip_wrapper]' <?php checked( $options['wpip_wrapper'], 'inline' ); ?> id="wpip_wrapper_inline" value='inline'><label for="wpip_wrapper_inline">Use inline wrapper (span). Example: <code>&lt;span data-post-id="1" class="insert-page">...&lt;/span></code></label><br />

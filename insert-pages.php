@@ -57,6 +57,12 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 
 		// Action hook: Wordpress 'admin_init'
 		function insertPages_admin_init() {
+			// Get options set in WordPress dashboard (Settings > Insert Pages).
+			$options = get_option( 'wpip_settings' );
+			if ( $options === FALSE ) {
+				$options = wpip_set_defaults();
+			}
+
 			// Add TinyMCE toolbar button filters only if current user has permissions
 			if ( current_user_can( 'edit_posts' ) && current_user_can( 'edit_pages' ) && get_user_option( 'rich_editing' )=='true' ) {
 
@@ -76,6 +82,7 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 						'noTitle' => __( '(no title)' ),
 						'noMatchesFound' => __( 'No matches found.' ),
 						'l10n_print_after' => 'try{convertEntities(wpLinkL10n);}catch(e){};',
+						'format' => $options['wpip_format'],
 					)
 				);
 
@@ -105,6 +112,12 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 				'class' => '',
 				'inline' => false,
 			), $atts ) );
+
+			// Get options set in WordPress dashboard (Settings > Insert Pages).
+			$options = get_option( 'wpip_settings' );
+			if ( $options === FALSE ) {
+				$options = wpip_set_defaults();
+			}
 
 			// Validation checks.
 			if ( $page === '0' ) {
@@ -170,7 +183,7 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 			 */
 			$should_apply_the_content_filter = apply_filters( 'insert_pages_apply_the_content_filter', $should_apply_the_content_filter );
 
-			$should_use_inline_wrapper = ( $inline !== false && $inline !== 'false' ) || array_search( 'inline', $atts ) === 0;
+			$should_use_inline_wrapper = ( $inline !== false && $inline !== 'false' ) || array_search( 'inline', $atts ) === 0 || ( array_key_exists( 'wpip_wrapper', $options ) && $options['wpip_wrapper'] === 'inline' );
 			/**
 			 * Filter the flag indicating whether to wrap the inserted content in inline tags (span).
 			 *
