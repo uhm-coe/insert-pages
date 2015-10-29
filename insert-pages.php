@@ -201,6 +201,16 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 			if ( have_posts() ) {
 				ob_start(); // Start output buffering so we can save the output to string
 
+				// If Beaver Builder plugin is enabled, load any cached styles associated with the inserted page.
+				// Note: Temporarily set the global $post->ID to the inserted page ID,
+				// since Beaver Builder relies on it to load the appropraite styles.
+				if ( class_exists( 'FLBuilder' ) ) {
+					$old_post_id = $post->ID;
+					$post->ID = $page;
+					FLBuilder::enqueue_layout_styles_scripts( $page );
+					$post->ID = $old_post_id;
+				}
+
 				// Show either the title, link, content, everything, or everything via a custom template
 				// Note: if the sharing_display filter exists, it means Jetpack is installed and Sharing is enabled;
 				// This plugin conflicts with Sharing, because Sharing assumes the_content and the_excerpt filters
