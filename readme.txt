@@ -86,6 +86,15 @@ Just one! The plugin prevents you from embedding a page in itself, but you can t
 
 == Changelog ==
 
+= 2.8 =
+* Feature: Add options page with option to insert page IDs instead of page slugs (users of WPML will need this feature if translated pages all share the same page slug).
+* Feature: Inserted pages with Beaver Builder enabled now embed correctly.
+* Fix: TinyMCE toolbar button states (active, disabled) have been fixed.
+* Fix: TinyMCE cursor detection inside an existing shortcode has been fixed.
+* Fix: Expanded options in Insert Pages popup now correctly remembers last choice.
+* Fix: Restore missing spinners in search dialog.
+* Fix: prevent PHP warning when rendering wp_editor() outside of edit context. Props Jerry Benton.
+
 = 2.7.2 =
 * Add shortcode attribute to wrap inserted content in an inline element (span) instead of a block level element (div). Example usage:
 `Lorem ipsum [insert page='my-page' display='content' inline] dolor sit amet.`
