@@ -2,7 +2,7 @@
 
 /*
 Plugin Name: Insert Pages
-Plugin URI: https://bitbucket.org/figureone/insert-pages
+Plugin URI: https://github.com/uhm-coe/insert-pages
 Description: Insert Pages lets you embed any WordPress content (e.g., pages, posts, custom post types) into other WordPress content using the Shortcode API.
 Author: Paul Ryan
 Version: 2.8
