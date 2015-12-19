@@ -166,7 +166,7 @@ add_action( 'init', 'theme_init' );`
 
 = 1.7 =
 * Tested and works on WordPress 4.1;
-* New display format: excerpt. Props to bitbucket user grzegorzdrozd for the pull request. https://bitbucket.org/figureone/insert-pages/commits/0f6402c98058858f76f3f865bb3f8c5aba4cda65
+* New display format: excerpt. Props to bitbucket user grzegorzdrozd for the pull request. https://github.com/uhm-coe/insert-pages/commit/0f6402c98058858f76f3f865bb3f8c5aba4cda65
 
 = 1.6 =
 * Fix for long page template names causing Display field to wrap in the tinymce popup;
