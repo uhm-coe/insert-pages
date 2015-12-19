@@ -106,14 +106,14 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 		// Shortcode hook: Replace the [insert ...] shortcode with the inserted page's content
 		function insertPages_handleShortcode_insert( $atts, $content = null ) {
 			global $wp_query, $post, $wp_current_filter;
+
 			$shortcode_attributes = shortcode_atts( array(
 				'page' => '0',
 				'display' => 'all',
 				'class' => '',
 				'inline' => false,
 			), $atts );
-
-			extract($shortcode_attributes);
+			extract( $shortcode_attributes );
 
 			// Get options set in WordPress dashboard (Settings > Insert Pages).
 			$options = get_option( 'wpip_settings' );
@@ -174,7 +174,7 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 				);
 			}
 
-			$posts = query_posts($args);
+			$posts = query_posts( $args );
 
 			$should_apply_the_content_filter = true;
 			/**
@@ -276,22 +276,25 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 
 			wp_reset_query();
 
-			$shortcode_attributes['wrapper'] = $should_use_inline_wrapper ? 'span' : 'div';
-			$content = apply_filters('insert_pages_wrap_content', $content, $posts, $shortcode_attributes);
+			$wrapper_tag = $should_use_inline_wrapper ? 'span' : 'div';
+			/**
+			 * Filter the markup generated for the inserted page.
+			 *
+			 * @param string $wrapper_tag The html element to wrap the content in (typically div or span).
+			 * @param string $extra_classes Space-delimited list of classes to add to the wrapper element.
+			 * @param int $post_id The ID of the inserted page.
+			 * @param string $content The post content of the inserted page.
+			 */
+			$content = apply_filters( 'insert_pages_wrap_content', $wrapper_tag, $class, $page, $content );
+
 			return $content;
 			//return do_shortcode($content); // careful: watch for infinite loops with nested inserts
 		}
 
-		public function wrapContentIntoSpan($content, $posts, $attributes) {
-			return sprintf(
-				'<%4$s data-post-id="%2$s" class="insert-page insert-page-%2$s %3$s">%1$s</%4$s>',
-				$content,
-				$attributes['page'],
-				$attributes['class'],
-				$attributes['wrapper']
-			);
+		// Default filter for insert_pages_wrap_content.
+		function insertPages_wrap_content( $wrapper_tag, $extra_classes, $post_id, $content ) {
+			return "<{$wrapper_tag} data-post-id='{$post_id}' class='insert-page insert-page-{$post_id} {$extra_classes}'>{$content}</{$wrapper_tag}>";
 		}
-
 
 		// Filter hook: Add a button to the TinyMCE toolbar for our insert page tool
 		function insertPages_handleFilter_mceButtons( $buttons ) {
@@ -543,5 +546,5 @@ if ( isset( $insertPages_plugin ) ) {
 	add_action( 'before_wp_tiny_mce', array( $insertPages_plugin, 'insertPages_wp_tinymce_dialog' ), 1 ); // Preload TinyMCE popup
 	add_action( 'wp_ajax_insertpage', array( $insertPages_plugin, 'insertPages_insert_page_callback' ) ); // Populate page search in TinyMCE button popup in this ajax call
 	add_action( 'admin_print_footer_scripts', array( $insertPages_plugin, 'insertPages_add_quicktags' ) );
-	add_filter('insert_pages_wrap_content', array($insertPages_plugin, 'wrapContentIntoSpan'), 10, 3);
+	add_filter( 'insert_pages_wrap_content', array( $insertPages_plugin, 'insertPages_wrap_content' ), 10, 4 );
 }
