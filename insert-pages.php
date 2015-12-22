@@ -107,31 +107,38 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 		function insertPages_handleShortcode_insert( $atts, $content = null ) {
 			global $wp_query, $post, $wp_current_filter;
 
-			$shortcode_attributes = shortcode_atts( array(
+			/**
+			 * Shortcode attributes:
+			 *   page: Page ID or slug of page to be inserted.
+			 *   display: Content to display from inserted page.
+			 *   class: Extra classes to add to inserted page wrapper element.
+			 *   inline: Boolean indicating wrapper element should be a span.
+			 */
+			$shortcode = shortcode_atts( array(
 				'page' => '0',
 				'display' => 'all',
 				'class' => '',
 				'inline' => false,
 			), $atts );
-			extract( $shortcode_attributes );
 
-			// Get options set in WordPress dashboard (Settings > Insert Pages).
-			$options = get_option( 'wpip_settings' );
-			if ( $options === FALSE ) {
-				$options = wpip_set_defaults();
-			}
+			$shortcode['inline'] = ( $shortcode['inline'] !== false && $shortcode['inline'] !== 'false' ) || array_search( 'inline', $atts ) === 0 || ( array_key_exists( 'wpip_wrapper', $options ) && $options['wpip_wrapper'] === 'inline' );
+			/**
+			 * Filter the flag indicating whether to wrap the inserted content in inline tags (span).
+			 *
+			 * @param bool $use_inline_wrapper Indicates whether to wrap the content in span tags.
+			 */
+			$shortcode['inline'] = apply_filters( 'insert_pages_use_inline_wrapper', $shortcode['inline'] );
 
-			// Validation checks.
-			if ( $page === '0' ) {
-				return $content;
-			}
+			/**
+			 * Shortcode additional attributes:
+			 *   should_apply_nesting_check: Whether to disable nested inserted pages.
+			 *   should_apply_the_content_filter: Whether to apply the_content filter to post contents and excerpts.
+			 *   wrapper_tag: Tag to use for the wrapper element (e.g., div, span).
+			 */
+			$shortcode['should_apply_nesting_check'] = true;
+			$shortcode['should_apply_the_content_filter'] = true;
+			$shortcode['wrapper_tag'] = $shortcode['inline'] ? 'span' : 'div';
 
-			// Trying to embed same page in itself.
-			if ( $page == $post->ID || $page == $post->post_name ) {
-				return $content;
-			}
-
-			$should_apply_nesting_check = true;
 			/**
 			 * Filter the flag indicating whether to apply deep nesting check
 			 * that can prevent circular loops. Note that some use cases rely
@@ -140,10 +147,40 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 			 *
 			 * @param bool $apply_the_content_filter Indicates whether to apply the_content filter.
 			 */
-			$should_apply_nesting_check = apply_filters( 'insert_pages_apply_nesting_check', $should_apply_nesting_check );
+			$shortcode['should_apply_nesting_check'] = apply_filters( 'insert_pages_apply_nesting_check', $shortcode['should_apply_nesting_check'] );
+
+			/**
+			 * Filter the flag indicating whether to apply the_content filter to post
+			 * contents and excerpts that are being inserted.
+			 *
+			 * @param bool $apply_the_content_filter Indicates whether to apply the_content filter.
+			 */
+			$shortcode['should_apply_the_content_filter'] = apply_filters( 'insert_pages_apply_the_content_filter', $shortcode['should_apply_the_content_filter'] );
+
+			// Disable the_content filter if using inline tags, since wpautop
+			// inserts p tags and we can't have any inside inline elements.
+			if ( $shortcode['inline'] ) {
+				$shortcode['should_apply_the_content_filter'] = false;
+			}
+
+			// Get options set in WordPress dashboard (Settings > Insert Pages).
+			$options = get_option( 'wpip_settings' );
+			if ( $options === FALSE ) {
+				$options = wpip_set_defaults();
+			}
+
+			// Validation checks.
+			if ( $shortcode['page'] === '0' ) {
+				return $content;
+			}
+
+			// Trying to embed same page in itself.
+			if ( $shortcode['page'] == $post->ID || $shortcode['page'] == $post->post_name ) {
+				return $content;
+			}
 
 			// Don't allow inserted pages to be added to the_content more than once (prevent infinite loops).
-			if ( $should_apply_nesting_check ) {
+			if ( $shortcode['should_apply_nesting_check'] ) {
 				$done = false;
 				foreach ( $wp_current_filter as $filter ) {
 					if ( 'the_content' == $filter ) {
@@ -157,47 +194,24 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 			}
 
 			// Convert slugs to page IDs to standardize query_posts() lookup below.
-			if ( ! is_numeric( $page ) ) {
-				$page_object = get_page_by_path( $page, OBJECT, get_post_types() );
-				$page = $page_object ? $page_object->ID : $page;
+			if ( ! is_numeric( $shortcode['page'] ) ) {
+				$page_object = get_page_by_path( $shortcode['page'], OBJECT, get_post_types() );
+				$shortcode['page'] = $page_object ? $page_object->ID : $shortcode['page'];
 			}
 
-			if ( is_numeric( $page ) ) {
+			if ( is_numeric( $shortcode['page'] ) ) {
 				$args = array(
-					'p' => intval( $page ),
+					'p' => intval( $shortcode['page'] ),
 					'post_type' => get_post_types(),
 				);
 			} else {
 				$args = array(
-					'name' => esc_attr( $page ),
+					'name' => esc_attr( $shortcode['page'] ),
 					'post_type' => get_post_types(),
 				);
 			}
 
 			$posts = query_posts( $args );
-
-			$should_apply_the_content_filter = true;
-			/**
-			 * Filter the flag indicating whether to apply the_content filter to post
-			 * contents and excerpts that are being inserted.
-			 *
-			 * @param bool $apply_the_content_filter Indicates whether to apply the_content filter.
-			 */
-			$should_apply_the_content_filter = apply_filters( 'insert_pages_apply_the_content_filter', $should_apply_the_content_filter );
-
-			$should_use_inline_wrapper = ( $inline !== false && $inline !== 'false' ) || array_search( 'inline', $atts ) === 0 || ( array_key_exists( 'wpip_wrapper', $options ) && $options['wpip_wrapper'] === 'inline' );
-			/**
-			 * Filter the flag indicating whether to wrap the inserted content in inline tags (span).
-			 *
-			 * @param bool $use_inline_wrapper Indicates whether to wrap the content in span tags.
-			 */
-			$should_use_inline_wrapper = apply_filters( 'insert_pages_use_inline_wrapper', $should_use_inline_wrapper );
-
-			// Disable the_content filter if using inline tags, since wpautop
-			// inserts p tags and we can't have any inside inline elements.
-			if ( $should_use_inline_wrapper ) {
-				$should_apply_the_content_filter = false;
-			}
 
 			// Start our new Loop (only iterate once).
 			if ( have_posts() ) {
@@ -208,8 +222,8 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 				// since Beaver Builder relies on it to load the appropraite styles.
 				if ( class_exists( 'FLBuilder' ) ) {
 					$old_post_id = $post->ID;
-					$post->ID = $page;
-					FLBuilder::enqueue_layout_styles_scripts( $page );
+					$post->ID = $shortcode['page'];
+					FLBuilder::enqueue_layout_styles_scripts( $shortcode['page'] );
 					$post->ID = $old_post_id;
 				}
 
@@ -218,10 +232,10 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 				// This plugin conflicts with Sharing, because Sharing assumes the_content and the_excerpt filters
 				// are only getting called once. The fix here is to disable processing of filters on the_content in
 				// the inserted page. @see https://codex.wordpress.org/Function_Reference/the_content#Alternative_Usage
-				switch ( $display ) {
+				switch ( $shortcode['display'] ) {
 				case "title":
 					the_post();
-					$title_tag = $should_use_inline_wrapper ? 'span' : 'h1';
+					$title_tag = $shortcode['inline'] ? 'span' : 'h1';
 					echo "<$title_tag class='insert-page-title'>";
 					the_title();
 					echo "</$title_tag>";
@@ -233,27 +247,27 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 				case "excerpt":
 					the_post();
 					?><h1><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a></h1><?php
-					if ( $should_apply_the_content_filter ) the_excerpt(); else echo get_the_excerpt();
+					if ( $shortcode['should_apply_the_content_filter'] ) the_excerpt(); else echo get_the_excerpt();
 					break;
 				case "excerpt-only":
 					the_post();
-					if ( $should_apply_the_content_filter ) the_excerpt(); else echo get_the_excerpt();
+					if ( $shortcode['should_apply_the_content_filter'] ) the_excerpt(); else echo get_the_excerpt();
 					break;
 				case "content":
 					the_post();
-					if ( $should_apply_the_content_filter ) the_content(); else echo get_the_content();
+					if ( $shortcode['should_apply_the_content_filter'] ) the_content(); else echo get_the_content();
 					break;
 				case "all":
 					the_post();
-					$title_tag = $should_use_inline_wrapper ? 'span' : 'h1';
+					$title_tag = $shortcode['inline'] ? 'span' : 'h1';
 					echo "<$title_tag class='insert-page-title'>";
 					the_title();
 					echo "</$title_tag>";
-					if ( $should_apply_the_content_filter ) the_content(); else echo get_the_content();
+					if ( $shortcode['should_apply_the_content_filter'] ) the_content(); else echo get_the_content();
 					the_meta();
 					break;
 				default: // display is either invalid, or contains a template file to use
-					$template = locate_template( $display );
+					$template = locate_template( $shortcode['display'] );
 					if ( strlen( $template ) > 0 ) {
 						include $template; // execute the template code
 					} else { // Couldn't find template, so fall back to printing a link to the page.
@@ -276,7 +290,6 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 
 			wp_reset_query();
 
-			$wrapper_tag = $should_use_inline_wrapper ? 'span' : 'div';
 			/**
 			 * Filter the markup generated for the inserted page.
 			 *
@@ -285,10 +298,9 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 			 * @param int $post_id The ID of the inserted page.
 			 * @param string $content The post content of the inserted page.
 			 */
-			$content = apply_filters( 'insert_pages_wrap_content', $wrapper_tag, $class, $page, $content );
+			$content = apply_filters( 'insert_pages_wrap_content', $shortcode['wrapper_tag'], $shortcode['class'], $shortcode['page'], $content );
 
 			return $content;
-			//return do_shortcode($content); // careful: watch for infinite loops with nested inserts
 		}
 
 		// Default filter for insert_pages_wrap_content.
