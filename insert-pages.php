@@ -180,80 +180,143 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 				}
 			}
 
-			// Convert slugs to page IDs to standardize query_posts() lookup below.
+			// Get the WP_Post object from the provided slug or ID.
 			if ( ! is_numeric( $attributes['page'] ) ) {
-				$page_object = get_page_by_path( $attributes['page'], OBJECT, get_post_types() );
-				$attributes['page'] = $page_object ? $page_object->ID : $attributes['page'];
-			}
-
-			if ( is_numeric( $attributes['page'] ) ) {
-				$args = array(
-					'p' => intval( $attributes['page'] ),
-					'post_type' => get_post_types(),
-				);
+				$inserted_page = get_page_by_path( $attributes['page'], OBJECT, get_post_types() );
+				$attributes['page'] = $inserted_page ? $inserted_page->ID : $attributes['page'];
 			} else {
-				$args = array(
-					'name' => esc_attr( $attributes['page'] ),
-					'post_type' => get_post_types(),
-				);
+				$inserted_page = get_post( intval( $attributes['page'] ) );
 			}
 
-			$posts = query_posts( $args );
+			// If we couldn't retrieve the page, fire the filter hook showing a not-found message.
+			if ( $inserted_page === null ) {
+				/**
+				 * Filter the html that should be displayed if an inserted page was not found.
+				 *
+				 * @param string $content html to be displayed. Defaults to an empty string.
+				 */
+				$content = apply_filters( 'insert_pages_not_found_message', $content );
 
-			// Start our new Loop (only iterate once).
-			if ( have_posts() ) {
-				ob_start(); // Start output buffering so we can save the output to string
+				// Short-circuit since we didn't find the page.
+				return $content;
+			}
 
-				// If Beaver Builder plugin is enabled, load any cached styles associated with the inserted page.
-				// Note: Temporarily set the global $post->ID to the inserted page ID,
-				// since Beaver Builder relies on it to load the appropraite styles.
-				if ( class_exists( 'FLBuilder' ) ) {
-					$old_post_id = $post->ID;
-					$post->ID = $attributes['page'];
-					FLBuilder::enqueue_layout_styles_scripts( $attributes['page'] );
-					$post->ID = $old_post_id;
+			// If Beaver Builder plugin is enabled, load any cached styles associated with the inserted page.
+			// Note: Temporarily set the global $post->ID to the inserted page ID,
+			// since Beaver Builder relies on it to load the appropriate styles.
+			if ( class_exists( 'FLBuilder' ) ) {
+				$old_post_id = $post->ID;
+				$post->ID = $inserted_page->ID;
+				FLBuilder::enqueue_layout_styles_scripts( $inserted_page->ID );
+				$post->ID = $old_post_id;
+			}
+
+			// Start output buffering so we can save the output to a string.
+			ob_start();
+
+			// Show either the title, link, content, everything, or everything via a custom template
+			// Note: if the sharing_display filter exists, it means Jetpack is installed and Sharing is enabled;
+			// This plugin conflicts with Sharing, because Sharing assumes the_content and the_excerpt filters
+			// are only getting called once. The fix here is to disable processing of filters on the_content in
+			// the inserted page. @see https://codex.wordpress.org/Function_Reference/the_content#Alternative_Usage
+			switch ( $attributes['display'] ) {
+
+			case "title":
+				$title_tag = $attributes['inline'] ? 'span' : 'h1';
+				echo "<$title_tag class='insert-page-title'>";
+				get_the_title( $inserted_page->ID );
+				echo "</$title_tag>";
+				break;
+
+			case "link":
+				?><a href="<?php echo esc_url( get_permalink( $inserted_page->ID ) ); ?>"><?php get_the_title( $inserted_page->ID ); ?></a><?php
+				break;
+
+			case "excerpt":
+				?><h1><a href="<?php echo esc_url( get_permalink( $inserted_page->ID ) ); ?>"><?php get_the_title( $inserted_page->ID ); ?></a></h1><?php
+				$excerpt = get_post_field( 'post_excerpt', $inserted_page->ID );
+				if ( $attributes['should_apply_the_content_filter'] ) {
+					$excerpt = apply_filters( 'the_excerpt', $excerpt );
 				}
+				echo $excerpt;
+				break;
 
-				// Show either the title, link, content, everything, or everything via a custom template
-				// Note: if the sharing_display filter exists, it means Jetpack is installed and Sharing is enabled;
-				// This plugin conflicts with Sharing, because Sharing assumes the_content and the_excerpt filters
-				// are only getting called once. The fix here is to disable processing of filters on the_content in
-				// the inserted page. @see https://codex.wordpress.org/Function_Reference/the_content#Alternative_Usage
-				switch ( $attributes['display'] ) {
-				case "title":
-					the_post();
-					$title_tag = $attributes['inline'] ? 'span' : 'h1';
-					echo "<$title_tag class='insert-page-title'>";
-					the_title();
-					echo "</$title_tag>";
-					break;
-				case "link":
-					the_post();
-					?><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a><?php
-					break;
-				case "excerpt":
-					the_post();
-					?><h1><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a></h1><?php
-					if ( $attributes['should_apply_the_content_filter'] ) the_excerpt(); else echo get_the_excerpt();
-					break;
-				case "excerpt-only":
-					the_post();
-					if ( $attributes['should_apply_the_content_filter'] ) the_excerpt(); else echo get_the_excerpt();
-					break;
-				case "content":
-					the_post();
-					if ( $attributes['should_apply_the_content_filter'] ) the_content(); else echo get_the_content();
-					break;
-				case "all":
-					the_post();
-					$title_tag = $attributes['inline'] ? 'span' : 'h1';
-					echo "<$title_tag class='insert-page-title'>";
-					the_title();
-					echo "</$title_tag>";
-					if ( $attributes['should_apply_the_content_filter'] ) the_content(); else echo get_the_content();
-					the_meta();
-					break;
-				default: // display is either invalid, or contains a template file to use
+			case "excerpt-only":
+				$excerpt = get_post_field( 'post_excerpt', $inserted_page->ID );
+				if ( $attributes['should_apply_the_content_filter'] ) {
+					$excerpt = apply_filters( 'the_excerpt', $excerpt );
+				}
+				echo $excerpt;
+				break;
+
+			case "content":
+				$content = get_post_field( 'post_content', $inserted_page->ID );
+				if ( $attributes['should_apply_the_content_filter'] ) {
+					$content = apply_filters( 'the_content', $content );
+				}
+				echo $content;
+				break;
+
+			case "all":
+				// Title.
+				$title_tag = $attributes['inline'] ? 'span' : 'h1';
+				echo "<$title_tag class='insert-page-title'>";
+				get_the_title( $inserted_page->ID );
+				echo "</$title_tag>";
+				// Content.
+				$content = get_post_field( 'post_content', $inserted_page->ID );
+				if ( $attributes['should_apply_the_content_filter'] ) {
+					$content = apply_filters( 'the_content', $content );
+				}
+				echo $content;
+				// Meta.
+				// @ref https://core.trac.wordpress.org/browser/tags/4.4/src/wp-includes/post-template.php#L968
+				if ( $keys = get_post_custom_keys( $inserted_page->ID ) ) {
+					echo "<ul class='post-meta'>\n";
+					foreach ( (array) $keys as $key ) {
+						$keyt = trim( $key );
+						if ( is_protected_meta( $keyt, 'post' ) ) {
+							continue;
+						}
+						$values = array_map( 'trim', get_post_custom_values( $key ) );
+						$value = implode( $values, ', ' );
+
+						/**
+						 * Filter the HTML output of the li element in the post custom fields list.
+						 *
+						 * @since 2.2.0
+						 *
+						 * @param string $html  The HTML output for the li element.
+						 * @param string $key   Meta key.
+						 * @param string $value Meta value.
+						 */
+						echo apply_filters( 'the_meta_key', "<li><span class='post-meta-key'>$key:</span> $value</li>\n", $key, $value );
+					}
+					echo "</ul>\n";
+				}
+				break;
+
+			default: // display is either invalid, or contains a template file to use
+				// Legacy/compatibility code: In order to use custom templates,
+				// we use query_posts() to provide the template with the global
+				// state it requires for the inserted page (in other words, all
+				// template tags will work with respect to the inserted page
+				// instead of the parent page / main loop). Note that this may
+				// cause some compatibility issues with other plugins.
+				// @ref https://codex.wordpress.org/Function_Reference/query_posts
+				if ( is_numeric( $attributes['page'] ) ) {
+					$args = array(
+						'p' => intval( $attributes['page'] ),
+						'post_type' => get_post_types(),
+					);
+				} else {
+					$args = array(
+						'name' => esc_attr( $attributes['page'] ),
+						'post_type' => get_post_types(),
+					);
+				}
+				$inserted_page = query_posts( $args );
+				if ( have_posts() ) {
 					$template = locate_template( $attributes['display'] );
 					if ( strlen( $template ) > 0 ) {
 						include $template; // execute the template code
@@ -263,25 +326,18 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 					}
 					break;
 				}
+				wp_reset_query();
 
-				$content = ob_get_contents(); // Save off output buffer
-				ob_end_clean(); // End output buffering
-			} else {
-				/**
-				 * Filter the html that should be displayed if an inserted page was not found.
-				 *
-				 * @param string $content html to be displayed. Defaults to an empty string.
-				 */
-				$content = apply_filters( 'insert_pages_not_found_message', $content );
 			}
 
-			wp_reset_query();
+			// Save output buffer contents.
+			$content = ob_get_clean();
 
 			/**
 			 * Filter the markup generated for the inserted page.
 			 *
 			 * @param string $content The post content of the inserted page.
-			 * @param array $posts The array of post objects (typically 1) returned from querying the inserted page.
+			 * @param object $inserted_page The post object returned from querying the inserted page.
 			 * @param array $attributes Extra parameters modifying the inserted page.
 			 *   page: Page ID or slug of page to be inserted.
 			 *   display: Content to display from inserted page.
@@ -291,7 +347,7 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 			 *   should_apply_the_content_filter: Whether to apply the_content filter to post contents and excerpts.
 			 *   wrapper_tag: Tag to use for the wrapper element (e.g., div, span).
 			 */
-			$content = apply_filters( 'insert_pages_wrap_content', $content, $posts, $attributes );
+			$content = apply_filters( 'insert_pages_wrap_content', $content, $inserted_page, $attributes );
 
 			return $content;
 		}
