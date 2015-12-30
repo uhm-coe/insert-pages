@@ -123,9 +123,12 @@ Example 2:
  *   wrapper_tag: Tag to use for the wrapper element (e.g., div, span).
  */
 function your_custom_wrapper_function( $content, $inserted_page, $attributes ) {
+    // Remove the default filter that wraps the content in a div or span.
+    remove_all_filters( 'insert_pages_wrap_content', 10 );
+    // Return your custom wrapper around the content.
     return "<section class='my-section {$attributes['class']}'>$content</section>";
 }
-add_filter( 'insert_pages_wrap_content', 'your_custom_wrapper_function', 11, 3 );`
+add_filter( 'insert_pages_wrap_content', 'your_custom_wrapper_function', 9, 3 );`
 
 = 2.9.1 =
 * API Change: modify insert_pages_wrap_content filter. Props @heiglandreas.
