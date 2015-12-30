@@ -354,7 +354,7 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 
 		// Default filter for insert_pages_wrap_content.
 		function insertPages_wrap_content( $content, $posts, $attributes ) {
-			return "<{$attributes['wrapper_tag']} data-post-id='{$attributes['page']}' class='insert-page insert-page-{$attributes['page']} {$attributes['extra_classes']}'>{$content}</{$attributes['wrapper_tag']}>";
+			return "<{$attributes['wrapper_tag']} data-post-id='{$attributes['page']}' class='insert-page insert-page-{$attributes['page']} {$attributes['class']}'>{$content}</{$attributes['wrapper_tag']}>";
 		}
 
 		// Filter hook: Add a button to the TinyMCE toolbar for our insert page tool
