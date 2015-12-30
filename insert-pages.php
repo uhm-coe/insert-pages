@@ -71,7 +71,7 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 					'wpinsertpages',
 					plugins_url( '/js/wpinsertpages.js', __FILE__ ),
 					array( 'wpdialogs' ),
-					'20151022'
+					'20151230'
 				);
 				wp_localize_script(
 					'wpinsertpages',
@@ -91,7 +91,7 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 					'wpinsertpagescss',
 					plugins_url( '/css/wpinsertpages.css', __FILE__ ),
 					array( 'wp-jquery-ui-dialog' ),
-					'20151022'
+					'20151230'
 				);
 
 				add_filter( 'mce_external_plugins', array( $this, 'insertPages_handleFilter_mceExternalPlugins' ) );
