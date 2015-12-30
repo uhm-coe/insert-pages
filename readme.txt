@@ -87,7 +87,7 @@ Just one! The plugin prevents you from embedding a page in itself, but you can t
 == Changelog ==
 
 = 3.0 =
-* Hotfix: 2.9.1 broke extra classes added to the inserted page wrapper.
+* Hotfix: 2.9.1 broke extra classes added to the inserted page wrapper. Props @philipsacht!
 * Feature: Expose extra classes and inline status in tinymce dialog.
 * One more API change to insert_pages_wrap_content_filter (2nd parameter is a WP_Post now instead of an array of WP_Posts, since we only ever insert one page).
 Example 1:
