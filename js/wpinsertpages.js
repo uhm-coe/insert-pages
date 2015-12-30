@@ -25,6 +25,9 @@ var wpInsertPages;
 			inputs.parentPageID = $( '#insertpage-parent-pageID' );
 			// Format field (title, link, content, all, choose a custom template ->)
 			inputs.format = $( '#insertpage-format-select' );
+			// Extra fields (wrapper classes, inline checkbox)
+			inputs.extraClasses = $( '#insertpage-extra-classes' );
+			inputs.extraInline = $( '#insertpage-extra-inline' );
 			// Custom template select field
 			inputs.template = $( '#insertpage-template-select' );
 			inputs.search = $( '#insertpage-search-field' );
@@ -199,7 +202,7 @@ var wpInsertPages;
 				// Set slug/id (also set the slug as the search term)
 				regexp = /page=['"]([^['"]*)['"]/;
 				matches = regexp.exec( shortcode );
-				if ( matches.length > 1 ) {
+				if ( matches && matches.length > 1 ) {
 					// Indicate that this search term is a slug or id.
 					if ( isNaN( parseInt( matches[1] ) ) ) {
 						inputs.search.data( 'type', 'slug' );
@@ -215,7 +218,7 @@ var wpInsertPages;
 				// Update display dropdown to match the selected shortcode.
 				regexp = /display=['"]([^['"]*)['"]/;
 				matches = regexp.exec( shortcode );
-				if ( matches.length > 1 ) {
+				if ( matches && matches.length > 1 ) {
 					if ( ['title', 'link', 'excerpt', 'excerpt-only', 'content', 'all', ].indexOf( matches[1] ) >= 0 ) {
 						inputs.format.val( matches[1] );
 						inputs.template.val( 'all' );
@@ -224,6 +227,24 @@ var wpInsertPages;
 						inputs.template.val( matches[1] );
 					}
 					inputs.format.change();
+				}
+
+				// Update extra classes.
+				regexp = /class=['"]([^['"]*)['"]/;
+				matches = regexp.exec( shortcode );
+				if ( matches && matches.length > 1 ) {
+					inputs.extraClasses.val( matches[1] );
+				} else {
+					inputs.extraClasses.val( '' );
+				}
+
+				// Update extra inline (i.e., use span instead of div for wrapper).
+				regexp = /inline/;
+				matches = regexp.exec( shortcode );
+				if ( matches && matches.length > 0 ) {
+					inputs.extraInline.attr( 'checked', true );
+				} else {
+					inputs.extraInline.attr( 'checked', false );
 				}
 
 				// Update save prompt.
@@ -243,6 +264,8 @@ var wpInsertPages;
 			inputs.format.val('title');
 			inputs.format.change();
 			inputs.template.val('all');
+			inputs.extraClasses.val('');
+			inputs.extraInline.attr( 'checked', false );
 			inputs.search.val( '' );
 			inputs.search.data( 'type', 'text' );
 			inputs.search.keyup();
@@ -269,6 +292,8 @@ var wpInsertPages;
 				page: inputs.slug.val(),
 				pageID: inputs.pageID.val(),
 				display: inputs.format.val()=='template' ? inputs.template.val() : inputs.format.val(),
+				class: inputs.extraClasses.val(),
+				inline: inputs.extraInline.is( ':checked' ),
 			};
 		},
 
@@ -298,6 +323,8 @@ var wpInsertPages;
 			editor.selection.setContent("[insert " +
 				"page='" + attrs.page +"' " +
 				"display='" + attrs.display + "'" +
+				( attrs['class'].length > 0 ? " class='" + attrs['class'] + "'" : "" ) +
+				( attrs.inline ? " inline" : "" ) +
 				"]");
 			editor.execCommand("mceEndUndoLevel");
 		},

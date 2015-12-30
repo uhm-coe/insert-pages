@@ -8,7 +8,7 @@
 	-webkit-box-shadow: 0 3px 6px rgba(0,0,0,.3);
 	box-shadow: 0 3px 6px rgba(0,0,0,.3);
 	width: 500px;
-	height: 430px;
+	height: 400px;
 	overflow: hidden;
 	margin-left: -250px;
 	margin-top: -250px;
@@ -125,7 +125,7 @@
 }
 
 #wp-insertpage p.howto {
-	margin: 285px 0 3px;
+	margin: 255px 0 3px;
 }
 
 #insertpage-options-toggle {
@@ -140,6 +140,9 @@
 #wp-insertpage label input[type="text"] {
 	margin-top: 5px;
 	width: 77%;
+}
+#wp-insertpage label input#insertpage-extra-classes {
+	width: 66%;
 }
 
 #wp-insertpage #insertpage-search-panel label span.search-label {
@@ -182,7 +185,7 @@
 	left: 16px;
 	right: 16px;
 	top: 38px;
-	height: 265px;
+	height: 245px;
 }
 
 #wp-insertpage li,
@@ -286,8 +289,12 @@
 
 @media screen and ( max-width: 782px ) {
 	#wp-insertpage-wrap {
-		height: 450px;
+		height: 420px;
 		margin-top: -250px;
+	}
+
+	#wp-insertpage label input#insertpage-extra-classes {
+		width: 62%;
 	}
 
 	#wp-insertpage-wrap.options-panel-visible {
@@ -318,6 +325,10 @@
 		left: 10px;
 		right: 10px;
 		max-width: 500px;
+	}
+
+	#wp-insertpage label input#insertpage-extra-classes {
+		width: 48%;
 	}
 
 	#wp-insertpage-wrap.options-panel-visible {

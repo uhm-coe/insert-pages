@@ -428,7 +428,7 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 					<div class="insertpage-options-wrapper">
 						<label for="insertpage-slug-field">
 							<span><?php _e( 'Slug or ID' ); ?></span>
-							<input id="insertpage-slug-field" type="text" tabindex="10" autocomplete="off" />
+							<input id="insertpage-slug-field" type="text" autocomplete="off" />
 							<input id="insertpage-pageID" type="hidden" />
 						</label>
 					</div>
@@ -448,6 +448,16 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 								<option value='all'><?php _e( 'Default Template' ); ?></option>
 								<?php page_template_dropdown(); ?>
 							</select>
+						</label>
+					</div>
+					<div class="insertpage-extra">
+						<label for="insertpage-extra-classes">
+							<?php _e( 'Extra Classes' ); ?>
+							<input id="insertpage-extra-classes" type="text" autocomplete="off" />
+						</label>
+						<label for="insertpage-extra-inline">
+							<?php _e( 'Inline?' ); ?>
+							<input id="insertpage-extra-inline" type="checkbox" />
 						</label>
 					</div>
 				</div>
