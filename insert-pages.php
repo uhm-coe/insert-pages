@@ -611,11 +611,21 @@ if ( class_exists( 'InsertPagesPlugin' ) ) {
 
 // Actions and Filters handled by InsertPagesPlugin class
 if ( isset( $insertPages_plugin ) ) {
-	// Actions
-	add_action( 'init', array( $insertPages_plugin, 'insertPages_init' ), 1 ); // Register Shortcodes here
-	add_action( 'admin_head', array( $insertPages_plugin, 'insertPages_admin_init' ), 1 ); // Add TinyMCE buttons here
-	add_action( 'before_wp_tiny_mce', array( $insertPages_plugin, 'insertPages_wp_tinymce_dialog' ), 1 ); // Preload TinyMCE popup
-	add_action( 'wp_ajax_insertpage', array( $insertPages_plugin, 'insertPages_insert_page_callback' ) ); // Populate page search in TinyMCE button popup in this ajax call
+	// Register shortcode [insert ...].
+	add_action( 'init', array( $insertPages_plugin, 'insertPages_init' ), 1 );
+
+	// Add TinyMCE button for shortcode.
+	add_action( 'admin_head', array( $insertPages_plugin, 'insertPages_admin_init' ), 1 );
+
+	// Add quicktags button for shortcode.
 	add_action( 'admin_print_footer_scripts', array( $insertPages_plugin, 'insertPages_add_quicktags' ) );
+
+	// Preload TinyMCE popup.
+	add_action( 'before_wp_tiny_mce', array( $insertPages_plugin, 'insertPages_wp_tinymce_dialog' ), 1 );
+
+	// Ajax: Populate page search in TinyMCE button popup.
+	add_action( 'wp_ajax_insertpage', array( $insertPages_plugin, 'insertPages_insert_page_callback' ) );
+
+	// Use internal filter to wrap inserted content in a div or span.
 	add_filter( 'insert_pages_wrap_content', array( $insertPages_plugin, 'insertPages_wrap_content' ), 10, 3 );
 }
