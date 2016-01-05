@@ -437,7 +437,7 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 							<select name="insertpage-format-select" id="insertpage-format-select">
 								<option value='title'>Title</option>
 								<option value='link'>Link</option>
-								<option value='excerpt'>Excerpt</option>
+								<option value='excerpt'>Excerpt with title</option>
 								<option value='excerpt-only'>Excerpt only (no title)</option>
 								<option value='content'>Content</option>
 								<option value='all'>All (includes custom fields)</option>
