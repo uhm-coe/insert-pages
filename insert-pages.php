@@ -5,7 +5,7 @@ Plugin Name: Insert Pages
 Plugin URI: https://github.com/uhm-coe/insert-pages
 Description: Insert Pages lets you embed any WordPress content (e.g., pages, posts, custom post types) into other WordPress content using the Shortcode API.
 Author: Paul Ryan
-Version: 3.0
+Version: 3.0.1
 Author URI: http://www.linkedin.com/in/paulrryan
 License: GPL2
 */
@@ -59,7 +59,7 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 		function insertPages_admin_init() {
 			// Get options set in WordPress dashboard (Settings > Insert Pages).
 			$options = get_option( 'wpip_settings' );
-			if ( $options === FALSE ) {
+			if ( $options === FALSE || ! is_array( $options ) || ! array_key_exists( 'wpip_format', $options ) || ! array_key_exists( 'wpip_wrapper', $options ) || ! array_key_exists( 'wpip_insert_method', $options ) ) {
 				$options = wpip_set_defaults();
 			}
 
@@ -127,7 +127,7 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 
 			// Get options set in WordPress dashboard (Settings > Insert Pages).
 			$options = get_option( 'wpip_settings' );
-			if ( $options === FALSE ) {
+			if ( $options === FALSE || ! is_array( $options ) || ! array_key_exists( 'wpip_format', $options ) || ! array_key_exists( 'wpip_wrapper', $options ) || ! array_key_exists( 'wpip_insert_method', $options ) ) {
 				$options = wpip_set_defaults();
 			}
 
@@ -211,99 +211,123 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 				$post->ID = $old_post_id;
 			}
 
-			// Start output buffering so we can save the output to a string.
-			ob_start();
+			// Use "Normal" insert method (get_post()).
+			if ( $options['wpip_insert_method'] !== 'legacy' ) {
+				// Start output buffering so we can save the output to a string.
+				ob_start();
 
-			// Show either the title, link, content, everything, or everything via a custom template
-			// Note: if the sharing_display filter exists, it means Jetpack is installed and Sharing is enabled;
-			// This plugin conflicts with Sharing, because Sharing assumes the_content and the_excerpt filters
-			// are only getting called once. The fix here is to disable processing of filters on the_content in
-			// the inserted page. @see https://codex.wordpress.org/Function_Reference/the_content#Alternative_Usage
-			switch ( $attributes['display'] ) {
+				// Show either the title, link, content, everything, or everything via a custom template
+				// Note: if the sharing_display filter exists, it means Jetpack is installed and Sharing is enabled;
+				// This plugin conflicts with Sharing, because Sharing assumes the_content and the_excerpt filters
+				// are only getting called once. The fix here is to disable processing of filters on the_content in
+				// the inserted page. @see https://codex.wordpress.org/Function_Reference/the_content#Alternative_Usage
+				switch ( $attributes['display'] ) {
 
-			case "title":
-				$title_tag = $attributes['inline'] ? 'span' : 'h1';
-				echo "<$title_tag class='insert-page-title'>";
-				get_the_title( $inserted_page->ID );
-				echo "</$title_tag>";
-				break;
+				case "title":
+					$title_tag = $attributes['inline'] ? 'span' : 'h1';
+					echo "<$title_tag class='insert-page-title'>";
+					echo get_the_title( $inserted_page->ID );
+					echo "</$title_tag>";
+					break;
 
-			case "link":
-				?><a href="<?php echo esc_url( get_permalink( $inserted_page->ID ) ); ?>"><?php get_the_title( $inserted_page->ID ); ?></a><?php
-				break;
+				case "link":
+					?><a href="<?php echo esc_url( get_permalink( $inserted_page->ID ) ); ?>"><?php echo get_the_title( $inserted_page->ID ); ?></a><?php
+					break;
 
-			case "excerpt":
-				?><h1><a href="<?php echo esc_url( get_permalink( $inserted_page->ID ) ); ?>"><?php get_the_title( $inserted_page->ID ); ?></a></h1><?php
-				$excerpt = get_post_field( 'post_excerpt', $inserted_page->ID );
-				if ( $attributes['should_apply_the_content_filter'] ) {
-					$excerpt = apply_filters( 'the_excerpt', $excerpt );
-				}
-				echo $excerpt;
-				break;
+				case "excerpt":
+					?><h1><a href="<?php echo esc_url( get_permalink( $inserted_page->ID ) ); ?>"><?php echo get_the_title( $inserted_page->ID ); ?></a></h1><?php
+					echo $this->insertPages_trim_excerpt( get_post_field( 'post_excerpt', $inserted_page->ID ), $inserted_page->ID, $attributes['should_apply_the_content_filter'] );
+					break;
 
-			case "excerpt-only":
-				$excerpt = get_post_field( 'post_excerpt', $inserted_page->ID );
-				if ( $attributes['should_apply_the_content_filter'] ) {
-					$excerpt = apply_filters( 'the_excerpt', $excerpt );
-				}
-				echo $excerpt;
-				break;
+				case "excerpt-only":
+					echo $this->insertPages_trim_excerpt( get_post_field( 'post_excerpt', $inserted_page->ID ), $inserted_page->ID, $attributes['should_apply_the_content_filter'] );
+					break;
 
-			case "content":
-				$content = get_post_field( 'post_content', $inserted_page->ID );
-				if ( $attributes['should_apply_the_content_filter'] ) {
-					$content = apply_filters( 'the_content', $content );
-				}
-				echo $content;
-				break;
-
-			case "all":
-				// Title.
-				$title_tag = $attributes['inline'] ? 'span' : 'h1';
-				echo "<$title_tag class='insert-page-title'>";
-				get_the_title( $inserted_page->ID );
-				echo "</$title_tag>";
-				// Content.
-				$content = get_post_field( 'post_content', $inserted_page->ID );
-				if ( $attributes['should_apply_the_content_filter'] ) {
-					$content = apply_filters( 'the_content', $content );
-				}
-				echo $content;
-				// Meta.
-				// @ref https://core.trac.wordpress.org/browser/tags/4.4/src/wp-includes/post-template.php#L968
-				if ( $keys = get_post_custom_keys( $inserted_page->ID ) ) {
-					echo "<ul class='post-meta'>\n";
-					foreach ( (array) $keys as $key ) {
-						$keyt = trim( $key );
-						if ( is_protected_meta( $keyt, 'post' ) ) {
-							continue;
-						}
-						$values = array_map( 'trim', get_post_custom_values( $key ) );
-						$value = implode( $values, ', ' );
-
-						/**
-						 * Filter the HTML output of the li element in the post custom fields list.
-						 *
-						 * @since 2.2.0
-						 *
-						 * @param string $html  The HTML output for the li element.
-						 * @param string $key   Meta key.
-						 * @param string $value Meta value.
-						 */
-						echo apply_filters( 'the_meta_key', "<li><span class='post-meta-key'>$key:</span> $value</li>\n", $key, $value );
+				case "content":
+					$content = get_post_field( 'post_content', $inserted_page->ID );
+					if ( $attributes['should_apply_the_content_filter'] ) {
+						$content = apply_filters( 'the_content', $content );
 					}
-					echo "</ul>\n";
-				}
-				break;
+					echo $content;
+					break;
 
-			default: // display is either invalid, or contains a template file to use
-				// Legacy/compatibility code: In order to use custom templates,
-				// we use query_posts() to provide the template with the global
-				// state it requires for the inserted page (in other words, all
-				// template tags will work with respect to the inserted page
-				// instead of the parent page / main loop). Note that this may
-				// cause some compatibility issues with other plugins.
-				// @ref https://codex.wordpress.org/Function_Reference/query_posts
+				case "all":
+					// Title.
+					$title_tag = $attributes['inline'] ? 'span' : 'h1';
+					echo "<$title_tag class='insert-page-title'>";
+					echo get_the_title( $inserted_page->ID );
+					echo "</$title_tag>";
+					// Content.
+					$content = get_post_field( 'post_content', $inserted_page->ID );
+					if ( $attributes['should_apply_the_content_filter'] ) {
+						$content = apply_filters( 'the_content', $content );
+					}
+					echo $content;
+					// Meta.
+					// @ref https://core.trac.wordpress.org/browser/tags/4.4/src/wp-includes/post-template.php#L968
+					if ( $keys = get_post_custom_keys( $inserted_page->ID ) ) {
+						echo "<ul class='post-meta'>\n";
+						foreach ( (array) $keys as $key ) {
+							$keyt = trim( $key );
+							if ( is_protected_meta( $keyt, 'post' ) ) {
+								continue;
+							}
+							$values = array_map( 'trim', get_post_custom_values( $key ) );
+							$value = implode( $values, ', ' );
+
+							/**
+							 * Filter the HTML output of the li element in the post custom fields list.
+							 *
+							 * @since 2.2.0
+							 *
+							 * @param string $html  The HTML output for the li element.
+							 * @param string $key   Meta key.
+							 * @param string $value Meta value.
+							 */
+							echo apply_filters( 'the_meta_key', "<li><span class='post-meta-key'>$key:</span> $value</li>\n", $key, $value );
+						}
+						echo "</ul>\n";
+					}
+					break;
+
+				default: // display is either invalid, or contains a template file to use
+					// Legacy/compatibility code: In order to use custom templates,
+					// we use query_posts() to provide the template with the global
+					// state it requires for the inserted page (in other words, all
+					// template tags will work with respect to the inserted page
+					// instead of the parent page / main loop). Note that this may
+					// cause some compatibility issues with other plugins.
+					// @ref https://codex.wordpress.org/Function_Reference/query_posts
+					if ( is_numeric( $attributes['page'] ) ) {
+						$args = array(
+							'p' => intval( $attributes['page'] ),
+							'post_type' => get_post_types(),
+						);
+					} else {
+						$args = array(
+							'name' => esc_attr( $attributes['page'] ),
+							'post_type' => get_post_types(),
+						);
+					}
+					$inserted_page = query_posts( $args );
+					if ( have_posts() ) {
+						$template = locate_template( $attributes['display'] );
+						if ( strlen( $template ) > 0 ) {
+							include $template; // execute the template code
+						} else { // Couldn't find template, so fall back to printing a link to the page.
+							the_post();
+							?><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a><?php
+						}
+					}
+					wp_reset_query();
+
+				}
+
+				// Save output buffer contents.
+				$content = ob_get_clean();
+
+			// Use "Legacy" insert method (query_posts()).
+			} else {
 				if ( is_numeric( $attributes['page'] ) ) {
 					$args = array(
 						'p' => intval( $attributes['page'] ),
@@ -315,23 +339,65 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 						'post_type' => get_post_types(),
 					);
 				}
-				$inserted_page = query_posts( $args );
+				$posts = query_posts( $args );
 				if ( have_posts() ) {
-					$template = locate_template( $attributes['display'] );
-					if ( strlen( $template ) > 0 ) {
-						include $template; // execute the template code
-					} else { // Couldn't find template, so fall back to printing a link to the page.
+					// Start output buffering so we can save the output to string
+					ob_start();
+					// Show either the title, link, content, everything, or everything via a custom template
+					// Note: if the sharing_display filter exists, it means Jetpack is installed and Sharing is enabled;
+					// This plugin conflicts with Sharing, because Sharing assumes the_content and the_excerpt filters
+					// are only getting called once. The fix here is to disable processing of filters on the_content in
+					// the inserted page. @see https://codex.wordpress.org/Function_Reference/the_content#Alternative_Usage
+					switch ( $attributes['display'] ) {
+					case "title":
+						the_post();
+						$title_tag = $attributes['inline'] ? 'span' : 'h1';
+						echo "<$title_tag class='insert-page-title'>";
+						the_title();
+						echo "</$title_tag>";
+						break;
+					case "link":
 						the_post();
 						?><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a><?php
+						break;
+					case "excerpt":
+						the_post();
+						?><h1><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a></h1><?php
+						if ( $attributes['should_apply_the_content_filter'] ) the_excerpt(); else echo get_the_excerpt();
+						break;
+					case "excerpt-only":
+						the_post();
+						if ( $attributes['should_apply_the_content_filter'] ) the_excerpt(); else echo get_the_excerpt();
+						break;
+					case "content":
+						the_post();
+						if ( $attributes['should_apply_the_content_filter'] ) the_content(); else echo get_the_content();
+						break;
+					case "all":
+						the_post();
+						$title_tag = $attributes['inline'] ? 'span' : 'h1';
+						echo "<$title_tag class='insert-page-title'>";
+						the_title();
+						echo "</$title_tag>";
+						if ( $attributes['should_apply_the_content_filter'] ) the_content(); else echo get_the_content();
+						the_meta();
+						break;
+					default: // display is either invalid, or contains a template file to use
+						$template = locate_template( $attributes['display'] );
+						if ( strlen( $template ) > 0 ) {
+							include $template; // execute the template code
+						} else { // Couldn't find template, so fall back to printing a link to the page.
+							the_post();
+							?><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a><?php
+						}
+						break;
 					}
-					break;
+					// Save output buffer contents.
+					$content = ob_get_clean();
+
 				}
 				wp_reset_query();
-
 			}
-
-			// Save output buffer contents.
-			$content = ob_get_clean();
 
 			/**
 			 * Filter the markup generated for the inserted page.
@@ -367,6 +433,55 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 		function insertPages_handleFilter_mceExternalPlugins( $plugins ) {
 			$plugins['wpInsertPages'] = plugins_url( '/js/wpinsertpages_plugin.js', __FILE__ );
 			return $plugins;
+		}
+
+		// Helper function to generate an excerpt (outside of the Loop) for a given ID.
+		// @ref wp_trim_excerpt()
+		function insertPages_trim_excerpt( $text = '', $post_id = 0, $apply_the_content_filter = true ) {
+			$post_id = intval( $post_id );
+			if ( $post_id < 1 ) {
+				return '';
+			}
+
+			$raw_excerpt = $text;
+			if ( '' == $text ) {
+				$text = get_post_field( 'post_content', $post_id );
+
+				$text = strip_shortcodes( $text );
+
+				/** This filter is documented in wp-includes/post-template.php */
+				if ( $apply_the_content_filter ) {
+					$text = apply_filters( 'the_content', $text );
+				}
+				$text = str_replace( ']]>', ']]&gt;', $text );
+
+				/**
+				 * Filter the number of words in an excerpt.
+				 *
+				 * @since 2.7.0
+				 *
+				 * @param int $number The number of words. Default 55.
+				 */
+				$excerpt_length = apply_filters( 'excerpt_length', 55 );
+				/**
+				 * Filter the string in the "more" link displayed after a trimmed excerpt.
+				 *
+				 * @since 2.9.0
+				 *
+				 * @param string $more_string The string shown within the more link.
+				 */
+				$excerpt_more = apply_filters( 'excerpt_more', ' ' . '[&hellip;]' );
+				$text = wp_trim_words( $text, $excerpt_length, $excerpt_more );
+			}
+			/**
+			 * Filter the trimmed excerpt string.
+			 *
+			 * @since 2.8.0
+			 *
+			 * @param string $text        The trimmed text.
+			 * @param string $raw_excerpt The text prior to trimming.
+			 */
+			return apply_filters( 'wp_trim_excerpt', $text, $raw_excerpt );
 		}
 
 		/**
@@ -438,7 +553,7 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 							<select name="insertpage-format-select" id="insertpage-format-select">
 								<option value='title'>Title</option>
 								<option value='link'>Link</option>
-								<option value='excerpt'>Excerpt</option>
+								<option value='excerpt'>Excerpt with title</option>
 								<option value='excerpt-only'>Excerpt only (no title)</option>
 								<option value='content'>Content</option>
 								<option value='all'>All (includes custom fields)</option>
