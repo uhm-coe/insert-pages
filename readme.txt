@@ -86,6 +86,10 @@ Just one! The plugin prevents you from embedding a page in itself, but you can t
 
 == Changelog ==
 
+= 3.0.1 =
+* Hotfix: Version 3 broke some plugin compatibility (most notably with Beaver Builder and Page Builder by SiteOrigin). This update should restore functionality.
+* Hotfix: Version 3 broke some page displays (e.g., content, all). This update should restore functionality.
+
 = 3.0 =
 * Hotfix: 2.9.1 broke extra classes added to the inserted page wrapper. Props @philipsacht!
 * Feature: Expose extra classes and inline status in tinymce dialog.
