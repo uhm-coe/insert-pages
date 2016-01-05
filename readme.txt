@@ -17,7 +17,7 @@ The real power of Insert Pages comes when you start creating custom post types, 
 
 Here are two quick example use cases:
 
-### Novice Use Case
+### Normal Use
 Say you teach a course and you're constantly referring to an assignment due date in your course website. The next semester the due date changes, and you have to go change all of the locations you referred to it. Instead, you'd rather just change the date once! With Insert Pages, you can do the following:
 
 1. Create a custom post type called **Due Date**.
@@ -25,7 +25,7 @@ Say you teach a course and you're constantly referring to an assignment due date
 1. Edit all the pages where the due date occurs and use the *Insert Pages* toolbar button to insert a reference to the *Due Date* you just created. Be sure to set the *Display* to **Content** so *Fri Nov 22, 2013* shows wherever you insert it. The shortcode you just created should look something like this: `[insert page='assignment-1-due-date' display='content']`
 1. That's it! Now, when you want to change the due date, just edit the *Assignment 1 Due Date* custom post you created, and it will automatically be updated on all the pages you inserted it on.
 
-### Expert Use Case
+### Advanced Use
 Say your site has a lot of video content, and you want to include video transcripts and video lengths along with the videos wherever you show them. You could just paste the transcripts into the page content under the video, but then you'd have to do this on every page the video showed on. (It's also just a bad idea, architecturally!) With Insert Pages, you can use a custom post type and create a custom theme template to display your videos+transcripts+lengths just the way you want!
 
 1. Create a custom post type called **Video**.
