@@ -324,7 +324,6 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 						the_post();
 						?><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a><?php
 					}
-					break;
 				}
 				wp_reset_query();
 
