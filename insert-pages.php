@@ -5,7 +5,7 @@ Plugin Name: Insert Pages
 Plugin URI: https://github.com/uhm-coe/insert-pages
 Description: Insert Pages lets you embed any WordPress content (e.g., pages, posts, custom post types) into other WordPress content using the Shortcode API.
 Author: Paul Ryan
-Version: 3.0.1
+Version: 3.0.2
 Author URI: http://www.linkedin.com/in/paulrryan
 License: GPL2
 */

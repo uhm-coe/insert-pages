@@ -86,6 +86,9 @@ Just one! The plugin prevents you from embedding a page in itself, but you can t
 
 == Changelog ==
 
+= 3.0.2 =
+* Hotfix: Inserting posts with custom paths using legacy insert method.
+
 = 3.0.1 =
 * Hotfix: Version 3 broke some plugin compatibility (most notably with Beaver Builder and Page Builder by SiteOrigin). This update should restore functionality.
 * Hotfix: Version 3 broke some page displays (e.g., content, all). This update should restore functionality.
