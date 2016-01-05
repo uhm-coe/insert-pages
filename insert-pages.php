@@ -188,33 +188,34 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 				$inserted_page = get_post( intval( $attributes['page'] ) );
 			}
 
-			// If we couldn't retrieve the page, fire the filter hook showing a not-found message.
-			if ( $inserted_page === null ) {
-				/**
-				 * Filter the html that should be displayed if an inserted page was not found.
-				 *
-				 * @param string $content html to be displayed. Defaults to an empty string.
-				 */
-				$content = apply_filters( 'insert_pages_not_found_message', $content );
-
-				// Short-circuit since we didn't find the page.
-				return $content;
-			}
-
-			// If Beaver Builder plugin is enabled, load any cached styles associated with the inserted page.
-			// Note: Temporarily set the global $post->ID to the inserted page ID,
-			// since Beaver Builder relies on it to load the appropriate styles.
-			if ( class_exists( 'FLBuilder' ) ) {
-				$old_post_id = $post->ID;
-				$post->ID = $inserted_page->ID;
-				FLBuilder::enqueue_layout_styles_scripts( $inserted_page->ID );
-				$post->ID = $old_post_id;
-			}
-
 			// Use "Normal" insert method (get_post()).
 			if ( $options['wpip_insert_method'] !== 'legacy' ) {
+
+				// If we couldn't retrieve the page, fire the filter hook showing a not-found message.
+				if ( $inserted_page === null ) {
+					/**
+					 * Filter the html that should be displayed if an inserted page was not found.
+					 *
+					 * @param string $content html to be displayed. Defaults to an empty string.
+					 */
+					$content = apply_filters( 'insert_pages_not_found_message', $content );
+
+					// Short-circuit since we didn't find the page.
+					return $content;
+				}
+
 				// Start output buffering so we can save the output to a string.
 				ob_start();
+
+				// If Beaver Builder plugin is enabled, load any cached styles associated with the inserted page.
+				// Note: Temporarily set the global $post->ID to the inserted page ID,
+				// since Beaver Builder relies on it to load the appropriate styles.
+				if ( class_exists( 'FLBuilder' ) ) {
+					$old_post_id = $post->ID;
+					$post->ID = $inserted_page->ID;
+					FLBuilder::enqueue_layout_styles_scripts( $inserted_page->ID );
+					$post->ID = $old_post_id;
+				}
 
 				// Show either the title, link, content, everything, or everything via a custom template
 				// Note: if the sharing_display filter exists, it means Jetpack is installed and Sharing is enabled;
@@ -328,6 +329,8 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 
 			// Use "Legacy" insert method (query_posts()).
 			} else {
+
+				// Construct query_posts arguments.
 				if ( is_numeric( $attributes['page'] ) ) {
 					$args = array(
 						'p' => intval( $attributes['page'] ),
@@ -343,6 +346,17 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 				if ( have_posts() ) {
 					// Start output buffering so we can save the output to string
 					ob_start();
+
+					// If Beaver Builder plugin is enabled, load any cached styles associated with the inserted page.
+					// Note: Temporarily set the global $post->ID to the inserted page ID,
+					// since Beaver Builder relies on it to load the appropriate styles.
+					if ( class_exists( 'FLBuilder' ) ) {
+						$old_post_id = $post->ID;
+						$post->ID = $inserted_page->ID;
+						FLBuilder::enqueue_layout_styles_scripts( $inserted_page->ID );
+						$post->ID = $old_post_id;
+					}
+
 					// Show either the title, link, content, everything, or everything via a custom template
 					// Note: if the sharing_display filter exists, it means Jetpack is installed and Sharing is enabled;
 					// This plugin conflicts with Sharing, because Sharing assumes the_content and the_excerpt filters
@@ -394,7 +408,13 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 					}
 					// Save output buffer contents.
 					$content = ob_get_clean();
-
+				} else {
+					/**
+					 * Filter the html that should be displayed if an inserted page was not found.
+					 *
+					 * @param string $content html to be displayed. Defaults to an empty string.
+					 */
+					$content = apply_filters( 'insert_pages_not_found_message', $content );
 				}
 				wp_reset_query();
 			}
