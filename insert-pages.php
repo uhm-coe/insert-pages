@@ -224,29 +224,21 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 			case "title":
 				$title_tag = $attributes['inline'] ? 'span' : 'h1';
 				echo "<$title_tag class='insert-page-title'>";
-				get_the_title( $inserted_page->ID );
+				echo get_the_title( $inserted_page->ID );
 				echo "</$title_tag>";
 				break;
 
 			case "link":
-				?><a href="<?php echo esc_url( get_permalink( $inserted_page->ID ) ); ?>"><?php get_the_title( $inserted_page->ID ); ?></a><?php
+				?><a href="<?php echo esc_url( get_permalink( $inserted_page->ID ) ); ?>"><?php echo get_the_title( $inserted_page->ID ); ?></a><?php
 				break;
 
 			case "excerpt":
-				?><h1><a href="<?php echo esc_url( get_permalink( $inserted_page->ID ) ); ?>"><?php get_the_title( $inserted_page->ID ); ?></a></h1><?php
-				$excerpt = get_post_field( 'post_excerpt', $inserted_page->ID );
-				if ( $attributes['should_apply_the_content_filter'] ) {
-					$excerpt = apply_filters( 'the_excerpt', $excerpt );
-				}
-				echo $excerpt;
+				?><h1><a href="<?php echo esc_url( get_permalink( $inserted_page->ID ) ); ?>"><?php echo get_the_title( $inserted_page->ID ); ?></a></h1><?php
+				echo $this->insertPages_trim_excerpt( get_post_field( 'post_excerpt', $inserted_page->ID ), $inserted_page->ID, $attributes['should_apply_the_content_filter'] );
 				break;
 
 			case "excerpt-only":
-				$excerpt = get_post_field( 'post_excerpt', $inserted_page->ID );
-				if ( $attributes['should_apply_the_content_filter'] ) {
-					$excerpt = apply_filters( 'the_excerpt', $excerpt );
-				}
-				echo $excerpt;
+				echo $this->insertPages_trim_excerpt( get_post_field( 'post_excerpt', $inserted_page->ID ), $inserted_page->ID, $attributes['should_apply_the_content_filter'] );
 				break;
 
 			case "content":
@@ -261,7 +253,7 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 				// Title.
 				$title_tag = $attributes['inline'] ? 'span' : 'h1';
 				echo "<$title_tag class='insert-page-title'>";
-				get_the_title( $inserted_page->ID );
+				echo get_the_title( $inserted_page->ID );
 				echo "</$title_tag>";
 				// Content.
 				$content = get_post_field( 'post_content', $inserted_page->ID );
@@ -366,6 +358,55 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 		function insertPages_handleFilter_mceExternalPlugins( $plugins ) {
 			$plugins['wpInsertPages'] = plugins_url( '/js/wpinsertpages_plugin.js', __FILE__ );
 			return $plugins;
+		}
+
+		// Helper function to generate an excerpt (outside of the Loop) for a given ID.
+		// @ref wp_trim_excerpt()
+		function insertPages_trim_excerpt( $text = '', $post_id = 0, $apply_the_content_filter = true ) {
+			$post_id = intval( $post_id );
+			if ( $post_id < 1 ) {
+				return '';
+			}
+
+			$raw_excerpt = $text;
+			if ( '' == $text ) {
+				$text = get_post_field( 'post_content', $post_id );
+
+				$text = strip_shortcodes( $text );
+
+				/** This filter is documented in wp-includes/post-template.php */
+				if ( $apply_the_content_filter ) {
+					$text = apply_filters( 'the_content', $text );
+				}
+				$text = str_replace( ']]>', ']]&gt;', $text );
+
+				/**
+				 * Filter the number of words in an excerpt.
+				 *
+				 * @since 2.7.0
+				 *
+				 * @param int $number The number of words. Default 55.
+				 */
+				$excerpt_length = apply_filters( 'excerpt_length', 55 );
+				/**
+				 * Filter the string in the "more" link displayed after a trimmed excerpt.
+				 *
+				 * @since 2.9.0
+				 *
+				 * @param string $more_string The string shown within the more link.
+				 */
+				$excerpt_more = apply_filters( 'excerpt_more', ' ' . '[&hellip;]' );
+				$text = wp_trim_words( $text, $excerpt_length, $excerpt_more );
+			}
+			/**
+			 * Filter the trimmed excerpt string.
+			 *
+			 * @since 2.8.0
+			 *
+			 * @param string $text        The trimmed text.
+			 * @param string $raw_excerpt The text prior to trimming.
+			 */
+			return apply_filters( 'wp_trim_excerpt', $text, $raw_excerpt );
 		}
 
 		/**
