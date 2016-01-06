@@ -86,6 +86,9 @@ Just one! The plugin prevents you from embedding a page in itself, but you can t
 
 == Changelog ==
 
+= 3.1 =
+* Feature: Insert Page widget. Go to Appearance > Widgets to add the Insert Page widget to any of your widget areas. Specify a page slug or ID in the widget, and that page will get displayed in the widget area.
+
 = 3.0.2 =
 * Hotfix: Inserting posts with custom paths using legacy insert method.
 
