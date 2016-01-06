@@ -2,7 +2,7 @@
 /* global ajaxurl, tinymce, wpLinkL10n, setUserSetting, wpActiveEditor */
 var wpInsertPages;
 
-(function($){
+(function ( $ ) {
 	var inputs = {}, rivers = {}, editor, searchTimer, RiverInsertPages, QueryInsertPages;
 
 	wpInsertPages = {
@@ -631,5 +631,6 @@ var wpInsertPages;
 		}
 	});
 
-	$(document).ready( wpInsertPages.init );
-})(jQuery);
+	$( document ).ready( wpInsertPages.init );
+
+})( jQuery );
