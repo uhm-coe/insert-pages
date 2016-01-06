@@ -766,5 +766,5 @@ if ( isset( $insertPages_plugin ) ) {
 
 	// Register Insert Pages shortcode widget.
 	require_once( dirname( __FILE__ ) . '/widget.php' );
-	add_action( 'widgets_init', function () { return register_widget( 'InsertPagesWidget' ); } );
+	add_action( 'widgets_init', create_function( '', 'return register_widget( "InsertPagesWidget" );' ) );
 }
