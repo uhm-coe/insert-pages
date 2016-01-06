@@ -86,6 +86,9 @@ Just one! The plugin prevents you from embedding a page in itself, but you can t
 
 == Changelog ==
 
+= 3.1.1 =
+* Fix: Add compatibility for PHP 5.2 in the widget registration code. See https://codex.wordpress.org/Widgets_API
+
 = 3.1 =
 * Feature: Insert Page widget. Go to Appearance > Widgets to add the Insert Page widget to any of your widget areas. Specify a page slug or ID in the widget, and that page will get displayed in the widget area.
 
