@@ -763,4 +763,8 @@ if ( isset( $insertPages_plugin ) ) {
 
 	// Use internal filter to wrap inserted content in a div or span.
 	add_filter( 'insert_pages_wrap_content', array( $insertPages_plugin, 'insertPages_wrap_content' ), 10, 3 );
+
+	// Register Insert Pages shortcode widget.
+	require_once( dirname( __FILE__ ) . '/widget.php' );
+	add_action( 'widgets_init', function () { return register_widget( 'InsertPagesWidget' ); } );
 }
