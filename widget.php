@@ -11,13 +11,21 @@ class InsertPagesWidget extends WP_Widget {
 	 * Set up the widget.
 	 */
 	public function __construct() {
-		// Load admin javascript for Widget options.
-		if ( is_admin() ) {
-			wp_enqueue_script( 'insertpages_widget', plugins_url( '/js/widget.js', __FILE__ ), array( 'jquery' ), '20160105' );
-		}
+		// Load admin javascript for Widget options on admin page (widgets.php).
+		add_action( 'sidebar_admin_page', array( $this, 'widget_admin_js' ) );
+
+		// Load admin javascript for Widget options on theme customize page (customize.php)
+		add_action( 'customize_controls_enqueue_scripts', array( $this, 'widget_admin_js' ) );
 
 		// Call parent constructor to initialize the widget.
 		parent::__construct( 'ipw', 'Insert Page', array( 'description' => 'Insert a page into a widget area.' ) );
+	}
+
+	/**
+	 * Load javascript for interacting with the Insert Page widget.
+	 */
+	function widget_admin_js() {
+		wp_enqueue_script( 'insertpages_widget', plugins_url( '/js/widget.js', __FILE__ ), array( 'jquery' ), '20160429' );
 	}
 
 	/**
