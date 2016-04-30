@@ -2,7 +2,7 @@
 Contributors: figureone, the_magician
 Tags: insert, pages, shortcode, embed
 Requires at least: 3.0.1
-Tested up to: 4.5
+Tested up to: 4.5.1
 Stable tag: trunk
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -85,6 +85,9 @@ Just one! The plugin prevents you from embedding a page in itself, but you can t
 3. Insert Pages shortcode example.
 
 == Changelog ==
+
+= 3.1.2 =
+* Fix for custom template dropdown not enabling when configuring the widget on the theme customizer page (customize.php). Props @aassouad for finding this!
 
 = 3.1.1 =
 * Fix: Add compatibility for PHP 5.2 in the widget registration code. See https://codex.wordpress.org/Widgets_API
