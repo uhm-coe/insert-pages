@@ -86,6 +86,9 @@ Just one! The plugin prevents you from embedding a page in itself, but you can t
 
 == Changelog ==
 
+= 3.1.3 =
+* Prevent menu items and page attachments from being insertable; this fixes problems with inserting pages via slug when there is a menu item with the same slug as a page/post. Props @k7f7 for tracking this one down!
+
 = 3.1.2 =
 * Fix for custom template dropdown not enabling when configuring the widget on the theme customizer page (customize.php). Props @aassouad for finding this!
 
