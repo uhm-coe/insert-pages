@@ -182,7 +182,12 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 
 			// Get the WP_Post object from the provided slug or ID.
 			if ( ! is_numeric( $attributes['page'] ) ) {
-				$inserted_page = get_page_by_path( $attributes['page'], OBJECT, get_post_types() );
+				// Get list of post types that can be inserted (page, post, custom
+				// types), excluding builtin types (nav_menu_item, attachment).
+				$insertable_post_types = array_filter( get_post_types(), function ( $type ) {
+					return ! in_array( $type, array( 'nav_menu_item', 'attachment' ) );
+				});
+				$inserted_page = get_page_by_path( $attributes['page'], OBJECT, $insertable_post_types );
 				$attributes['page'] = $inserted_page ? $inserted_page->ID : $attributes['page'];
 			} else {
 				$inserted_page = get_post( intval( $attributes['page'] ) );
