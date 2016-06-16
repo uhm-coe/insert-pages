@@ -86,6 +86,9 @@ Just one! The plugin prevents you from embedding a page in itself, but you can t
 
 == Changelog ==
 
+= 3.1.4 =
+* Compatibility for for php versions lower than 5.3. Replace closure with create_function().
+
 = 3.1.3 =
 * Prevent menu items and page attachments from being insertable; this fixes problems with inserting pages via slug when there is a menu item with the same slug as a page/post. Props @k7f7 for tracking this one down!
 
