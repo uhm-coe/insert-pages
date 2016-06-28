@@ -2,7 +2,7 @@
 Contributors: figureone, the_magician
 Tags: insert, pages, shortcode, embed
 Requires at least: 3.0.1
-Tested up to: 4.5.1
+Tested up to: 4.5.3
 Stable tag: trunk
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -85,6 +85,9 @@ Just one! The plugin prevents you from embedding a page in itself, but you can t
 3. Insert Pages shortcode example.
 
 == Changelog ==
+
+= 3.1.5 =
+* Fix for php warning when inserting page outside of The Loop while using Beaver Builder. Props @jeffreytanuwidjaja for the report.
 
 = 3.1.4 =
 * Compatibility for for php versions lower than 5.3. Replace closure with create_function().
