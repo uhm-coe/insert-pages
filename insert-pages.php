@@ -121,7 +121,10 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 			}
 
 			// Trying to embed same page in itself.
-			if ( $attributes['page'] == $post->ID || $attributes['page'] == $post->post_name ) {
+			if (
+				! is_null( $post ) && property_exists( $post, 'ID' ) &&
+				( $attributes['page'] == $post->ID || $attributes['page'] == $post->post_name )
+			) {
 				return $content;
 			}
 
@@ -217,10 +220,25 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 				// Note: Temporarily set the global $post->ID to the inserted page ID,
 				// since Beaver Builder relies on it to load the appropriate styles.
 				if ( class_exists( 'FLBuilder' ) ) {
-					$old_post_id = $post->ID;
-					$post->ID = $inserted_page->ID;
+					// If we're not in The Loop (i.e., global $post isn't assigned),
+					// temporarily populate it with the post to be inserted so we can
+					// retrieve Beaver Builder styles for that post. Reset $post to null
+					// after we're done.
+					if ( is_null( $post ) ) {
+						$old_post_id = null;
+						$post = $inserted_page;
+					} else {
+						$old_post_id = $post->ID;
+						$post->ID = $inserted_page->ID;
+					}
+
 					FLBuilder::enqueue_layout_styles_scripts( $inserted_page->ID );
-					$post->ID = $old_post_id;
+
+					if ( is_null( $old_post_id ) ) {
+						$post = null;
+					} else {
+						$post->ID = $old_post_id;
+					}
 				}
 
 				// Show either the title, link, content, everything, or everything via a custom template
@@ -357,10 +375,25 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 					// Note: Temporarily set the global $post->ID to the inserted page ID,
 					// since Beaver Builder relies on it to load the appropriate styles.
 					if ( class_exists( 'FLBuilder' ) ) {
-						$old_post_id = $post->ID;
-						$post->ID = $inserted_page->ID;
+						// If we're not in The Loop (i.e., global $post isn't assigned),
+						// temporarily populate it with the post to be inserted so we can
+						// retrieve Beaver Builder styles for that post. Reset $post to null
+						// after we're done.
+						if ( is_null( $post ) ) {
+							$old_post_id = null;
+							$post = $inserted_page;
+						} else {
+							$old_post_id = $post->ID;
+							$post->ID = $inserted_page->ID;
+						}
+
 						FLBuilder::enqueue_layout_styles_scripts( $inserted_page->ID );
-						$post->ID = $old_post_id;
+
+						if ( is_null( $old_post_id ) ) {
+							$post = null;
+						} else {
+							$post->ID = $old_post_id;
+						}
 					}
 
 					// Show either the title, link, content, everything, or everything via a custom template
