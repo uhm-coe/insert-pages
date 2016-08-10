@@ -63,42 +63,38 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 				$options = wpip_set_defaults();
 			}
 
-			// Add TinyMCE toolbar button filters only if current user has permissions
-			if ( current_user_can( 'edit_posts' ) && current_user_can( 'edit_pages' ) && get_user_option( 'rich_editing' )=='true' ) {
+			// Register the TinyMCE toolbar button script
+			wp_enqueue_script(
+				'wpinsertpages',
+				plugins_url( '/js/wpinsertpages.js', __FILE__ ),
+				array( 'wpdialogs' ),
+				'20151230'
+			);
+			wp_localize_script(
+				'wpinsertpages',
+				'wpInsertPagesL10n',
+				array(
+					'update' => __( 'Update' ),
+					'save' => __( 'Insert Page' ),
+					'noTitle' => __( '(no title)' ),
+					'noMatchesFound' => __( 'No matches found.' ),
+					'l10n_print_after' => 'try{convertEntities(wpLinkL10n);}catch(e){};',
+					'format' => $options['wpip_format'],
+				)
+			);
 
-				// Register the TinyMCE toolbar button script
-				wp_enqueue_script(
-					'wpinsertpages',
-					plugins_url( '/js/wpinsertpages.js', __FILE__ ),
-					array( 'wpdialogs' ),
-					'20151230'
-				);
-				wp_localize_script(
-					'wpinsertpages',
-					'wpInsertPagesL10n',
-					array(
-						'update' => __( 'Update' ),
-						'save' => __( 'Insert Page' ),
-						'noTitle' => __( '(no title)' ),
-						'noMatchesFound' => __( 'No matches found.' ),
-						'l10n_print_after' => 'try{convertEntities(wpLinkL10n);}catch(e){};',
-						'format' => $options['wpip_format'],
-					)
-				);
+			// Register the TinyMCE toolbar button styles
+			wp_enqueue_style(
+				'wpinsertpagescss',
+				plugins_url( '/css/wpinsertpages.css', __FILE__ ),
+				array( 'wp-jquery-ui-dialog' ),
+				'20151230'
+			);
 
-				// Register the TinyMCE toolbar button styles
-				wp_enqueue_style(
-					'wpinsertpagescss',
-					plugins_url( '/css/wpinsertpages.css', __FILE__ ),
-					array( 'wp-jquery-ui-dialog' ),
-					'20151230'
-				);
+			add_filter( 'mce_external_plugins', array( $this, 'insertPages_handleFilter_mceExternalPlugins' ) );
+			add_filter( 'mce_buttons', array( $this, 'insertPages_handleFilter_mceButtons' ) );
 
-				add_filter( 'mce_external_plugins', array( $this, 'insertPages_handleFilter_mceExternalPlugins' ) );
-				add_filter( 'mce_buttons', array( $this, 'insertPages_handleFilter_mceButtons' ) );
-
-				//load_plugin_textdomain('insert-pages', false, dirname(plugin_basename(__FILE__)).'/languages/');
-			}
+			//load_plugin_textdomain('insert-pages', false, dirname(plugin_basename(__FILE__)).'/languages/');
 
 		}
 
