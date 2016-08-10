@@ -37,7 +37,7 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 		protected $pageID;
 
 		// Constructor
-		public function InsertPagesPlugin() {
+		public function __construct() {
 			// Include the code that generates the options page.
 			require_once( dirname( __FILE__ ) . '/options.php' );
 		}
