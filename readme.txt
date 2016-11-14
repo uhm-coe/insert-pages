@@ -2,7 +2,7 @@
 Contributors: figureone, the_magician
 Tags: insert, pages, shortcode, embed
 Requires at least: 3.0.1
-Tested up to: 4.6
+Tested up to: 4.6.2
 Stable tag: trunk
 Text Domain: insert-pages
 Domain Path: /languages
