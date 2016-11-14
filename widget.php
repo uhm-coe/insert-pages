@@ -98,7 +98,7 @@ class InsertPagesWidget extends WP_Widget {
 			</select>
 			<select class="insertpage-template-select" name="<?php echo $this->get_field_name( 'template' ); ?>" id="<?php echo $this->get_field_id( 'template' ); ?>" disabled="disabled">
 				<option value='all'><?php _e( 'Default Template', 'insert-pages' ); ?></option>
-				<?php page_template_dropdown( $instance['template'] ); ?>
+				<?php if ( function_exists( 'page_template_dropdown' ) ) page_template_dropdown( $instance['template'] ); ?>
 			</select>
 		</p>
 		<p>
@@ -120,11 +120,11 @@ class InsertPagesWidget extends WP_Widget {
 	public function update( $new_instance, $old_instance ) {
 		// Sanitize form options.
 		$instance = $old_instance;
-		$instance['page'] = strip_tags( $new_instance['page'] );
-		$instance['display'] = strip_tags( $new_instance['display'] );
-		$instance['template'] = strip_tags( $new_instance['template'] );
-		$instance['class'] = strip_tags( $new_instance['class'] );
-		$instance['inline'] = strip_tags( $new_instance['inline'] );
+		$instance['page'] = array_key_exists( 'page', $new_instance ) ? strip_tags( $new_instance['page'] ) : '';
+		$instance['display'] = array_key_exists( 'display', $new_instance ) ? strip_tags( $new_instance['display'] ) : '';
+		$instance['template'] = array_key_exists( 'template', $new_instance ) ? strip_tags( $new_instance['template'] ) : '';
+		$instance['class'] = array_key_exists( 'class', $new_instance ) ? strip_tags( $new_instance['class'] ) : '';
+		$instance['inline'] = array_key_exists( 'inline', $new_instance ) ? strip_tags( $new_instance['inline'] ) : '';
 
 		return $instance;
 	}
