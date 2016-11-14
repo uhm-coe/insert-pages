@@ -1,0 +1,156 @@
+#, fuzzy
+msgid ""
+msgstr ""
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+"Project-Id-Version: Insert Pages\n"
+"POT-Creation-Date: 2016-11-14 10:04-1000\n"
+"PO-Revision-Date: 2016-11-14 10:04-1000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 1.8.11\n"
+"X-Poedit-Basepath: ..\n"
+"X-Poedit-WPHeader: insert-pages.php\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"X-Poedit-KeywordsList: __;_e;_n:1,2;_x:1,2c;_ex:1,2c;_nx:4c,1,2;esc_attr__;"
+"esc_attr_e;esc_attr_x:1,2c;esc_html__;esc_html_e;esc_html_x:1,2c;_n_noop:1,2;"
+"_nx_noop:3c,1,2;__ngettext_noop:1,2\n"
+"X-Poedit-SearchPath-0: .\n"
+"X-Poedit-SearchPathExcluded-0: *.js\n"
+
+#: insert-pages.php:77
+msgid "Update"
+msgstr ""
+
+#: insert-pages.php:78 insert-pages.php:637 widget.php:21
+msgid "Insert Page"
+msgstr ""
+
+#: insert-pages.php:79
+msgid "(no title)"
+msgstr ""
+
+#: insert-pages.php:80
+msgid "No matches found."
+msgstr ""
+
+#: insert-pages.php:570
+msgid "Insert page"
+msgstr ""
+
+#: insert-pages.php:577
+msgid "Search"
+msgstr ""
+
+#: insert-pages.php:589
+msgid "No search term specified. Showing recent items."
+msgstr ""
+
+#: insert-pages.php:596
+msgid "Options"
+msgstr ""
+
+#: insert-pages.php:600
+msgid "Slug or ID"
+msgstr ""
+
+#: insert-pages.php:607 widget.php:89
+msgid "Display"
+msgstr ""
+
+#: insert-pages.php:609 widget.php:91
+msgid "Title"
+msgstr ""
+
+#: insert-pages.php:610 widget.php:92
+msgid "Link"
+msgstr ""
+
+#: insert-pages.php:611
+msgid "Excerpt with title"
+msgstr ""
+
+#: insert-pages.php:612 widget.php:94
+msgid "Excerpt only (no title)"
+msgstr ""
+
+#: insert-pages.php:613 widget.php:95
+msgid "Content"
+msgstr ""
+
+#: insert-pages.php:614 widget.php:96
+msgid "All (includes custom fields)"
+msgstr ""
+
+#: insert-pages.php:615 widget.php:97
+msgid "Use a custom template"
+msgstr ""
+
+#: insert-pages.php:618 widget.php:100
+msgid "Default Template"
+msgstr ""
+
+#: insert-pages.php:625 widget.php:105
+msgid "Extra Classes"
+msgstr ""
+
+#: insert-pages.php:629 widget.php:110
+msgid "Inline?"
+msgstr ""
+
+#: insert-pages.php:640
+msgid "Cancel"
+msgstr ""
+
+#. Plugin Name of the plugin/theme
+#: options.php:13
+msgid "Insert Pages"
+msgstr ""
+
+#: options.php:19
+msgid "Shortcode format"
+msgstr ""
+
+#: options.php:26
+msgid "Wrapper for inserts"
+msgstr ""
+
+#: options.php:33
+msgid "Insert method"
+msgstr ""
+
+#: options.php:68
+msgid "You may override some default settings here."
+msgstr ""
+
+#: widget.php:21
+msgid "Insert a page into a widget area."
+msgstr ""
+
+#: widget.php:85
+msgid "Page/Post ID or Slug"
+msgstr ""
+
+#: widget.php:93
+msgid "Excerpt"
+msgstr ""
+
+#. Plugin URI of the plugin/theme
+msgid "https://github.com/uhm-coe/insert-pages"
+msgstr ""
+
+#. Description of the plugin/theme
+msgid ""
+"Insert Pages lets you embed any WordPress content (e.g., pages, posts, "
+"custom post types) into other WordPress content using the Shortcode API."
+msgstr ""
+
+#. Author of the plugin/theme
+msgid "Paul Ryan"
+msgstr ""
+
+#. Author URI of the plugin/theme
+msgid "http://www.linkedin.com/in/paulrryan"
+msgstr ""

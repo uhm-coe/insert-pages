@@ -18,7 +18,7 @@ class InsertPagesWidget extends WP_Widget {
 		add_action( 'customize_controls_enqueue_scripts', array( $this, 'widget_admin_js' ) );
 
 		// Call parent constructor to initialize the widget.
-		parent::__construct( 'ipw', 'Insert Page', array( 'description' => 'Insert a page into a widget area.' ) );
+		parent::__construct( 'ipw', __( 'Insert Page', 'insert-pages' ), array( 'description' => __( 'Insert a page into a widget area.', 'insert-pages' ) ) );
 	}
 
 	/**
@@ -82,32 +82,32 @@ class InsertPagesWidget extends WP_Widget {
 			'inline' => '',
 		)); ?>
 		<p>
-			<label for="<?php echo $this->get_field_id( 'page' ); ?>"><?php _e( 'Page/Post ID or Slug' ); ?>:</label>
+			<label for="<?php echo $this->get_field_id( 'page' ); ?>"><?php _e( 'Page/Post ID or Slug', 'insert-pages' ); ?>:</label>
 			<input type="text" class="widefat" id="<?php echo $this->get_field_id( 'page' ); ?>" name="<?php echo $this->get_field_name( 'page' ); ?>" value="<?php echo $instance['page']; ?>" />
 		</p>
 		<p>
-			<label for="<?php echo $this->get_field_id( 'display' ); ?>"><?php _e( 'Display' ); ?>:</label><br />
+			<label for="<?php echo $this->get_field_id( 'display' ); ?>"><?php _e( 'Display', 'insert-pages' ); ?>:</label><br />
 			<select class="insertpage-format-select" name="<?php echo $this->get_field_name( 'display' ); ?>" id="<?php echo $this->get_field_id( 'display' ); ?>">
-				<option value='title' <?php selected( $instance['display'], 'title' ); ?>>Title</option>
-				<option value='link' <?php selected( $instance['display'], 'link' ); ?>>Link</option>
-				<option value='excerpt' <?php selected( $instance['display'], 'excerpt' ); ?>>Excerpt</option>
-				<option value='excerpt-only' <?php selected( $instance['display'], 'excerpt-only' ); ?>>Excerpt only (no title)</option>
-				<option value='content' <?php selected( $instance['display'], 'content' ); ?>>Content</option>
-				<option value='all' <?php selected( $instance['display'], 'all' ); ?>>All (includes custom fields)</option>
-				<option value='template' <?php selected( $instance['display'], 'template' ); ?>>Use a custom template &raquo;</option>
+				<option value='title' <?php selected( $instance['display'], 'title' ); ?>><?php _e( 'Title', 'insert-pages' ); ?></option>
+				<option value='link' <?php selected( $instance['display'], 'link' ); ?>><?php _e( 'Link', 'insert-pages' ); ?></option>
+				<option value='excerpt' <?php selected( $instance['display'], 'excerpt' ); ?>><?php _e( 'Excerpt', 'insert-pages' ); ?></option>
+				<option value='excerpt-only' <?php selected( $instance['display'], 'excerpt-only' ); ?>><?php _e( 'Excerpt only (no title)', 'insert-pages' ); ?></option>
+				<option value='content' <?php selected( $instance['display'], 'content' ); ?>><?php _e( 'Content', 'insert-pages' ); ?></option>
+				<option value='all' <?php selected( $instance['display'], 'all' ); ?>><?php _e( 'All (includes custom fields)', 'insert-pages' ); ?></option>
+				<option value='template' <?php selected( $instance['display'], 'template' ); ?>><?php _e( 'Use a custom template', 'insert-pages' ); ?> &raquo;</option>
 			</select>
 			<select class="insertpage-template-select" name="<?php echo $this->get_field_name( 'template' ); ?>" id="<?php echo $this->get_field_id( 'template' ); ?>" disabled="disabled">
-				<option value='all'><?php _e( 'Default Template' ); ?></option>
+				<option value='all'><?php _e( 'Default Template', 'insert-pages' ); ?></option>
 				<?php page_template_dropdown( $instance['template'] ); ?>
 			</select>
 		</p>
 		<p>
-			<label for="<?php echo $this->get_field_id( 'class' ); ?>"><?php _e( 'Extra Classes' ); ?>:</label>
+			<label for="<?php echo $this->get_field_id( 'class' ); ?>"><?php _e( 'Extra Classes', 'insert-pages' ); ?>:</label>
 			<input type="text" class="widefat" autocomplete="off" name="<?php echo $this->get_field_name( 'class' ); ?>" id="<?php echo $this->get_field_id( 'class' ); ?>" value="<?php echo esc_attr( $instance['class'] ); ?>" />
 		</p>
 		<p>
 			<input class="checkbox" type="checkbox" name="<?php echo $this->get_field_name( 'inline' ); ?>" id="<?php echo $this->get_field_id( 'inline' ); ?>" value="1" <?php checked( $instance['inline'], '1' ); ?> />
-			<label for="<?php echo $this->get_field_id( 'inline' ); ?>"><?php _e( 'Inline?' ); ?></label>
+			<label for="<?php echo $this->get_field_id( 'inline' ); ?>"><?php _e( 'Inline?', 'insert-pages' ); ?></label>
 		</p><?php
 	}
 

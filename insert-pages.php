@@ -74,10 +74,10 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 				'wpinsertpages',
 				'wpInsertPagesL10n',
 				array(
-					'update' => __( 'Update' ),
-					'save' => __( 'Insert Page' ),
-					'noTitle' => __( '(no title)' ),
-					'noMatchesFound' => __( 'No matches found.' ),
+					'update' => __( 'Update', 'insert-pages' ),
+					'save' => __( 'Insert Page', 'insert-pages' ),
+					'noTitle' => __( '(no title)', 'insert-pages' ),
+					'noMatchesFound' => __( 'No matches found.', 'insert-pages' ),
 					'l10n_print_after' => 'try{convertEntities(wpLinkL10n);}catch(e){};',
 					'format' => $options['wpip_format'],
 				)
@@ -94,7 +94,11 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 			add_filter( 'mce_external_plugins', array( $this, 'insertPages_handleFilter_mceExternalPlugins' ) );
 			add_filter( 'mce_buttons', array( $this, 'insertPages_handleFilter_mceButtons' ) );
 
-			//load_plugin_textdomain('insert-pages', false, dirname(plugin_basename(__FILE__)).'/languages/');
+			load_plugin_textdomain(
+				'insert-pages',
+				false,
+				plugin_basename( dirname( __FILE__ ) ) . '/languages'
+			);
 
 		}
 
@@ -567,14 +571,14 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 			<?php wp_nonce_field( 'internal-inserting', '_ajax_inserting_nonce', false ); ?>
 			<input type="hidden" id="insertpage-parent-pageID" value="<?php echo $post_id; ?>" />
 			<div id="insertpage-modal-title">
-				<?php _e( 'Insert page' ) ?>
+				<?php _e( 'Insert page', 'insert-pages' ) ?>
 				<div id="wp-insertpage-close" tabindex="0"></div>
 			</div>
 			<div id="insertpage-selector">
 				<div id="insertpage-search-panel">
 					<div class="insertpage-search-wrapper">
 						<label>
-							<span class="search-label"><?php _e( 'Search' ); ?></span>
+							<span class="search-label"><?php _e( 'Search', 'insert-pages' ); ?></span>
 							<input type="search" id="insertpage-search-field" class="insertpage-search-field" autocomplete="off" />
 							<span class="spinner"></span>
 						</label>
@@ -586,47 +590,47 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 						</div>
 					</div>
 					<div id="insertpage-most-recent-results" class="query-results">
-						<div class="query-notice"><em><?php _e( 'No search term specified. Showing recent items.' ); ?></em></div>
+						<div class="query-notice"><em><?php _e( 'No search term specified. Showing recent items.', 'insert-pages' ); ?></em></div>
 						<ul></ul>
 						<div class="river-waiting">
 							<span class="spinner"></span>
 						</div>
 					</div>
 				</div>
-				<p class="howto" id="insertpage-options-toggle"><?php _e( 'Options' ); ?></p>
+				<p class="howto" id="insertpage-options-toggle"><?php _e( 'Options', 'insert-pages' ); ?></p>
 				<div id="insertpage-options-panel">
 					<div class="insertpage-options-wrapper">
 						<label for="insertpage-slug-field">
-							<span><?php _e( 'Slug or ID' ); ?></span>
+							<span><?php _e( 'Slug or ID', 'insert-pages' ); ?></span>
 							<input id="insertpage-slug-field" type="text" autocomplete="off" />
 							<input id="insertpage-pageID" type="hidden" />
 						</label>
 					</div>
 					<div class="insertpage-format">
 						<label for="insertpage-format-select">
-							<?php _e( 'Display' ); ?>
+							<?php _e( 'Display', 'insert-pages' ); ?>
 							<select name="insertpage-format-select" id="insertpage-format-select">
-								<option value='title'>Title</option>
-								<option value='link'>Link</option>
-								<option value='excerpt'>Excerpt with title</option>
-								<option value='excerpt-only'>Excerpt only (no title)</option>
-								<option value='content'>Content</option>
-								<option value='all'>All (includes custom fields)</option>
-								<option value='template'>Use a custom template &raquo;</option>
+								<option value='title'><?php _e( 'Title', 'insert-pages' ); ?></option>
+								<option value='link'><?php _e( 'Link', 'insert-pages' ); ?></option>
+								<option value='excerpt'><?php _e( 'Excerpt with title', 'insert-pages' ); ?></option>
+								<option value='excerpt-only'><?php _e( 'Excerpt only (no title)', 'insert-pages' ); ?></option>
+								<option value='content'><?php _e( 'Content', 'insert-pages' ); ?></option>
+								<option value='all'><?php _e( 'All (includes custom fields)', 'insert-pages' ); ?></option>
+								<option value='template'><?php _e( 'Use a custom template', 'insert-pages' ); ?> &raquo;</option>
 							</select>
 							<select name="insertpage-template-select" id="insertpage-template-select" disabled="true">
-								<option value='all'><?php _e( 'Default Template' ); ?></option>
+								<option value='all'><?php _e( 'Default Template', 'insert-pages' ); ?></option>
 								<?php page_template_dropdown(); ?>
 							</select>
 						</label>
 					</div>
 					<div class="insertpage-extra">
 						<label for="insertpage-extra-classes">
-							<?php _e( 'Extra Classes' ); ?>
+							<?php _e( 'Extra Classes', 'insert-pages' ); ?>
 							<input id="insertpage-extra-classes" type="text" autocomplete="off" />
 						</label>
 						<label for="insertpage-extra-inline">
-							<?php _e( 'Inline?' ); ?>
+							<?php _e( 'Inline?', 'insert-pages' ); ?>
 							<input id="insertpage-extra-inline" type="checkbox" />
 						</label>
 					</div>
@@ -634,10 +638,10 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 			</div>
 			<div class="submitbox">
 				<div id="wp-insertpage-update">
-					<input type="submit" value="<?php esc_attr_e( 'Insert Page' ); ?>" class="button button-primary" id="wp-insertpage-submit" name="wp-insertpage-submit">
+					<input type="submit" value="<?php esc_attr_e( 'Insert Page', 'insert-pages' ); ?>" class="button button-primary" id="wp-insertpage-submit" name="wp-insertpage-submit">
 				</div>
 				<div id="wp-insertpage-cancel">
-					<a class="submitdelete deletion" href="#"><?php _e( 'Cancel' ); ?></a>
+					<a class="submitdelete deletion" href="#"><?php _e( 'Cancel', 'insert-pages' ); ?></a>
 				</div>
 			</div>
 			</form>
@@ -748,7 +752,7 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 			$results = array();
 			foreach ( $posts as $post ) {
 				if ( 'post' == $post->post_type ) {
-					$info = mysql2date( __( 'Y/m/d' ), $post->post_date );
+					$info = mysql2date( 'Y/m/d', $post->post_date );
 				} else {
 					$info = $pts[ $post->post_type ]->labels->singular_name;
 				}

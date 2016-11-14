@@ -10,27 +10,27 @@ function wpip_settings_init() {
 	register_setting( 'wpipSettings', 'wpip_settings' );
 	add_settings_section(
 		'wpip_section',
-		__( 'Insert Pages', 'wordpress' ),
+		__( 'Insert Pages', 'insert-pages' ),
 		'wpip_settings_section_callback',
 		'wpipSettings'
 	);
 	add_settings_field(
 		'wpip_format',
-		__( 'Shortcode format', 'wordpress' ),
+		__( 'Shortcode format', 'insert-pages' ),
 		'wpip_format_render',
 		'wpipSettings',
 		'wpip_section'
 	);
 	add_settings_field(
 		'wpip_wrapper',
-		__( 'Wrapper for inserts', 'wordpress' ),
+		__( 'Wrapper for inserts', 'insert-pages' ),
 		'wpip_wrapper_render',
 		'wpipSettings',
 		'wpip_section'
 	);
 	add_settings_field(
 		'wpip_insert_method',
-		__( 'Insert method', 'wordpress' ),
+		__( 'Insert method', 'insert-pages' ),
 		'wpip_insert_method_render',
 		'wpipSettings',
 		'wpip_section'
@@ -65,7 +65,7 @@ register_activation_hook( __FILE__, 'wpip_set_defaults' );
 
 
 function wpip_settings_section_callback() {
-	echo __( 'You may override some default settings here.', 'wordpress' );
+	echo __( 'You may override some default settings here.', 'insert-pages' );
 }
 
 
