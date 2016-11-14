@@ -88,6 +88,9 @@ Just one! The plugin prevents you from embedding a page in itself, but you can t
 
 == Changelog ==
 
+= 3.1.7 =
+* Plugin is now translatable (internationalization). Props @maxgx for getting the ball rolling and creating a translation.
+
 = 3.1.6 =
 * Fix for TinyMCE toolbar button not appearing for authors and contributors. Props @fernandosalvato for the report.
 * Fix for deprecation warning in PHP 7. Props @christer_f for the report.
