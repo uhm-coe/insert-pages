@@ -86,6 +86,9 @@ Just one! The plugin prevents you from embedding a page in itself, but you can t
 
 == Changelog ==
 
+= 3.1.8 =
+* Fix for widget being used in the Beaver Builder widget interface.
+
 = 3.1.7 =
 * Plugin is now translatable (internationalization). Props @maxgx for getting the ball rolling and creating a translation.
 
