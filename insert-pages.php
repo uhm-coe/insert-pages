@@ -115,7 +115,7 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 				'display' => 'all',
 				'class' => '',
 				'inline' => false,
-			), $atts );
+			), $atts, 'insert' );
 
 			// Validation checks.
 			if ( $attributes['page'] === '0' ) {
