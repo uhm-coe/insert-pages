@@ -93,9 +93,6 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 				'20151230'
 			);
 
-			add_filter( 'mce_external_plugins', array( $this, 'insertPages_handleFilter_mceExternalPlugins' ) );
-			add_filter( 'mce_buttons', array( $this, 'insertPages_handleFilter_mceButtons' ) );
-
 			load_plugin_textdomain(
 				'insert-pages',
 				false,
@@ -804,6 +801,10 @@ if ( isset( $insertPages_plugin ) ) {
 
 	// Use internal filter to wrap inserted content in a div or span.
 	add_filter( 'insert_pages_wrap_content', array( $insertPages_plugin, 'insertPages_wrap_content' ), 10, 3 );
+
+	// Register TinyMCE plugin for the toolbar button.
+	add_filter( 'mce_external_plugins', array( $insertPages_plugin, 'insertPages_handleFilter_mceExternalPlugins' ) );
+	add_filter( 'mce_buttons', array( $insertPages_plugin, 'insertPages_handleFilter_mceButtons' ) );
 
 	// Register Insert Pages shortcode widget.
 	require_once( dirname( __FILE__ ) . '/widget.php' );
