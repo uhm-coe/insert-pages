@@ -86,6 +86,9 @@ Just one! The plugin prevents you from embedding a page in itself, but you can t
 
 == Changelog ==
 
+= 3.1.9 =
+* Support `shortcode_atts_insert` filter for filtering the shortcode's default attributes. Props @gtrout for the pull request!
+
 = 3.1.8 =
 * Fix for widget being used in the Beaver Builder widget interface.
 
