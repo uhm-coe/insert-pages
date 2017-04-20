@@ -86,6 +86,9 @@ Just one! The plugin prevents you from embedding a page in itself, but you can t
 
 == Changelog ==
 
+= 3.2.0 =
+* Fix for toolbar button disappearing when the SiteOrigin PageBuilder Widgets Bundle plugin is enabled. Props @JarkkoLaine for figuring that one out! Ref: https://wordpress.org/support/topic/button-in-the-toolbar-of-tinymce-disappear-conflict-page-builder/
+
 = 3.1.9 =
 * Support `shortcode_atts_insert` filter for filtering the shortcode's default attributes. Props @gtrout for the pull request!
 
