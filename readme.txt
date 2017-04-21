@@ -86,6 +86,9 @@ Just one! The plugin prevents you from embedding a page in itself, but you can t
 
 == Changelog ==
 
+= 3.2.1 =
+* Revert TinyMCE filter move for SiteOrigin PageBuilder since it breaks compatibility with Divi theme. Instead, hook into the filter multiple times, and make sure the Insert Pages button is registered each time. Props @trevorp for the report.
+
 = 3.2.0 =
 * Fix for toolbar button disappearing when the SiteOrigin PageBuilder Widgets Bundle plugin is enabled. Props @JarkkoLaine for figuring that one out! Ref: https://wordpress.org/support/topic/button-in-the-toolbar-of-tinymce-disappear-conflict-page-builder/
 
