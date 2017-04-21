@@ -93,6 +93,13 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 				'20151230'
 			);
 
+			// Register TinyMCE plugin for the toolbar button.
+			// Note: Also register TinyMCE plugin filters below before plugins_loaded
+			// is done (to work around a SiteOrigin PageBuilder bug).
+			// Ref: https://wordpress.org/support/topic/button-in-the-toolbar-of-tinymce-disappear-conflict-page-builder/
+			add_filter( 'mce_external_plugins', array( $this, 'insertPages_handleFilter_mceExternalPlugins' ) );
+			add_filter( 'mce_buttons', array( $this, 'insertPages_handleFilter_mceButtons' ) );
+
 			load_plugin_textdomain(
 				'insert-pages',
 				false,
@@ -483,13 +490,17 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 
 		// Filter hook: Add a button to the TinyMCE toolbar for our insert page tool
 		function insertPages_handleFilter_mceButtons( $buttons ) {
-			array_push( $buttons, 'wpInsertPages_button' ); // add a separator and button to toolbar
+			if ( ! in_array( 'wpInsertPages_button', $buttons ) ) {
+				array_push( $buttons, 'wpInsertPages_button' );
+			}
 			return $buttons;
 		}
 
 		// Filter hook: Load the javascript for our custom toolbar button
 		function insertPages_handleFilter_mceExternalPlugins( $plugins ) {
-			$plugins['wpInsertPages'] = plugins_url( '/js/wpinsertpages_plugin.js', __FILE__ );
+			if ( ! array_key_exists( 'wpInsertPages', $plugins ) ) {
+				$plugins['wpInsertPages'] = plugins_url( '/js/wpinsertpages_plugin.js', __FILE__ );
+			}
 			return $plugins;
 		}
 
@@ -803,6 +814,9 @@ if ( isset( $insertPages_plugin ) ) {
 	add_filter( 'insert_pages_wrap_content', array( $insertPages_plugin, 'insertPages_wrap_content' ), 10, 3 );
 
 	// Register TinyMCE plugin for the toolbar button.
+	// Note: Also register TinyMCE plugin filters here before plugins_loaded
+	// is done (to work around a SiteOrigin PageBuilder bug).
+	// Ref: https://wordpress.org/support/topic/button-in-the-toolbar-of-tinymce-disappear-conflict-page-builder/
 	add_filter( 'mce_external_plugins', array( $insertPages_plugin, 'insertPages_handleFilter_mceExternalPlugins' ) );
 	add_filter( 'mce_buttons', array( $insertPages_plugin, 'insertPages_handleFilter_mceButtons' ) );
 
