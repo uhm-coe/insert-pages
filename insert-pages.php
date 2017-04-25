@@ -80,7 +80,7 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 					'save' => __( 'Insert Page', 'insert-pages' ),
 					'noTitle' => __( '(no title)', 'insert-pages' ),
 					'noMatchesFound' => __( 'No matches found.', 'insert-pages' ),
-					'l10n_print_after' => 'try{convertEntities(wpLinkL10n);}catch(e){};',
+					'l10n_print_after' => 'try{convertEntities(wpInsertPagesL10n);}catch(e){};',
 					'format' => $options['wpip_format'],
 				)
 			);
