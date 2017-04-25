@@ -805,6 +805,9 @@ if ( isset( $insertPages_plugin ) ) {
 
 	// Register shortcode [insert ...].
 	add_action( 'init', array( $insertPages_plugin, 'insertPages_init' ), 1 );
+	// Register shortcode [insert ...] when TinyMCE is included in a frontend ACF form.
+	add_action( 'acf_head-input', array( $insertPages_plugin, 'insertPages_init' ), 1 ); // ACF 3
+	add_action( 'acf/input/admin_head', array( $insertPages_plugin, 'insertPages_init' ), 1 ); // ACF 4
 
 	// Add TinyMCE button for shortcode.
 	add_action( 'admin_head', array( $insertPages_plugin, 'insertPages_admin_init' ), 1 );
