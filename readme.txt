@@ -86,6 +86,11 @@ Just one! The plugin prevents you from embedding a page in itself, but you can t
 
 == Changelog ==
 
+= 3.2.2 =
+* Revert TinyMCE filter hook to 3.1.9 method due to continued Divi theme compatibility issues.
+* Add configurable option to load TinyMCE filter in a different location to support SiteOrigin PageBuilder users.
+* Fix missing JS on front-end ACF forms with WYSIWYG editors.
+
 = 3.2.1 =
 * Revert TinyMCE filter move for SiteOrigin PageBuilder since it breaks compatibility with Divi theme. Instead, hook into the filter multiple times, and make sure the Insert Pages button is registered each time. Props @trevorp for the report.
 
