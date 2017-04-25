@@ -61,7 +61,7 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 		function insertPages_admin_init() {
 			// Get options set in WordPress dashboard (Settings > Insert Pages).
 			$options = get_option( 'wpip_settings' );
-			if ( $options === FALSE || ! is_array( $options ) || ! array_key_exists( 'wpip_format', $options ) || ! array_key_exists( 'wpip_wrapper', $options ) || ! array_key_exists( 'wpip_insert_method', $options ) ) {
+			if ( $options === FALSE || ! is_array( $options ) || ! array_key_exists( 'wpip_format', $options ) || ! array_key_exists( 'wpip_wrapper', $options ) || ! array_key_exists( 'wpip_insert_method', $options ) || ! array_key_exists( 'wpip_tinymce_filter', $options ) ) {
 				$options = wpip_set_defaults();
 			}
 
@@ -93,12 +93,14 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 				'20151230'
 			);
 
-			// Register TinyMCE plugin for the toolbar button.
-			// Note: Also register TinyMCE plugin filters below before plugins_loaded
-			// is done (to work around a SiteOrigin PageBuilder bug).
+			// Register TinyMCE plugin for the toolbar button if in normal mode
+			// (register TinyMCE plugin filters below before plugins_loaded
+			// if in compatibility mode, to work around a SiteOrigin PageBuilder bug).
 			// Ref: https://wordpress.org/support/topic/button-in-the-toolbar-of-tinymce-disappear-conflict-page-builder/
-			add_filter( 'mce_external_plugins', array( $this, 'insertPages_handleFilter_mceExternalPlugins' ) );
-			add_filter( 'mce_buttons', array( $this, 'insertPages_handleFilter_mceButtons' ) );
+			if ( $options['wpip_tinymce_filter'] === 'normal' ) {
+				add_filter( 'mce_external_plugins', array( $this, 'insertPages_handleFilter_mceExternalPlugins' ) );
+				add_filter( 'mce_buttons', array( $this, 'insertPages_handleFilter_mceButtons' ) );
+			}
 
 			load_plugin_textdomain(
 				'insert-pages',
@@ -136,7 +138,7 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 
 			// Get options set in WordPress dashboard (Settings > Insert Pages).
 			$options = get_option( 'wpip_settings' );
-			if ( $options === FALSE || ! is_array( $options ) || ! array_key_exists( 'wpip_format', $options ) || ! array_key_exists( 'wpip_wrapper', $options ) || ! array_key_exists( 'wpip_insert_method', $options ) ) {
+			if ( $options === FALSE || ! is_array( $options ) || ! array_key_exists( 'wpip_format', $options ) || ! array_key_exists( 'wpip_wrapper', $options ) || ! array_key_exists( 'wpip_insert_method', $options ) || ! array_key_exists( 'wpip_tinymce_filter', $options ) ) {
 				$options = wpip_set_defaults();
 			}
 
@@ -795,6 +797,12 @@ if ( class_exists( 'InsertPagesPlugin' ) ) {
 
 // Actions and Filters handled by InsertPagesPlugin class
 if ( isset( $insertPages_plugin ) ) {
+	// Get options set in WordPress dashboard (Settings > Insert Pages).
+	$options = get_option( 'wpip_settings' );
+	if ( $options === FALSE || ! is_array( $options ) || ! array_key_exists( 'wpip_format', $options ) || ! array_key_exists( 'wpip_wrapper', $options ) || ! array_key_exists( 'wpip_insert_method', $options ) || ! array_key_exists( 'wpip_tinymce_filter', $options ) ) {
+		$options = wpip_set_defaults();
+	}
+
 	// Register shortcode [insert ...].
 	add_action( 'init', array( $insertPages_plugin, 'insertPages_init' ), 1 );
 
@@ -813,12 +821,13 @@ if ( isset( $insertPages_plugin ) ) {
 	// Use internal filter to wrap inserted content in a div or span.
 	add_filter( 'insert_pages_wrap_content', array( $insertPages_plugin, 'insertPages_wrap_content' ), 10, 3 );
 
-	// Register TinyMCE plugin for the toolbar button.
-	// Note: Also register TinyMCE plugin filters here before plugins_loaded
-	// is done (to work around a SiteOrigin PageBuilder bug).
+	// Register TinyMCE plugin for the toolbar button if in compatibility mode.
+	// (to work around a SiteOrigin PageBuilder bug).
 	// Ref: https://wordpress.org/support/topic/button-in-the-toolbar-of-tinymce-disappear-conflict-page-builder/
-	add_filter( 'mce_external_plugins', array( $insertPages_plugin, 'insertPages_handleFilter_mceExternalPlugins' ) );
-	add_filter( 'mce_buttons', array( $insertPages_plugin, 'insertPages_handleFilter_mceButtons' ) );
+	if ( $options['wpip_tinymce_filter'] === 'compatibility' ) {
+		add_filter( 'mce_external_plugins', array( $insertPages_plugin, 'insertPages_handleFilter_mceExternalPlugins' ) );
+		add_filter( 'mce_buttons', array( $insertPages_plugin, 'insertPages_handleFilter_mceButtons' ) );
+	}
 
 	// Register Insert Pages shortcode widget.
 	require_once( dirname( __FILE__ ) . '/widget.php' );

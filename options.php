@@ -35,6 +35,13 @@ function wpip_settings_init() {
 		'wpipSettings',
 		'wpip_section'
 	);
+	add_settings_field(
+		'wpip_tinymce_filter',
+		__( 'TinyMCE filter', 'insert-pages' ),
+		'wpip_tinymce_filter_render',
+		'wpipSettings',
+		'wpip_section'
+	);
 }
 add_action( 'admin_init', 'wpip_settings_init' );
 
@@ -55,6 +62,10 @@ function wpip_set_defaults() {
 
 	if ( ! array_key_exists( 'wpip_insert_method', $options ) ) {
 		$options['wpip_insert_method'] = 'legacy';
+	}
+
+	if ( ! array_key_exists( 'wpip_tinymce_filter', $options ) ) {
+		$options['wpip_tinymce_filter'] = 'normal';
 	}
 
 	update_option( 'wpip_settings', $options );
@@ -116,5 +127,17 @@ function wpip_insert_method_render() {
 	<input type='radio' name='wpip_settings[wpip_insert_method]' <?php checked( $options['wpip_insert_method'], 'legacy' ); ?> id="wpip_insert_method_legacy" value='legacy'><label for="wpip_insert_method_legacy">Use legacy method (compatible with <a href="https://wordpress.org/plugins/beaver-builder-lite-version/" target="_blank">Beaver Builder</a> and <a href="https://wordpress.org/plugins/siteorigin-panels/" target="_blank">Page Builder by SiteOrigin</a>, but less efficient). </label><br />
 	<input type='radio' name='wpip_settings[wpip_insert_method]' <?php checked( $options['wpip_insert_method'], 'normal' ); ?> id="wpip_insert_method_normal" value='normal'><label for="wpip_insert_method_normal">Use normal method (more compatible with other plugins, and more efficient).</label><br />
 	<small><em>The legacy method uses <a href="https://codex.wordpress.org/Function_Reference/query_posts" target="_blank">query_posts()</a>, which the Codex cautions against using. However, to recreate the exact state that many page builder plugins are expecting, the Main Loop has to be replaced with the inserted page while it is being rendered. The normal method, on the other hand, just uses <a href="https://developer.wordpress.org/reference/functions/get_post/" target="_blank">get_post()</a>.</em></small>
+	<?php
+}
+
+function wpip_tinymce_filter_render() {
+	$options = get_option( 'wpip_settings' );
+	if ( $options === FALSE || ! is_array( $options ) || ! array_key_exists( 'wpip_tinymce_filter', $options ) ) {
+		$options = wpip_set_defaults();
+	}
+	?>
+	<input type='radio' name='wpip_settings[wpip_tinymce_filter]' <?php checked( $options['wpip_tinymce_filter'], 'normal' ); ?> id="wpip_tinymce_filter_normal" value='normal'><label for="wpip_tinymce_filter_normal">Use normal method (compatible with Divi theme and most situations). </label><br />
+	<input type='radio' name='wpip_settings[wpip_tinymce_filter]' <?php checked( $options['wpip_tinymce_filter'], 'compatibility' ); ?> id="wpip_tinymce_filter_compatibility" value='compatibility'><label for="wpip_tinymce_filter_normal">Use compatibility method (works with <a href="https://wordpress.org/plugins/siteorigin-panels/" target="_blank">Page Builder by SiteOrigin</a>).</label><br />
+	<small><em>The normal method adds the TinyMCE plugin filters in the <a href="https://developer.wordpress.org/reference/hooks/admin_head/" target="_blank">admin_head</a> hook. For users using SiteOrigin PageBuilder with the so-widgets-bundle enabled and using Contact Form, Editor, Google Maps, Hero Image, or Testimonials widgets, a bug in that plugin prevents other plugins from registering TinyMCE plugins. Use compatibility mode here to use a workaround.</em></small>
 	<?php
 }
