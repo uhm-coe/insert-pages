@@ -224,13 +224,13 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 				// Start output buffering so we can save the output to a string.
 				ob_start();
 
-				// If Beaver Builder plugin is enabled, load any cached styles associated with the inserted page.
+				// If Beaver Builder or SiteOrigin Page Builder are enabled, load any cached styles associated with the inserted page.
 				// Note: Temporarily set the global $post->ID to the inserted page ID,
-				// since Beaver Builder relies on it to load the appropriate styles.
-				if ( class_exists( 'FLBuilder' ) ) {
+				// since both builders rely on the id to load the appropriate styles.
+				if ( class_exists( 'FLBuilder' ) || class_exists( 'SiteOrigin_Panels' ) ) {
 					// If we're not in The Loop (i.e., global $post isn't assigned),
 					// temporarily populate it with the post to be inserted so we can
-					// retrieve Beaver Builder styles for that post. Reset $post to null
+					// retrieve generated styles for that post. Reset $post to null
 					// after we're done.
 					if ( is_null( $post ) ) {
 						$old_post_id = null;
@@ -240,8 +240,16 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 						$post->ID = $inserted_page->ID;
 					}
 
-					FLBuilder::enqueue_layout_styles_scripts( $inserted_page->ID );
 
+					if ( class_exists( 'FLBuilder' ) ) {
+						FLBuilder::enqueue_layout_styles_scripts( $inserted_page->ID );
+					}
+
+					if( class_exists( 'SiteOrigin_Panels' ) ) {
+						$renderer = SiteOrigin_Panels::renderer();
+						$renderer->add_inline_css( $inserted_page->ID, $renderer->generate_css( $inserted_page->ID ) );
+					}
+					
 					if ( is_null( $old_post_id ) ) {
 						$post = null;
 					} else {
@@ -379,13 +387,13 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 					// Start output buffering so we can save the output to string
 					ob_start();
 
-					// If Beaver Builder plugin is enabled, load any cached styles associated with the inserted page.
+					// If Beaver Builder or SiteOrigin Page Builder are enabled, load any cached styles associated with the inserted page.
 					// Note: Temporarily set the global $post->ID to the inserted page ID,
-					// since Beaver Builder relies on it to load the appropriate styles.
-					if ( class_exists( 'FLBuilder' ) ) {
+					// since both builders rely on the id to load the appropriate styles.
+					if ( class_exists( 'FLBuilder' ) || class_exists( 'SiteOrigin_Panels' ) ) {
 						// If we're not in The Loop (i.e., global $post isn't assigned),
 						// temporarily populate it with the post to be inserted so we can
-						// retrieve Beaver Builder styles for that post. Reset $post to null
+						// retrieve generated styles for that post. Reset $post to null
 						// after we're done.
 						if ( is_null( $post ) ) {
 							$old_post_id = null;
@@ -395,8 +403,16 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 							$post->ID = $inserted_page->ID;
 						}
 
-						FLBuilder::enqueue_layout_styles_scripts( $inserted_page->ID );
 
+						if ( class_exists( 'FLBuilder' ) ) {
+							FLBuilder::enqueue_layout_styles_scripts( $inserted_page->ID );
+						}
+
+						if( class_exists( 'SiteOrigin_Panels' ) ) {
+							$renderer = SiteOrigin_Panels::renderer();
+							$renderer->add_inline_css( $inserted_page->ID, $renderer->generate_css( $inserted_page->ID ) );
+						}
+						
 						if ( is_null( $old_post_id ) ) {
 							$post = null;
 						} else {
