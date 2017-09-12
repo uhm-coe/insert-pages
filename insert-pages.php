@@ -240,16 +240,15 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 						$post->ID = $inserted_page->ID;
 					}
 
-
 					if ( class_exists( 'FLBuilder' ) ) {
 						FLBuilder::enqueue_layout_styles_scripts( $inserted_page->ID );
 					}
 
-					if( class_exists( 'SiteOrigin_Panels' ) ) {
+					if ( class_exists( 'SiteOrigin_Panels' ) ) {
 						$renderer = SiteOrigin_Panels::renderer();
 						$renderer->add_inline_css( $inserted_page->ID, $renderer->generate_css( $inserted_page->ID ) );
 					}
-					
+
 					if ( is_null( $old_post_id ) ) {
 						$post = null;
 					} else {
@@ -403,16 +402,15 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 							$post->ID = $inserted_page->ID;
 						}
 
-
 						if ( class_exists( 'FLBuilder' ) ) {
 							FLBuilder::enqueue_layout_styles_scripts( $inserted_page->ID );
 						}
 
-						if( class_exists( 'SiteOrigin_Panels' ) ) {
+						if ( class_exists( 'SiteOrigin_Panels' ) ) {
 							$renderer = SiteOrigin_Panels::renderer();
 							$renderer->add_inline_css( $inserted_page->ID, $renderer->generate_css( $inserted_page->ID ) );
 						}
-						
+
 						if ( is_null( $old_post_id ) ) {
 							$post = null;
 						} else {
