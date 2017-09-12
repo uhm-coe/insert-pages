@@ -86,6 +86,9 @@ Just one! The plugin prevents you from embedding a page in itself, but you can t
 
 == Changelog ==
 
+= 3.2.3 =
+* Fix for loading inline CSS from SiteOrigin Page Builder version 2.5 or later. Props @alexgso for the pull request!
+
 = 3.2.2 =
 * Revert TinyMCE filter hook to 3.1.9 method due to continued Divi theme compatibility issues.
 * Add configurable option to load TinyMCE filter in a different location to support SiteOrigin PageBuilder users.
