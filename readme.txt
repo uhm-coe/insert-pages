@@ -2,7 +2,7 @@
 Contributors: figureone, the_magician
 Tags: insert, pages, shortcode, embed
 Requires at least: 3.0.1
-Tested up to: 4.7.4
+Tested up to: 4.8.2
 Stable tag: trunk
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -85,6 +85,9 @@ Just one! The plugin prevents you from embedding a page in itself, but you can t
 3. Insert Pages shortcode example.
 
 == Changelog ==
+
+= 3.2.4 =
+* Restrict custom template paths to theme directory (prevent directory traversal attacks).
 
 = 3.2.3 =
 * Fix for loading inline CSS from SiteOrigin Page Builder version 2.5 or later. Props @alexgso for the pull request!
@@ -300,6 +303,9 @@ add_action( 'init', 'theme_init' );`
 * Development release.
 
 == Upgrade Notice ==
+
+= 3.2.4 =
+Security notice: this update fixes a potential directory traversal attack where a WordPress user with Editor role or higher could include any php file by specifying it as a custom template in the Insert Pages shortcode. This vulnerability is limited because the attacker already needs to be an Editor or higher on your WordPress site. Example: [insert page='your-page' display='../../../../../../../../xampp/apache/logs/access.log']
 
 = 2.3 =
 Warning: If you apply CSS rules to #insertPages_Content, this update will require you to modify those styles. The element id "insertPages_Content" was removed so multiple pages can be embedded on a single page. You may apply styles instead to the "insert-page" class.
