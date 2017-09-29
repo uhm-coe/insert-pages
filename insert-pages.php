@@ -352,7 +352,10 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 					$inserted_page = query_posts( $args );
 					if ( have_posts() ) {
 						$template = locate_template( $attributes['display'] );
-						if ( strlen( $template ) > 0 ) {
+						// Only allow templates that don't have any directory traversal in
+						// them (to prevent including php files that aren't in the active
+						// theme directory or the /wp-includes/theme-compat/ directory).
+						if ( strlen( $template ) > 0 && $template === realpath( $template ) ) {
 							include $template; // execute the template code
 						} else { // Couldn't find template, so fall back to printing a link to the page.
 							the_post();
@@ -459,7 +462,10 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 						break;
 					default: // display is either invalid, or contains a template file to use
 						$template = locate_template( $attributes['display'] );
-						if ( strlen( $template ) > 0 ) {
+						// Only allow templates that don't have any directory traversal in
+						// them (to prevent including php files that aren't in the active
+						// theme directory or the /wp-includes/theme-compat/ directory).
+						if ( strlen( $template ) > 0 && $template === realpath( $template ) ) {
 							include $template; // execute the template code
 						} else { // Couldn't find template, so fall back to printing a link to the page.
 							the_post();
