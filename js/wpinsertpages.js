@@ -559,7 +559,7 @@ var wpInsertPages;
 					classes += this.title ? '' : ' no-title';
 					list += classes ? '<li class="' + classes + '">' : '<li>';
 					list += '<input type="hidden" class="item-permalink" value="' + this.permalink + '" />';
-					list += '<input type="hidden" class="item-slug" value="' + this.slug + '" />';
+					list += '<input type="hidden" class="item-slug" value="' + this.path + '" />';
 					list += '<input type="hidden" class="item-id" value="' + this.ID + '" />';
 					list += '<span class="item-title">';
 					list += this.title ? this.title : wpInsertPagesL10n.noTitle;

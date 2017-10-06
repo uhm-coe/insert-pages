@@ -70,7 +70,7 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 				'wpinsertpages',
 				plugins_url( '/js/wpinsertpages.js', __FILE__ ),
 				array( 'wpdialogs' ),
-				'20151230'
+				'20171006'
 			);
 			wp_localize_script(
 				'wpinsertpages',
@@ -200,6 +200,20 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 					create_function( '$type', 'return ! in_array( $type, array( "nav_menu_item", "attachment" ) );' )
 				);
 				$inserted_page = get_page_by_path( $attributes['page'], OBJECT, $insertable_post_types );
+
+				// If get_page_by_path() didn't find the page, check to see if the slug
+				// was provided instead of the full path (useful for hierarchical pages
+				// that are nested under another page).
+				if ( is_null( $inserted_page ) ) {
+					global $wpdb;
+					$page = $wpdb->get_var( $wpdb->prepare(
+						"SELECT ID FROM $wpdb->posts WHERE post_name = %s AND post_status = 'publish' LIMIT 1", $attributes['page']
+					) );
+					if ( $page ) {
+						 $inserted_page = get_post( $page );
+					}
+				}
+
 				$attributes['page'] = $inserted_page ? $inserted_page->ID : $attributes['page'];
 			} else {
 				$inserted_page = get_post( intval( $attributes['page'] ) );
@@ -796,6 +810,7 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 					'title' => trim( esc_html( strip_tags( get_the_title( $post ) ) ) ),
 					'permalink' => get_permalink( $post->ID ),
 					'slug' => $post->post_name,
+					'path' => get_page_uri( $post ),
 					'info' => $info,
 				);
 			}
