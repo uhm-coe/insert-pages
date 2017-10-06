@@ -312,8 +312,11 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 							if ( is_protected_meta( $keyt, 'post' ) ) {
 								continue;
 							}
-							$values = array_map( 'trim', get_post_custom_values( $key ) );
-							$value = implode( $values, ', ' );
+							$value = get_post_custom_values( $key );
+							if ( is_array( $value ) ) {
+								$values = array_map( 'trim', $value );
+								$value = implode( $values, ', ' );
+							}
 
 							/**
 							 * Filter the HTML output of the li element in the post custom fields list.
