@@ -372,7 +372,15 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 						// Only allow templates that don't have any directory traversal in
 						// them (to prevent including php files that aren't in the active
 						// theme directory or the /wp-includes/theme-compat/ directory).
-						if ( strlen( $template ) > 0 && $template === realpath( $template ) ) {
+						$path_in_theme_or_childtheme_or_compat = (
+							// Template is in current theme folder.
+							0 === strpos( realpath( $template ), realpath( STYLESHEETPATH ) ) ||
+							// Template is in current or parent theme folder.
+							0 === strpos( realpath( $template ), realpath( TEMPLATEPATH ) ) ||
+							// Template is in theme-compat folder.
+							0 === strpos( realpath( $template ), realpath( ABSPATH . WPINC . '/theme-compat/' ) )
+						);
+						if ( strlen( $template ) > 0 && $path_in_theme_or_childtheme_or_compat ) {
 							include $template; // execute the template code
 						} else { // Couldn't find template, so fall back to printing a link to the page.
 							the_post();
@@ -482,7 +490,15 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 						// Only allow templates that don't have any directory traversal in
 						// them (to prevent including php files that aren't in the active
 						// theme directory or the /wp-includes/theme-compat/ directory).
-						if ( strlen( $template ) > 0 && $template === realpath( $template ) ) {
+						$path_in_theme_or_childtheme_or_compat = (
+							// Template is in current theme folder.
+							0 === strpos( realpath( $template ), realpath( STYLESHEETPATH ) ) ||
+							// Template is in current or parent theme folder.
+							0 === strpos( realpath( $template ), realpath( TEMPLATEPATH ) ) ||
+							// Template is in theme-compat folder.
+							0 === strpos( realpath( $template ), realpath( ABSPATH . WPINC . '/theme-compat/' ) )
+						);
+						if ( strlen( $template ) > 0 && $path_in_theme_or_childtheme_or_compat ) {
 							include $template; // execute the template code
 						} else { // Couldn't find template, so fall back to printing a link to the page.
 							the_post();
