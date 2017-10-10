@@ -9,7 +9,7 @@ Author URI: http://www.linkedin.com/in/paulrryan
 Text Domain: insert-pages
 Domain Path: /languages
 License: GPL2
-Version: 3.2.5
+Version: 3.2.6
 */
 
 /*  Copyright 2011 Paul Ryan (email: prar@hawaii.edu)

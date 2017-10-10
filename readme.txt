@@ -86,6 +86,9 @@ Just one! The plugin prevents you from embedding a page in itself, but you can t
 
 == Changelog ==
 
+= 3.2.6 =
+* Fix for custom templates issues on certain platforms (e.g., Windows).
+
 = 3.2.5 =
 * Support looking up hierarchical pages by slug; insert hierarchical pages by path (not slug).
 * Fix for php warning when displaying meta values that are strings instead of arrays.
