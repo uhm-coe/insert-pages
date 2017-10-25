@@ -173,7 +173,7 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 			 * on inserting pages that themselves have inserted pages, so this
 			 * check should be disabled for those individuals.
 			 *
-			 * @param bool $apply_the_content_filter Indicates whether to apply the_content filter.
+			 * @param bool $apply_nesting_check Indicates whether to apply deep nesting check.
 			 */
 			$attributes['should_apply_nesting_check'] = apply_filters( 'insert_pages_apply_nesting_check', $attributes['should_apply_nesting_check'] );
 
