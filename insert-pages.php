@@ -177,6 +177,18 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 			 */
 			$attributes['should_apply_nesting_check'] = apply_filters( 'insert_pages_apply_nesting_check', $attributes['should_apply_nesting_check'] );
 
+			/**
+			 * Filter the chosen display method, where display can be one of:
+			 * title, link, excerpt, excerpt-only, content, all, {custom-template.php}
+			 * Useful for admins who want to restrict the display sitewide.
+			 *
+			 * @since 3.2.7
+			 *
+			 * @param string $display The display method for the inserted page.
+			 */
+			$attributes['display'] = apply_filters( 'insert_pages_override_display', $attributes['display'] );
+
+
 			// Don't allow inserted pages to be added to the_content more than once (prevent infinite loops).
 			if ( $attributes['should_apply_nesting_check'] ) {
 				$done = false;
