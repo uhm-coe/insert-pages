@@ -86,6 +86,9 @@ Just one! The plugin prevents you from embedding a page in itself, but you can t
 
 == Changelog ==
 
+= 3.2.7 =
+* Add insert_pages_override_display filter so site admins can enforce a specific display on all inserted pages.
+
 = 3.2.6 =
 * Fix for custom templates issues on certain platforms (e.g., Windows).
 
