@@ -250,10 +250,11 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 				// Start output buffering so we can save the output to a string.
 				ob_start();
 
-				// If Beaver Builder or SiteOrigin Page Builder are enabled, load any cached styles associated with the inserted page.
+				// If Beaver Builder, SiteOrigin Page Builder, or Elementor are enabled,
+				// load any cached styles associated with the inserted page.
 				// Note: Temporarily set the global $post->ID to the inserted page ID,
 				// since both builders rely on the id to load the appropriate styles.
-				if ( class_exists( 'FLBuilder' ) || class_exists( 'SiteOrigin_Panels' ) ) {
+				if ( class_exists( 'FLBuilder' ) || class_exists( 'SiteOrigin_Panels' ) || class_exists( '\Elementor\Post_CSS_File' ) ) {
 					// If we're not in The Loop (i.e., global $post isn't assigned),
 					// temporarily populate it with the post to be inserted so we can
 					// retrieve generated styles for that post. Reset $post to null
@@ -273,6 +274,11 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 					if ( class_exists( 'SiteOrigin_Panels' ) ) {
 						$renderer = SiteOrigin_Panels::renderer();
 						$renderer->add_inline_css( $inserted_page->ID, $renderer->generate_css( $inserted_page->ID ) );
+					}
+
+					if ( class_exists( '\Elementor\Post_CSS_File' ) ) {
+						$css_file = new \Elementor\Post_CSS_File( $inserted_page->ID );
+						$css_file->enqueue();
 					}
 
 					if ( is_null( $old_post_id ) ) {
@@ -310,6 +316,16 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 					break;
 
 				case "content":
+					// If Elementor is installed, try to render the page with it. If there is no Elementor content, fall back to normal rendering.
+					if ( class_exists( '\Elementor\Plugin' ) ) {
+						$elementor_content = \Elementor\Plugin::$instance->frontend->get_builder_content( $inserted_page->ID );
+						if ( strlen( $elementor_content ) > 0 ) {
+							echo $elementor_content;
+							break;
+						}
+					}
+
+					// Render the content normally.
 					$content = get_post_field( 'post_content', $inserted_page->ID );
 					if ( $attributes['should_apply_the_content_filter'] ) {
 						$content = apply_filters( 'the_content', $content );
@@ -426,10 +442,11 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 					// Start output buffering so we can save the output to string
 					ob_start();
 
-					// If Beaver Builder or SiteOrigin Page Builder are enabled, load any cached styles associated with the inserted page.
+					// If Beaver Builder, SiteOrigin Page Builder, or Elementor are enabled,
+					// load any cached styles associated with the inserted page.
 					// Note: Temporarily set the global $post->ID to the inserted page ID,
 					// since both builders rely on the id to load the appropriate styles.
-					if ( class_exists( 'FLBuilder' ) || class_exists( 'SiteOrigin_Panels' ) ) {
+					if ( class_exists( 'FLBuilder' ) || class_exists( 'SiteOrigin_Panels' ) || class_exists( '\Elementor\Post_CSS_File' ) ) {
 						// If we're not in The Loop (i.e., global $post isn't assigned),
 						// temporarily populate it with the post to be inserted so we can
 						// retrieve generated styles for that post. Reset $post to null
@@ -449,6 +466,11 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 						if ( class_exists( 'SiteOrigin_Panels' ) ) {
 							$renderer = SiteOrigin_Panels::renderer();
 							$renderer->add_inline_css( $inserted_page->ID, $renderer->generate_css( $inserted_page->ID ) );
+						}
+
+						if ( class_exists( '\Elementor\Post_CSS_File' ) ) {
+							$css_file = new \Elementor\Post_CSS_File( $inserted_page->ID );
+							$css_file->enqueue();
 						}
 
 						if ( is_null( $old_post_id ) ) {
