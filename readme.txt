@@ -86,6 +86,9 @@ Just one! The plugin prevents you from embedding a page in itself, but you can t
 
 == Changelog ==
 
+= 3.2.8 =
+* Add support for inserting pages/posts built with Elementor.
+
 = 3.2.7 =
 * Add insert_pages_override_display filter so site admins can enforce a specific display on all inserted pages.
 
