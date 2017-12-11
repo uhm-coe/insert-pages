@@ -121,6 +121,7 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 				'display' => 'all',
 				'class' => '',
 				'inline' => false,
+				'querystring' => '',
 			), $atts, 'insert' );
 
 			// Validation checks.
@@ -150,6 +151,19 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 			 */
 			$attributes['inline'] = apply_filters( 'insert_pages_use_inline_wrapper', $attributes['inline'] );
 			$attributes['wrapper_tag'] = $attributes['inline'] ? 'span' : 'div';
+
+			/**
+			 * Filter the querystring values applied to every inserted page. Useful
+			 * for admins who want to provide the same querystring value to all
+			 * inserted pages sitewide.
+			 *
+			 * @since 3.2.9
+			 *
+			 * @param string $querystring The querystring value for the inserted page.
+			 */
+			$attributes['querystring'] = apply_filters( 'insert_pages_override_querystring',
+				str_replace( '{', '[', str_replace( '}', ']', htmlspecialchars_decode( $attributes['querystring'] ) ) )
+			);
 
 			$attributes['should_apply_the_content_filter'] = true;
 			/**
@@ -229,6 +243,15 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 				$attributes['page'] = $inserted_page ? $inserted_page->ID : $attributes['page'];
 			} else {
 				$inserted_page = get_post( intval( $attributes['page'] ) );
+			}
+
+			// Set any querystring params included in the shortcode.
+			parse_str( $attributes['querystring'], $querystring );
+			$original_get = $_GET;
+			$original_request = $_REQUEST;
+			foreach ( $querystring as $param => $value ) {
+				$_GET[$param] = $value;
+				$_REQUEST[$param] = $value;
 			}
 
 			// Use "Normal" insert method (get_post()).
@@ -563,11 +586,16 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 			 *   display: Content to display from inserted page.
 			 *   class: Extra classes to add to inserted page wrapper element.
 			 *   inline: Boolean indicating wrapper element should be a span.
+			 *   querystring: Extra querystring values provided to the custom template.
 			 *   should_apply_nesting_check: Whether to disable nested inserted pages.
 			 *   should_apply_the_content_filter: Whether to apply the_content filter to post contents and excerpts.
 			 *   wrapper_tag: Tag to use for the wrapper element (e.g., div, span).
 			 */
 			$content = apply_filters( 'insert_pages_wrap_content', $content, $inserted_page, $attributes );
+
+			// Unset any querystring params included in the shortcode.
+			$_GET = $original_get;
+			$_REQUEST = $original_request;
 
 			return $content;
 		}
@@ -731,6 +759,10 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 						<label for="insertpage-extra-inline">
 							<?php _e( 'Inline?', 'insert-pages' ); ?>
 							<input id="insertpage-extra-inline" type="checkbox" />
+						</label>
+						<label for="insertpage-extra-querystring">
+							<?php _e( 'Querystring', 'insert-pages' ); ?>
+							<input id="insertpage-extra-querystring" type="text" autocomplete="off" />
 						</label>
 					</div>
 				</div>

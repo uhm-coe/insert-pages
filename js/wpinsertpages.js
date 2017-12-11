@@ -28,6 +28,7 @@ var wpInsertPages;
 			// Extra fields (wrapper classes, inline checkbox)
 			inputs.extraClasses = $( '#insertpage-extra-classes' );
 			inputs.extraInline = $( '#insertpage-extra-inline' );
+			inputs.extraQuerystring = $( '#insertpage-extra-querystring' );
 			// Custom template select field
 			inputs.template = $( '#insertpage-template-select' );
 			inputs.search = $( '#insertpage-search-field' );
@@ -249,6 +250,17 @@ var wpInsertPages;
 					inputs.extraInline.attr( 'checked', false );
 				}
 
+				// Update extra querystring.
+				regexp = /querystring=['"]([^['"]*)['"]/;
+				matches = regexp.exec( shortcode );
+				if ( matches && matches.length > 1 ) {
+					// Also unescape brackets in the querystring (if left alone, any
+					// closing bracket will terminate the shortcode).
+					inputs.extraQuerystring.val( matches[1].replace( /&amp;/g, '&' ) );
+				} else {
+					inputs.extraQuerystring.val( '' );
+				}
+
 				// Update save prompt.
 				inputs.submit.val( wpInsertPagesL10n.update );
 
@@ -296,6 +308,7 @@ var wpInsertPages;
 				display: inputs.format.val()=='template' ? inputs.template.val() : inputs.format.val(),
 				class: inputs.extraClasses.val(),
 				inline: inputs.extraInline.is( ':checked' ),
+				querystring: inputs.extraQuerystring.val(),
 			};
 		},
 
@@ -327,6 +340,10 @@ var wpInsertPages;
 				"display='" + attrs.display + "'" +
 				( attrs['class'].length > 0 ? " class='" + attrs['class'] + "'" : "" ) +
 				( attrs.inline ? " inline" : "" ) +
+				( attrs.querystring ? " querystring='" +
+					attrs['querystring'].replace( /&/g, '&amp;' ).replace( /\[/g, '{' ).replace( /\]/g, '}' )
+					+ "'" : ""
+				) +
 				"]");
 			editor.execCommand("mceEndUndoLevel");
 		},
