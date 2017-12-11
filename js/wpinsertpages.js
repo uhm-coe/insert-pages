@@ -111,7 +111,8 @@ var wpInsertPages;
 					// Get cursor state (used later to determine if we're in an existing shortcode)
 					node = editor.selection.getNode();
 					bookmark = editor.selection.getBookmark( 0 );
-					cursorPosition = node.innerHTML.indexOf( '<span data-mce-type="bookmark"' );
+					unencodedText = node.innerHTML.replace( /&amp;/g, '&' );
+					cursorPosition = unencodedText.indexOf( '<span data-mce-type="bookmark"' );
 					editor.selection.moveToBookmark( bookmark );
 
 				} else {
@@ -163,7 +164,7 @@ var wpInsertPages;
 
 			// Get the existing shortcode the cursor is in (or get the entire node if cursor not in one)
 			shortcode = '';
-			content = editor.selection.getNode().innerHTML;
+			content = editor.selection.getNode().innerHTML.replace( /&amp;/g, '&' );
 			if ( content.indexOf( '[insert page=' ) >= 0 ) {
 				// Find occurrences of shortcode in current node and see if the cursor
 				// position is inside one of them.
@@ -187,7 +188,8 @@ var wpInsertPages;
 				offset = 0;
 				for ( i = 0; i < node.childNodes.length; i++ ) {
 					selectedChild = node.childNodes[i];
-					length = ( selectedChild.outerHTML ) ? selectedChild.outerHTML.length : selectedChild.textContent.length;
+					text = ( selectedChild.outerHTML ) ? selectedChild.outerHTML : selectedChild.textContent;
+					length = text.length;
 					if ( cursorPosition <= offset + length ) {
 						break;
 					}
