@@ -86,6 +86,13 @@ Just one! The plugin prevents you from embedding a page in itself, but you can t
 
 == Changelog ==
 
+= 3.2.9 =
+* Add querystring parameter to the shortcode to pass custom querystring values to any custom templates.
+
+  Example: [insert page='your-page' display='your-custom-template.php' querystring='foo=bar&baz=qux']
+
+  Note: If you need to use arrays in your querystring variables, use braces {} instead of brackets [], since WordPress shortcodes cannot have brackets inside them. The plugin will convert the braces internally. Example: querystring='foo[]=bar&foo[]=baz'
+
 = 3.2.8 =
 * Add support for inserting pages/posts built with Elementor.
 
