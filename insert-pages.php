@@ -377,7 +377,7 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 							if ( is_protected_meta( $keyt, 'post' ) ) {
 								continue;
 							}
-							$value = get_post_custom_values( $key );
+							$value = get_post_custom_values( $key, $inserted_page->ID );
 							if ( is_array( $value ) ) {
 								$values = array_map( 'trim', $value );
 								$value = implode( $values, ', ' );
