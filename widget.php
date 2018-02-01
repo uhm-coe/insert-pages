@@ -93,6 +93,7 @@ class InsertPagesWidget extends WP_Widget {
 				<option value='excerpt' <?php selected( $instance['display'], 'excerpt' ); ?>><?php _e( 'Excerpt', 'insert-pages' ); ?></option>
 				<option value='excerpt-only' <?php selected( $instance['display'], 'excerpt-only' ); ?>><?php _e( 'Excerpt only (no title)', 'insert-pages' ); ?></option>
 				<option value='content' <?php selected( $instance['display'], 'content' ); ?>><?php _e( 'Content', 'insert-pages' ); ?></option>
+				<option value='post-thumbnail' <?php selected( $instance['display'], 'post-thumbnail' ); ?>><?php _e( 'Post Thumbnail', 'insert-pages' ); ?></option>
 				<option value='all' <?php selected( $instance['display'], 'all' ); ?>><?php _e( 'All (includes custom fields)', 'insert-pages' ); ?></option>
 				<option value='template' <?php selected( $instance['display'], 'template' ); ?>><?php _e( 'Use a custom template', 'insert-pages' ); ?> &raquo;</option>
 			</select>

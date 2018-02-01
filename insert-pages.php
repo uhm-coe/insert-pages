@@ -29,7 +29,7 @@ Version: 3.2.9
 */
 
 /*  Shortcode Format:
-	[insert page='{slug}|{id}' display='title|link|excerpt|excerpt-only|content|all|{custom-template.php}' class='any-classes']
+	[insert page='{slug}|{id}' display='title|link|excerpt|excerpt-only|content|post-thumbnail|all|{custom-template.php}' class='any-classes']
 */
 
 // Define the InsertPagesPlugin class (variables and functions)
@@ -70,7 +70,7 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 				'wpinsertpages',
 				plugins_url( '/js/wpinsertpages.js', __FILE__ ),
 				array( 'wpdialogs' ),
-				'20171006'
+				'20180201'
 			);
 			wp_localize_script(
 				'wpinsertpages',
@@ -193,7 +193,7 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 
 			/**
 			 * Filter the chosen display method, where display can be one of:
-			 * title, link, excerpt, excerpt-only, content, all, {custom-template.php}
+			 * title, link, excerpt, excerpt-only, content, post-thumbnail, all, {custom-template.php}
 			 * Useful for admins who want to restrict the display sitewide.
 			 *
 			 * @since 3.2.7
@@ -354,6 +354,10 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 						$content = apply_filters( 'the_content', $content );
 					}
 					echo $content;
+					break;
+
+				case "post-thumbnail":
+					?><a href="<?php echo esc_url( get_permalink( $inserted_page->ID ) ); ?>"><?php echo get_the_post_thumbnail( $inserted_page->ID ); ?></a><?php
 					break;
 
 				case "all":
@@ -532,6 +536,9 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 					case "content":
 						the_post();
 						if ( $attributes['should_apply_the_content_filter'] ) the_content(); else echo get_the_content();
+						break;
+					case "post-thumbnail":
+						?><a href="<?php the_permalink(); ?>"><?php the_post_thumbnail(); ?></a><?php
 						break;
 					case "all":
 						the_post();
@@ -742,6 +749,7 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 								<option value='excerpt'><?php _e( 'Excerpt with title', 'insert-pages' ); ?></option>
 								<option value='excerpt-only'><?php _e( 'Excerpt only (no title)', 'insert-pages' ); ?></option>
 								<option value='content'><?php _e( 'Content', 'insert-pages' ); ?></option>
+								<option value='post-thumbnail'><?php _e( 'Post Thumbnail', 'insert-pages' ); ?></option>
 								<option value='all'><?php _e( 'All (includes custom fields)', 'insert-pages' ); ?></option>
 								<option value='template'><?php _e( 'Use a custom template', 'insert-pages' ); ?> &raquo;</option>
 							</select>
@@ -902,7 +910,7 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 		function insertPages_add_quicktags() {
 			if ( wp_script_is( 'quicktags' ) ) : ?>
 				<script type="text/javascript">
-					QTags.addButton( 'ed_insert_page', '[insert page]', "[insert page='your-page-slug' display='title|link|excerpt|excerpt-only|content|all']\n", '', '', 'Insert Page', 999 );
+					QTags.addButton( 'ed_insert_page', '[insert page]', "[insert page='your-page-slug' display='title|link|excerpt|excerpt-only|content|post-thumbnail|all']\n", '', '', 'Insert Page', 999 );
 				</script>
 			<?php endif;
 		}

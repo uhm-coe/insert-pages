@@ -222,7 +222,7 @@ var wpInsertPages;
 				regexp = /display=['"]([^['"]*)['"]/;
 				matches = regexp.exec( shortcode );
 				if ( matches && matches.length > 1 ) {
-					if ( ['title', 'link', 'excerpt', 'excerpt-only', 'content', 'all', ].indexOf( matches[1] ) >= 0 ) {
+					if ( ['title', 'link', 'excerpt', 'excerpt-only', 'content', 'post-thumbnail', 'all', ].indexOf( matches[1] ) >= 0 ) {
 						inputs.format.val( matches[1] );
 						inputs.template.val( 'all' );
 					} else {
