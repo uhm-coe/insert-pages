@@ -86,6 +86,10 @@ Just one! The plugin prevents you from embedding a page in itself, but you can t
 
 == Changelog ==
 
+= 3.3.0 =
+* Fix custom field values coming from parent post in certain contexts. Props @chrisneward for catching it!
+* Add post-thumbnail display to output just the featured image of a post. Props @pereztroff for the feature request.
+
 = 3.2.9 =
 * Add querystring parameter to the shortcode to pass custom querystring values to any custom templates.
 
