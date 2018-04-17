@@ -277,7 +277,12 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 				// load any cached styles associated with the inserted page.
 				// Note: Temporarily set the global $post->ID to the inserted page ID,
 				// since both builders rely on the id to load the appropriate styles.
-				if ( class_exists( 'FLBuilder' ) || class_exists( 'SiteOrigin_Panels' ) || class_exists( '\Elementor\Post_CSS_File' ) ) {
+				if (
+					class_exists( 'FLBuilder' ) ||
+					class_exists( 'SiteOrigin_Panels' ) ||
+					class_exists( '\Elementor\Post_CSS_File' ) ||
+					defined( 'VCV_VERSION' )
+				) {
 					// If we're not in The Loop (i.e., global $post isn't assigned),
 					// temporarily populate it with the post to be inserted so we can
 					// retrieve generated styles for that post. Reset $post to null
@@ -302,6 +307,33 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 					if ( class_exists( '\Elementor\Post_CSS_File' ) ) {
 						$css_file = new \Elementor\Post_CSS_File( $inserted_page->ID );
 						$css_file->enqueue();
+					}
+
+					// Enqueue custom style from WPBakery Page Builder (Visual Composer).
+					if ( defined( 'VCV_VERSION' ) ) {
+						$bundleUrl = get_post_meta( $inserted_page->ID, 'vcvSourceCssFileUrl', true );
+						if ( $bundleUrl ) {
+							$version = get_post_meta( $inserted_page->ID, 'vcvSourceCssFileHash', true );
+							if ( ! preg_match( '/^http/', $bundleUrl ) ) {
+								if ( ! preg_match( '/assets-bundles/', $bundleUrl ) ) {
+									$bundleUrl = '/assets-bundles/' . $bundleUrl;
+								}
+							}
+							if ( preg_match( '/^http/', $bundleUrl ) ) {
+								$bundleUrl = set_url_scheme( $bundleUrl );
+							} else if ( defined( 'VCV_TF_ASSETS_IN_UPLOADS' ) && constant( 'VCV_TF_ASSETS_IN_UPLOADS' ) ) {
+								$uploadDir = wp_upload_dir();
+								$bundleUrl = set_url_scheme( $uploadDir['baseurl'] . '/' . VCV_PLUGIN_ASSETS_DIRNAME . '/' . ltrim( $bundleUrl, '/\\' ) );
+							} else {
+								$bundleUrl = content_url() . '/' . VCV_PLUGIN_ASSETS_DIRNAME . '/' . ltrim( $bundleUrl, '/\\' );
+							}
+							wp_enqueue_style(
+								'vcv:assets:source:main:styles:' . sanitize_title( $bundleUrl ),
+								$bundleUrl,
+								array(),
+								VCV_VERSION . '.' . $version
+							);
+						}
 					}
 
 					if ( is_null( $old_post_id ) ) {
@@ -473,7 +505,12 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 					// load any cached styles associated with the inserted page.
 					// Note: Temporarily set the global $post->ID to the inserted page ID,
 					// since both builders rely on the id to load the appropriate styles.
-					if ( class_exists( 'FLBuilder' ) || class_exists( 'SiteOrigin_Panels' ) || class_exists( '\Elementor\Post_CSS_File' ) ) {
+					if (
+						class_exists( 'FLBuilder' ) ||
+						class_exists( 'SiteOrigin_Panels' ) ||
+						class_exists( '\Elementor\Post_CSS_File' ) ||
+						defined( 'VCV_VERSION' )
+					) {
 						// If we're not in The Loop (i.e., global $post isn't assigned),
 						// temporarily populate it with the post to be inserted so we can
 						// retrieve generated styles for that post. Reset $post to null
@@ -498,6 +535,33 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 						if ( class_exists( '\Elementor\Post_CSS_File' ) ) {
 							$css_file = new \Elementor\Post_CSS_File( $inserted_page->ID );
 							$css_file->enqueue();
+						}
+
+						// Enqueue custom style from WPBakery Page Builder (Visual Composer).
+						if ( defined( 'VCV_VERSION' ) ) {
+							$bundleUrl = get_post_meta( $inserted_page->ID, 'vcvSourceCssFileUrl', true );
+							if ( $bundleUrl ) {
+								$version = get_post_meta( $inserted_page->ID, 'vcvSourceCssFileHash', true );
+								if ( ! preg_match( '/^http/', $bundleUrl ) ) {
+									if ( ! preg_match( '/assets-bundles/', $bundleUrl ) ) {
+										$bundleUrl = '/assets-bundles/' . $bundleUrl;
+									}
+								}
+								if ( preg_match( '/^http/', $bundleUrl ) ) {
+									$bundleUrl = set_url_scheme( $bundleUrl );
+								} else if ( defined( 'VCV_TF_ASSETS_IN_UPLOADS' ) && constant( 'VCV_TF_ASSETS_IN_UPLOADS' ) ) {
+									$uploadDir = wp_upload_dir();
+									$bundleUrl = set_url_scheme( $uploadDir['baseurl'] . '/' . VCV_PLUGIN_ASSETS_DIRNAME . '/' . ltrim( $bundleUrl, '/\\' ) );
+								} else {
+									$bundleUrl = content_url() . '/' . VCV_PLUGIN_ASSETS_DIRNAME . '/' . ltrim( $bundleUrl, '/\\' );
+								}
+								wp_enqueue_style(
+									'vcv:assets:source:main:styles:' . sanitize_title( $bundleUrl ),
+									$bundleUrl,
+									array(),
+									VCV_VERSION . '.' . $version
+								);
+							}
 						}
 
 						if ( is_null( $old_post_id ) ) {
