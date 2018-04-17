@@ -223,7 +223,7 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 				// types), excluding builtin types (nav_menu_item, attachment).
 				$insertable_post_types = array_filter(
 					get_post_types(),
-					create_function( '$type', 'return ! in_array( $type, array( "nav_menu_item", "attachment" ) );' )
+					array( $this, 'is_post_type_insertable' )
 				);
 				$inserted_page = get_page_by_path( $attributes['page'], OBJECT, $insertable_post_types );
 
@@ -981,6 +981,23 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 			<?php endif;
 		}
 
+		/**
+		 * Indicates whether a particular post type is able to be inserted.
+		 * @param  boolean $type Post type.
+		 * @return boolean       Whether post type is insertable.
+		 */
+		private function is_post_type_insertable( $type ) {
+			return ! in_array( $type, array( 'nav_menu_item', 'attachment', 'revision', 'customize_changeset', 'oembed_cache' ) );
+		}
+
+		/**
+		 * Registers the theme widget for inserting a page into an area.
+		 * @return null
+		 */
+		public function insertPages_widgets_init() {
+			register_widget( 'InsertPagesWidget' );
+		}
+
 	}
 }
 
@@ -1028,5 +1045,5 @@ if ( isset( $insertPages_plugin ) ) {
 
 	// Register Insert Pages shortcode widget.
 	require_once( dirname( __FILE__ ) . '/widget.php' );
-	add_action( 'widgets_init', create_function( '', 'return register_widget( "InsertPagesWidget" );' ) );
+	add_action( 'widgets_init', array( $insertPages_plugin, 'insertPages_widgets_init' ) );
 }
