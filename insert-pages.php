@@ -273,8 +273,9 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 				// Start output buffering so we can save the output to a string.
 				ob_start();
 
-				// If Beaver Builder, SiteOrigin Page Builder, or Elementor are enabled,
-				// load any cached styles associated with the inserted page.
+				// If Beaver Builder, SiteOrigin Page Builder, Elementor, or WPBakery
+				// Page Builder (Visual Composer) are enabled, load any cached styles
+				// associated with the inserted page.
 				// Note: Temporarily set the global $post->ID to the inserted page ID,
 				// since both builders rely on the id to load the appropriate styles.
 				if (
@@ -501,8 +502,9 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 					// Start output buffering so we can save the output to string
 					ob_start();
 
-					// If Beaver Builder, SiteOrigin Page Builder, or Elementor are enabled,
-					// load any cached styles associated with the inserted page.
+					// If Beaver Builder, SiteOrigin Page Builder, Elementor, or WPBakery
+					// Page Builder (Visual Composer) are enabled, load any cached styles
+					// associated with the inserted page.
 					// Note: Temporarily set the global $post->ID to the inserted page ID,
 					// since both builders rely on the id to load the appropriate styles.
 					if (
