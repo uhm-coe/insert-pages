@@ -862,19 +862,19 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 
 			// display: none is required here, see #WP27605.
 			?><div id="wp-insertpage-backdrop" style="display: none"></div>
-			<div id="wp-insertpage-wrap" class="wp-core-ui<?php echo $options_panel_visible; ?>" style="display: none">
+			<div id="wp-insertpage-wrap" class="wp-core-ui<?php esc_attr_e( $options_panel_visible ); ?>" style="display: none">
 			<form id="wp-insertpage" tabindex="-1">
 			<?php wp_nonce_field( 'internal-inserting', '_ajax_inserting_nonce', false ); ?>
-			<input type="hidden" id="insertpage-parent-page-id" value="<?php echo $post_id; ?>" />
+			<input type="hidden" id="insertpage-parent-page-id" value="<?php esc_attr_e( $post_id ); ?>" />
 			<div id="insertpage-modal-title">
-				<?php _e( 'Insert page', 'insert-pages' ); ?>
+				<?php esc_html_e( 'Insert page', 'insert-pages' ); ?>
 				<div id="wp-insertpage-close" tabindex="0"></div>
 			</div>
 			<div id="insertpage-selector">
 				<div id="insertpage-search-panel">
 					<div class="insertpage-search-wrapper">
 						<label>
-							<span class="search-label"><?php _e( 'Search', 'insert-pages' ); ?></span>
+							<span class="search-label"><?php esc_html_e( 'Search', 'insert-pages' ); ?></span>
 							<input type="search" id="insertpage-search-field" class="insertpage-search-field" autocomplete="off" />
 							<span class="spinner"></span>
 						</label>
@@ -886,52 +886,52 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 						</div>
 					</div>
 					<div id="insertpage-most-recent-results" class="query-results">
-						<div class="query-notice"><em><?php _e( 'No search term specified. Showing recent items.', 'insert-pages' ); ?></em></div>
+						<div class="query-notice"><em><?php esc_html_e( 'No search term specified. Showing recent items.', 'insert-pages' ); ?></em></div>
 						<ul></ul>
 						<div class="river-waiting">
 							<span class="spinner"></span>
 						</div>
 					</div>
 				</div>
-				<p class="howto" id="insertpage-options-toggle"><?php _e( 'Options', 'insert-pages' ); ?></p>
+				<p class="howto" id="insertpage-options-toggle"><?php esc_html_e( 'Options', 'insert-pages' ); ?></p>
 				<div id="insertpage-options-panel">
 					<div class="insertpage-options-wrapper">
 						<label for="insertpage-slug-field">
-							<span><?php _e( 'Slug or ID', 'insert-pages' ); ?></span>
+							<span><?php esc_html_e( 'Slug or ID', 'insert-pages' ); ?></span>
 							<input id="insertpage-slug-field" type="text" autocomplete="off" />
 							<input id="insertpage-page-id" type="hidden" />
 						</label>
 					</div>
 					<div class="insertpage-format">
 						<label for="insertpage-format-select">
-							<?php _e( 'Display', 'insert-pages' ); ?>
+							<?php esc_html_e( 'Display', 'insert-pages' ); ?>
 							<select name="insertpage-format-select" id="insertpage-format-select">
-								<option value='title'><?php _e( 'Title', 'insert-pages' ); ?></option>
-								<option value='link'><?php _e( 'Link', 'insert-pages' ); ?></option>
-								<option value='excerpt'><?php _e( 'Excerpt with title', 'insert-pages' ); ?></option>
-								<option value='excerpt-only'><?php _e( 'Excerpt only (no title)', 'insert-pages' ); ?></option>
-								<option value='content'><?php _e( 'Content', 'insert-pages' ); ?></option>
-								<option value='post-thumbnail'><?php _e( 'Post Thumbnail', 'insert-pages' ); ?></option>
-								<option value='all'><?php _e( 'All (includes custom fields)', 'insert-pages' ); ?></option>
-								<option value='template'><?php _e( 'Use a custom template', 'insert-pages' ); ?> &raquo;</option>
+								<option value='title'><?php esc_html_e( 'Title', 'insert-pages' ); ?></option>
+								<option value='link'><?php esc_html_e( 'Link', 'insert-pages' ); ?></option>
+								<option value='excerpt'><?php esc_html_e( 'Excerpt with title', 'insert-pages' ); ?></option>
+								<option value='excerpt-only'><?php esc_html_e( 'Excerpt only (no title)', 'insert-pages' ); ?></option>
+								<option value='content'><?php esc_html_e( 'Content', 'insert-pages' ); ?></option>
+								<option value='post-thumbnail'><?php esc_html_e( 'Post Thumbnail', 'insert-pages' ); ?></option>
+								<option value='all'><?php esc_html_e( 'All (includes custom fields)', 'insert-pages' ); ?></option>
+								<option value='template'><?php esc_html_e( 'Use a custom template', 'insert-pages' ); ?> &raquo;</option>
 							</select>
 							<select name="insertpage-template-select" id="insertpage-template-select" disabled="true">
-								<option value='all'><?php _e( 'Default Template', 'insert-pages' ); ?></option>
+								<option value='all'><?php esc_html_e( 'Default Template', 'insert-pages' ); ?></option>
 								<?php page_template_dropdown(); ?>
 							</select>
 						</label>
 					</div>
 					<div class="insertpage-extra">
 						<label for="insertpage-extra-classes">
-							<?php _e( 'Extra Classes', 'insert-pages' ); ?>
+							<?php esc_html_e( 'Extra Classes', 'insert-pages' ); ?>
 							<input id="insertpage-extra-classes" type="text" autocomplete="off" />
 						</label>
 						<label for="insertpage-extra-inline">
-							<?php _e( 'Inline?', 'insert-pages' ); ?>
+							<?php esc_html_e( 'Inline?', 'insert-pages' ); ?>
 							<input id="insertpage-extra-inline" type="checkbox" />
 						</label>
 						<label for="insertpage-extra-querystring">
-							<?php _e( 'Querystring', 'insert-pages' ); ?>
+							<?php esc_html_e( 'Querystring', 'insert-pages' ); ?>
 							<input id="insertpage-extra-querystring" type="text" autocomplete="off" />
 						</label>
 					</div>
@@ -942,7 +942,7 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 					<input type="submit" value="<?php esc_attr_e( 'Insert Page', 'insert-pages' ); ?>" class="button button-primary" id="wp-insertpage-submit" name="wp-insertpage-submit">
 				</div>
 				<div id="wp-insertpage-cancel">
-					<a class="submitdelete deletion" href="#"><?php _e( 'Cancel', 'insert-pages' ); ?></a>
+					<a class="submitdelete deletion" href="#"><?php esc_html_e( 'Cancel', 'insert-pages' ); ?></a>
 				</div>
 			</div>
 			</form>
