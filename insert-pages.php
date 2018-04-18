@@ -351,27 +351,27 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 				// the inserted page. @see https://codex.wordpress.org/Function_Reference/the_content#Alternative_Usage
 				switch ( $attributes['display'] ) {
 
-				case "title":
+				case 'title':
 					$title_tag = $attributes['inline'] ? 'span' : 'h1';
 					echo "<$title_tag class='insert-page-title'>";
 					echo get_the_title( $inserted_page->ID );
 					echo "</$title_tag>";
 					break;
 
-				case "link":
+				case 'link':
 					?><a href="<?php echo esc_url( get_permalink( $inserted_page->ID ) ); ?>"><?php echo get_the_title( $inserted_page->ID ); ?></a><?php
 					break;
 
-				case "excerpt":
+				case 'excerpt':
 					?><h1><a href="<?php echo esc_url( get_permalink( $inserted_page->ID ) ); ?>"><?php echo get_the_title( $inserted_page->ID ); ?></a></h1><?php
 					echo $this->insertPages_trim_excerpt( get_post_field( 'post_excerpt', $inserted_page->ID ), $inserted_page->ID, $attributes['should_apply_the_content_filter'] );
 					break;
 
-				case "excerpt-only":
+				case 'excerpt-only':
 					echo $this->insertPages_trim_excerpt( get_post_field( 'post_excerpt', $inserted_page->ID ), $inserted_page->ID, $attributes['should_apply_the_content_filter'] );
 					break;
 
-				case "content":
+				case 'content':
 					// If Elementor is installed, try to render the page with it. If there is no Elementor content, fall back to normal rendering.
 					if ( class_exists( '\Elementor\Plugin' ) ) {
 						$elementor_content = \Elementor\Plugin::$instance->frontend->get_builder_content( $inserted_page->ID );
@@ -389,11 +389,11 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 					echo $content;
 					break;
 
-				case "post-thumbnail":
+				case 'post-thumbnail':
 					?><a href="<?php echo esc_url( get_permalink( $inserted_page->ID ) ); ?>"><?php echo get_the_post_thumbnail( $inserted_page->ID ); ?></a><?php
 					break;
 
-				case "all":
+				case 'all':
 					// Title.
 					$title_tag = $attributes['inline'] ? 'span' : 'h1';
 					echo "<$title_tag class='insert-page-title'>";
@@ -579,34 +579,34 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 					// are only getting called once. The fix here is to disable processing of filters on the_content in
 					// the inserted page. @see https://codex.wordpress.org/Function_Reference/the_content#Alternative_Usage
 					switch ( $attributes['display'] ) {
-					case "title":
+					case 'title':
 						the_post();
 						$title_tag = $attributes['inline'] ? 'span' : 'h1';
 						echo "<$title_tag class='insert-page-title'>";
 						the_title();
 						echo "</$title_tag>";
 						break;
-					case "link":
+					case 'link':
 						the_post();
 						?><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a><?php
 						break;
-					case "excerpt":
+					case 'excerpt':
 						the_post();
 						?><h1><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a></h1><?php
 						if ( $attributes['should_apply_the_content_filter'] ) the_excerpt(); else echo get_the_excerpt();
 						break;
-					case "excerpt-only":
+					case 'excerpt-only':
 						the_post();
 						if ( $attributes['should_apply_the_content_filter'] ) the_excerpt(); else echo get_the_excerpt();
 						break;
-					case "content":
+					case 'content':
 						the_post();
 						if ( $attributes['should_apply_the_content_filter'] ) the_content(); else echo get_the_content();
 						break;
-					case "post-thumbnail":
+					case 'post-thumbnail':
 						?><a href="<?php the_permalink(); ?>"><?php the_post_thumbnail(); ?></a><?php
 						break;
-					case "all":
+					case 'all':
 						the_post();
 						$title_tag = $attributes['inline'] ? 'span' : 'h1';
 						echo "<$title_tag class='insert-page-title'>";
