@@ -35,7 +35,7 @@ class InsertPagesWidget extends WP_Widget {
 	 * @param array $instance
 	 */
 	public function widget( $args, $instance ) {
-		global $insertPages_plugin;
+		global $insert_pages_plugin;
 
 		// Print widget wrapper.
 		echo $args['before_widget'];
@@ -59,7 +59,7 @@ class InsertPagesWidget extends WP_Widget {
 		}
 
 		// Render the inserted page using the plugin's shortcode handler.
-		$content = $insertPages_plugin->insertPages_handleShortcode_insert( $atts );
+		$content = $insert_pages_plugin->insert_pages_handleShortcode_insert( $atts );
 
 		// Print inserted page.
 		echo $content;

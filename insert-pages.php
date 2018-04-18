@@ -36,7 +36,7 @@ Version: 3.3.0
 if ( !class_exists( 'InsertPagesPlugin' ) ) {
 	class InsertPagesPlugin {
 		// Save the id of the page being edited
-		protected $pageID;
+		protected $page_id;
 
 		// Constructor
 		public function __construct() {
@@ -44,21 +44,21 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 			require_once( dirname( __FILE__ ) . '/options.php' );
 		}
 
-		// Getter/Setter for pageID
+		// Getter/Setter for page_id
 		function getPageID() {
-			return $this->pageID;
+			return $this->page_id;
 		}
 		function setPageID( $id ) {
-			return $this->pageID = $id;
+			return $this->page_id = $id;
 		}
 
 		// Action hook: Wordpress 'init'
-		function insertPages_init() {
-			add_shortcode( 'insert', array( $this, 'insertPages_handleShortcode_insert' ) );
+		function insert_pages_init() {
+			add_shortcode( 'insert', array( $this, 'insert_pages_handleShortcode_insert' ) );
 		}
 
 		// Action hook: Wordpress 'admin_init'
-		function insertPages_admin_init() {
+		function insert_pages_admin_init() {
 			// Get options set in WordPress dashboard (Settings > Insert Pages).
 			$options = get_option( 'wpip_settings' );
 			if ( $options === FALSE || ! is_array( $options ) || ! array_key_exists( 'wpip_format', $options ) || ! array_key_exists( 'wpip_wrapper', $options ) || ! array_key_exists( 'wpip_insert_method', $options ) || ! array_key_exists( 'wpip_tinymce_filter', $options ) ) {
@@ -98,8 +98,8 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 			// if in compatibility mode, to work around a SiteOrigin PageBuilder bug).
 			// Ref: https://wordpress.org/support/topic/button-in-the-toolbar-of-tinymce-disappear-conflict-page-builder/
 			if ( $options['wpip_tinymce_filter'] === 'normal' ) {
-				add_filter( 'mce_external_plugins', array( $this, 'insertPages_handleFilter_mceExternalPlugins' ) );
-				add_filter( 'mce_buttons', array( $this, 'insertPages_handleFilter_mceButtons' ) );
+				add_filter( 'mce_external_plugins', array( $this, 'insert_pages_handleFilter_mceExternalPlugins' ) );
+				add_filter( 'mce_buttons', array( $this, 'insert_pages_handleFilter_mceButtons' ) );
 			}
 
 			load_plugin_textdomain(
@@ -112,7 +112,7 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 
 
 		// Shortcode hook: Replace the [insert ...] shortcode with the inserted page's content
-		function insertPages_handleShortcode_insert( $atts, $content = null ) {
+		function insert_pages_handleShortcode_insert( $atts, $content = null ) {
 			global $wp_query, $post, $wp_current_filter;
 
 			// Shortcode attributes.
@@ -312,25 +312,25 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 
 					// Enqueue custom style from WPBakery Page Builder (Visual Composer).
 					if ( defined( 'VCV_VERSION' ) ) {
-						$bundleUrl = get_post_meta( $inserted_page->ID, 'vcvSourceCssFileUrl', true );
-						if ( $bundleUrl ) {
+						$bundle_url = get_post_meta( $inserted_page->ID, 'vcvSourceCssFileUrl', true );
+						if ( $bundle_url ) {
 							$version = get_post_meta( $inserted_page->ID, 'vcvSourceCssFileHash', true );
-							if ( ! preg_match( '/^http/', $bundleUrl ) ) {
-								if ( ! preg_match( '/assets-bundles/', $bundleUrl ) ) {
-									$bundleUrl = '/assets-bundles/' . $bundleUrl;
+							if ( ! preg_match( '/^http/', $bundle_url ) ) {
+								if ( ! preg_match( '/assets-bundles/', $bundle_url ) ) {
+									$bundle_url = '/assets-bundles/' . $bundle_url;
 								}
 							}
-							if ( preg_match( '/^http/', $bundleUrl ) ) {
-								$bundleUrl = set_url_scheme( $bundleUrl );
+							if ( preg_match( '/^http/', $bundle_url ) ) {
+								$bundle_url = set_url_scheme( $bundle_url );
 							} else if ( defined( 'VCV_TF_ASSETS_IN_UPLOADS' ) && constant( 'VCV_TF_ASSETS_IN_UPLOADS' ) ) {
-								$uploadDir = wp_upload_dir();
-								$bundleUrl = set_url_scheme( $uploadDir['baseurl'] . '/' . VCV_PLUGIN_ASSETS_DIRNAME . '/' . ltrim( $bundleUrl, '/\\' ) );
+								$upload_dir = wp_upload_dir();
+								$bundle_url = set_url_scheme( $upload_dir['baseurl'] . '/' . VCV_PLUGIN_ASSETS_DIRNAME . '/' . ltrim( $bundle_url, '/\\' ) );
 							} else {
-								$bundleUrl = content_url() . '/' . VCV_PLUGIN_ASSETS_DIRNAME . '/' . ltrim( $bundleUrl, '/\\' );
+								$bundle_url = content_url() . '/' . VCV_PLUGIN_ASSETS_DIRNAME . '/' . ltrim( $bundle_url, '/\\' );
 							}
 							wp_enqueue_style(
-								'vcv:assets:source:main:styles:' . sanitize_title( $bundleUrl ),
-								$bundleUrl,
+								'vcv:assets:source:main:styles:' . sanitize_title( $bundle_url ),
+								$bundle_url,
 								array(),
 								VCV_VERSION . '.' . $version
 							);
@@ -364,11 +364,11 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 
 				case 'excerpt':
 					?><h1><a href="<?php echo esc_url( get_permalink( $inserted_page->ID ) ); ?>"><?php echo get_the_title( $inserted_page->ID ); ?></a></h1><?php
-					echo $this->insertPages_trim_excerpt( get_post_field( 'post_excerpt', $inserted_page->ID ), $inserted_page->ID, $attributes['should_apply_the_content_filter'] );
+					echo $this->insert_pages_trim_excerpt( get_post_field( 'post_excerpt', $inserted_page->ID ), $inserted_page->ID, $attributes['should_apply_the_content_filter'] );
 					break;
 
 				case 'excerpt-only':
-					echo $this->insertPages_trim_excerpt( get_post_field( 'post_excerpt', $inserted_page->ID ), $inserted_page->ID, $attributes['should_apply_the_content_filter'] );
+					echo $this->insert_pages_trim_excerpt( get_post_field( 'post_excerpt', $inserted_page->ID ), $inserted_page->ID, $attributes['should_apply_the_content_filter'] );
 					break;
 
 				case 'content':
@@ -541,25 +541,25 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 
 						// Enqueue custom style from WPBakery Page Builder (Visual Composer).
 						if ( defined( 'VCV_VERSION' ) ) {
-							$bundleUrl = get_post_meta( $inserted_page->ID, 'vcvSourceCssFileUrl', true );
-							if ( $bundleUrl ) {
+							$bundle_url = get_post_meta( $inserted_page->ID, 'vcvSourceCssFileUrl', true );
+							if ( $bundle_url ) {
 								$version = get_post_meta( $inserted_page->ID, 'vcvSourceCssFileHash', true );
-								if ( ! preg_match( '/^http/', $bundleUrl ) ) {
-									if ( ! preg_match( '/assets-bundles/', $bundleUrl ) ) {
-										$bundleUrl = '/assets-bundles/' . $bundleUrl;
+								if ( ! preg_match( '/^http/', $bundle_url ) ) {
+									if ( ! preg_match( '/assets-bundles/', $bundle_url ) ) {
+										$bundle_url = '/assets-bundles/' . $bundle_url;
 									}
 								}
-								if ( preg_match( '/^http/', $bundleUrl ) ) {
-									$bundleUrl = set_url_scheme( $bundleUrl );
+								if ( preg_match( '/^http/', $bundle_url ) ) {
+									$bundle_url = set_url_scheme( $bundle_url );
 								} else if ( defined( 'VCV_TF_ASSETS_IN_UPLOADS' ) && constant( 'VCV_TF_ASSETS_IN_UPLOADS' ) ) {
-									$uploadDir = wp_upload_dir();
-									$bundleUrl = set_url_scheme( $uploadDir['baseurl'] . '/' . VCV_PLUGIN_ASSETS_DIRNAME . '/' . ltrim( $bundleUrl, '/\\' ) );
+									$upload_dir = wp_upload_dir();
+									$bundle_url = set_url_scheme( $upload_dir['baseurl'] . '/' . VCV_PLUGIN_ASSETS_DIRNAME . '/' . ltrim( $bundle_url, '/\\' ) );
 								} else {
-									$bundleUrl = content_url() . '/' . VCV_PLUGIN_ASSETS_DIRNAME . '/' . ltrim( $bundleUrl, '/\\' );
+									$bundle_url = content_url() . '/' . VCV_PLUGIN_ASSETS_DIRNAME . '/' . ltrim( $bundle_url, '/\\' );
 								}
 								wp_enqueue_style(
-									'vcv:assets:source:main:styles:' . sanitize_title( $bundleUrl ),
-									$bundleUrl,
+									'vcv:assets:source:main:styles:' . sanitize_title( $bundle_url ),
+									$bundle_url,
 									array(),
 									VCV_VERSION . '.' . $version
 								);
@@ -674,12 +674,12 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 		}
 
 		// Default filter for insert_pages_wrap_content.
-		function insertPages_wrap_content( $content, $posts, $attributes ) {
+		function insert_pages_wrap_content( $content, $posts, $attributes ) {
 			return "<{$attributes['wrapper_tag']} data-post-id='{$attributes['page']}' class='insert-page insert-page-{$attributes['page']} {$attributes['class']}'>{$content}</{$attributes['wrapper_tag']}>";
 		}
 
 		// Filter hook: Add a button to the TinyMCE toolbar for our insert page tool
-		function insertPages_handleFilter_mceButtons( $buttons ) {
+		function insert_pages_handleFilter_mceButtons( $buttons ) {
 			if ( ! in_array( 'wpInsertPages_button', $buttons ) ) {
 				array_push( $buttons, 'wpInsertPages_button' );
 			}
@@ -687,7 +687,7 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 		}
 
 		// Filter hook: Load the javascript for our custom toolbar button
-		function insertPages_handleFilter_mceExternalPlugins( $plugins ) {
+		function insert_pages_handleFilter_mceExternalPlugins( $plugins ) {
 			if ( ! array_key_exists( 'wpInsertPages', $plugins ) ) {
 				$plugins['wpInsertPages'] = plugins_url( '/js/wpinsertpages_plugin.js', __FILE__ );
 			}
@@ -696,7 +696,7 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 
 		// Helper function to generate an excerpt (outside of the Loop) for a given ID.
 		// @ref wp_trim_excerpt()
-		function insertPages_trim_excerpt( $text = '', $post_id = 0, $apply_the_content_filter = true ) {
+		function insert_pages_trim_excerpt( $text = '', $post_id = 0, $apply_the_content_filter = true ) {
 			$post_id = intval( $post_id );
 			if ( $post_id < 1 ) {
 				return '';
@@ -749,7 +749,7 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 		 *
 		 * @since 3.1.0
 		 */
-		function insertPages_wp_tinymce_dialog() {
+		function insert_pages_wp_tinymce_dialog() {
 			// If wp_editor() is being called outside of an admin context,
 			// required dependencies for Insert Pages will be missing (e.g.,
 			// wp-admin/includes/template.php will not be loaded, admin_head
@@ -769,7 +769,7 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 			<div id="wp-insertpage-wrap" class="wp-core-ui<?php echo $options_panel_visible; ?>" style="display: none">
 			<form id="wp-insertpage" tabindex="-1">
 			<?php wp_nonce_field( 'internal-inserting', '_ajax_inserting_nonce', false ); ?>
-			<input type="hidden" id="insertpage-parent-pageID" value="<?php echo $post_id; ?>" />
+			<input type="hidden" id="insertpage-parent-page-id" value="<?php echo $post_id; ?>" />
 			<div id="insertpage-modal-title">
 				<?php _e( 'Insert page', 'insert-pages' ) ?>
 				<div id="wp-insertpage-close" tabindex="0"></div>
@@ -803,7 +803,7 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 						<label for="insertpage-slug-field">
 							<span><?php _e( 'Slug or ID', 'insert-pages' ); ?></span>
 							<input id="insertpage-slug-field" type="text" autocomplete="off" />
-							<input id="insertpage-pageID" type="hidden" />
+							<input id="insertpage-page-id" type="hidden" />
 						</label>
 					</div>
 					<div class="insertpage-format">
@@ -861,7 +861,7 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 		 * @subpackage Administration
 		 * @since 3.1.0
 		 */
-		function insertPages_insert_page_callback() {
+		function insert_pages_insert_page_callback() {
 			check_ajax_referer( 'internal-inserting', '_ajax_inserting_nonce' );
 			$args = array();
 			if ( isset( $_POST['search'] ) ) {
@@ -881,7 +881,7 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 				unset( $args['s'] );
 			}
 
-			$results = $this->insertPages_wp_query( $args );
+			$results = $this->insert_pages_wp_query( $args );
 
 			// Fail if our query didn't work.
 			if ( ! isset( $results ) ) {
@@ -900,7 +900,7 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 		 * @param array   $args Optional. Accepts 'pagenum' and 's' (search) arguments.
 		 * @return array Results.
 		 */
-		function insertPages_wp_query( $args = array() ) {
+		function insert_pages_wp_query( $args = array() ) {
 			$pts = get_post_types( array( 'public' => true ), 'objects' );
 			$post_types = array_keys( $pts );
 
@@ -973,7 +973,7 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 			return $results;
 		}
 
-		function insertPages_add_quicktags() {
+		function insert_pages_add_quicktags() {
 			if ( wp_script_is( 'quicktags' ) ) : ?>
 				<script type="text/javascript">
 					QTags.addButton( 'ed_insert_page', '[insert page]', "[insert page='your-page-slug' display='title|link|excerpt|excerpt-only|content|post-thumbnail|all']\n", '', '', 'Insert Page', 999 );
@@ -994,7 +994,7 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 		 * Registers the theme widget for inserting a page into an area.
 		 * @return null
 		 */
-		public function insertPages_widgets_init() {
+		public function insert_pages_widgets_init() {
 			register_widget( 'InsertPagesWidget' );
 		}
 
@@ -1003,11 +1003,11 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 
 // Initialize InsertPagesPlugin object
 if ( class_exists( 'InsertPagesPlugin' ) ) {
-	$insertPages_plugin = new InsertPagesPlugin();
+	$insert_pages_plugin = new InsertPagesPlugin();
 }
 
 // Actions and Filters handled by InsertPagesPlugin class
-if ( isset( $insertPages_plugin ) ) {
+if ( isset( $insert_pages_plugin ) ) {
 	// Get options set in WordPress dashboard (Settings > Insert Pages).
 	$options = get_option( 'wpip_settings' );
 	if ( $options === FALSE || ! is_array( $options ) || ! array_key_exists( 'wpip_format', $options ) || ! array_key_exists( 'wpip_wrapper', $options ) || ! array_key_exists( 'wpip_insert_method', $options ) || ! array_key_exists( 'wpip_tinymce_filter', $options ) ) {
@@ -1015,35 +1015,35 @@ if ( isset( $insertPages_plugin ) ) {
 	}
 
 	// Register shortcode [insert ...].
-	add_action( 'init', array( $insertPages_plugin, 'insertPages_init' ), 1 );
+	add_action( 'init', array( $insert_pages_plugin, 'insert_pages_init' ), 1 );
 	// Register shortcode [insert ...] when TinyMCE is included in a frontend ACF form.
-	add_action( 'acf_head-input', array( $insertPages_plugin, 'insertPages_init' ), 1 ); // ACF 3
-	add_action( 'acf/input/admin_head', array( $insertPages_plugin, 'insertPages_init' ), 1 ); // ACF 4
+	add_action( 'acf_head-input', array( $insert_pages_plugin, 'insert_pages_init' ), 1 ); // ACF 3
+	add_action( 'acf/input/admin_head', array( $insert_pages_plugin, 'insert_pages_init' ), 1 ); // ACF 4
 
 	// Add TinyMCE button for shortcode.
-	add_action( 'admin_head', array( $insertPages_plugin, 'insertPages_admin_init' ), 1 );
+	add_action( 'admin_head', array( $insert_pages_plugin, 'insert_pages_admin_init' ), 1 );
 
 	// Add quicktags button for shortcode.
-	add_action( 'admin_print_footer_scripts', array( $insertPages_plugin, 'insertPages_add_quicktags' ) );
+	add_action( 'admin_print_footer_scripts', array( $insert_pages_plugin, 'insert_pages_add_quicktags' ) );
 
 	// Preload TinyMCE popup.
-	add_action( 'before_wp_tiny_mce', array( $insertPages_plugin, 'insertPages_wp_tinymce_dialog' ), 1 );
+	add_action( 'before_wp_tiny_mce', array( $insert_pages_plugin, 'insert_pages_wp_tinymce_dialog' ), 1 );
 
 	// Ajax: Populate page search in TinyMCE button popup.
-	add_action( 'wp_ajax_insertpage', array( $insertPages_plugin, 'insertPages_insert_page_callback' ) );
+	add_action( 'wp_ajax_insertpage', array( $insert_pages_plugin, 'insert_pages_insert_page_callback' ) );
 
 	// Use internal filter to wrap inserted content in a div or span.
-	add_filter( 'insert_pages_wrap_content', array( $insertPages_plugin, 'insertPages_wrap_content' ), 10, 3 );
+	add_filter( 'insert_pages_wrap_content', array( $insert_pages_plugin, 'insert_pages_wrap_content' ), 10, 3 );
 
 	// Register TinyMCE plugin for the toolbar button if in compatibility mode.
 	// (to work around a SiteOrigin PageBuilder bug).
 	// Ref: https://wordpress.org/support/topic/button-in-the-toolbar-of-tinymce-disappear-conflict-page-builder/
 	if ( $options['wpip_tinymce_filter'] === 'compatibility' ) {
-		add_filter( 'mce_external_plugins', array( $insertPages_plugin, 'insertPages_handleFilter_mceExternalPlugins' ) );
-		add_filter( 'mce_buttons', array( $insertPages_plugin, 'insertPages_handleFilter_mceButtons' ) );
+		add_filter( 'mce_external_plugins', array( $insert_pages_plugin, 'insert_pages_handleFilter_mceExternalPlugins' ) );
+		add_filter( 'mce_buttons', array( $insert_pages_plugin, 'insert_pages_handleFilter_mceButtons' ) );
 	}
 
 	// Register Insert Pages shortcode widget.
 	require_once( dirname( __FILE__ ) . '/widget.php' );
-	add_action( 'widgets_init', array( $insertPages_plugin, 'insertPages_widgets_init' ) );
+	add_action( 'widgets_init', array( $insert_pages_plugin, 'insert_pages_widgets_init' ) );
 }

@@ -21,8 +21,8 @@ var wpInsertPages;
 			inputs.close = $( '#wp-insertpage-close' );
 			// Page info
 			inputs.slug = $( '#insertpage-slug-field' );
-			inputs.pageID = $( '#insertpage-pageID' );
-			inputs.parentPageID = $( '#insertpage-parent-pageID' );
+			inputs.pageID = $( '#insertpage-page-id' );
+			inputs.parentPageID = $( '#insertpage-parent-page-id' );
 			// Format field (title, link, content, all, choose a custom template ->)
 			inputs.format = $( '#insertpage-format-select' );
 			// Extra fields (wrapper classes, inline checkbox)
