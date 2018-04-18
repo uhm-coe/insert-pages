@@ -34,11 +34,14 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  * [insert page='{slug}|{id}' display='title|link|excerpt|excerpt-only|content|post-thumbnail|all|{custom-template.php}' class='any-classes']
  */
 
-// Define the InsertPagesPlugin class (variables and functions).
-if ( !class_exists( 'InsertPagesPlugin' ) ) {
+if ( ! class_exists( 'InsertPagesPlugin' ) ) {
+	/**
+	 * Class InsertPagesPlugin
+	 */
 	class InsertPagesPlugin {
 		/**
-		 * [$page_id description]
+		 * Page ID being inserted.
+		 *
 		 * @var int
 		 */
 		protected $page_id;
@@ -48,7 +51,7 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 		 */
 		public function __construct() {
 			// Include the code that generates the options page.
-			require_once( dirname( __FILE__ ) . '/options.php' );
+			require_once dirname( __FILE__ ) . '/options.php';
 		}
 
 		/**
@@ -66,11 +69,13 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 		 * @param int $id Page ID being inserted.
 		 */
 		public function set_page_id( $id ) {
-			return $this->page_id = $id;
+			$this->page_id = $id;
+
+			return $this->page_id;
 		}
 
 		/**
-		 * Action hook: Wordpress 'init'.
+		 * Action hook: WordPress 'init'.
 		 *
 		 * @return void
 		 */
@@ -79,14 +84,14 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 		}
 
 		/**
-		 * Action hook: Wordpress 'admin_init'.
+		 * Action hook: WordPress 'admin_init'.
 		 *
 		 * @return void
 		 */
 		public function insert_pages_admin_init() {
 			// Get options set in WordPress dashboard (Settings > Insert Pages).
 			$options = get_option( 'wpip_settings' );
-			if ( $options === FALSE || ! is_array( $options ) || ! array_key_exists( 'wpip_format', $options ) || ! array_key_exists( 'wpip_wrapper', $options ) || ! array_key_exists( 'wpip_insert_method', $options ) || ! array_key_exists( 'wpip_tinymce_filter', $options ) ) {
+			if ( false === $options || ! is_array( $options ) || ! array_key_exists( 'wpip_format', $options ) || ! array_key_exists( 'wpip_wrapper', $options ) || ! array_key_exists( 'wpip_insert_method', $options ) || ! array_key_exists( 'wpip_tinymce_filter', $options ) ) {
 				$options = wpip_set_defaults();
 			}
 
@@ -125,7 +130,7 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 			 *
 			 * @see  https://wordpress.org/support/topic/button-in-the-toolbar-of-tinymce-disappear-conflict-page-builder/
 			 */
-			if ( $options['wpip_tinymce_filter'] === 'normal' ) {
+			if ( 'normal' === $options['wpip_tinymce_filter'] ) {
 				add_filter( 'mce_external_plugins', array( $this, 'insert_pages_handle_filter_mce_external_plugins' ) );
 				add_filter( 'mce_buttons', array( $this, 'insert_pages_handle_filter_mce_buttons' ) );
 			}
@@ -141,6 +146,7 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 
 		/**
 		 * Shortcode hook: Replace the [insert ...] shortcode with the inserted page's content.
+		 *
 		 * @param  array  $atts    Shortcode attributes.
 		 * @param  string $content Content to replace shortcode.
 		 * @return string          Content to replace shortcode.
@@ -158,25 +164,25 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 			), $atts, 'insert' );
 
 			// Validation checks.
-			if ( $attributes['page'] === '0' ) {
+			if ( '0' === $attributes['page'] ) {
 				return $content;
 			}
 
 			// Trying to embed same page in itself.
 			if (
 				! is_null( $post ) && property_exists( $post, 'ID' ) &&
-				( $attributes['page'] == $post->ID || $attributes['page'] == $post->post_name )
+				( intval( $attributes['page'] ) === $post->ID || $attributes['page'] === $post->post_name )
 			) {
 				return $content;
 			}
 
 			// Get options set in WordPress dashboard (Settings > Insert Pages).
 			$options = get_option( 'wpip_settings' );
-			if ( $options === FALSE || ! is_array( $options ) || ! array_key_exists( 'wpip_format', $options ) || ! array_key_exists( 'wpip_wrapper', $options ) || ! array_key_exists( 'wpip_insert_method', $options ) || ! array_key_exists( 'wpip_tinymce_filter', $options ) ) {
+			if ( false === $options || ! is_array( $options ) || ! array_key_exists( 'wpip_format', $options ) || ! array_key_exists( 'wpip_wrapper', $options ) || ! array_key_exists( 'wpip_insert_method', $options ) || ! array_key_exists( 'wpip_tinymce_filter', $options ) ) {
 				$options = wpip_set_defaults();
 			}
 
-			$attributes['inline'] = ( $attributes['inline'] !== false && $attributes['inline'] !== 'false' ) || array_search( 'inline', $atts ) === 0 || ( array_key_exists( 'wpip_wrapper', $options ) && $options['wpip_wrapper'] === 'inline' );
+			$attributes['inline'] = ( false !== $attributes['inline'] && 'false' !== $attributes['inline'] ) || array_search( 'inline', $atts, true ) === 0 || ( array_key_exists( 'wpip_wrapper', $options ) && 'inline' === $options['wpip_wrapper'] );
 			/**
 			 * Filter the flag indicating whether to wrap the inserted content in inline tags (span).
 			 *
@@ -239,7 +245,7 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 			if ( $attributes['should_apply_nesting_check'] ) {
 				$done = false;
 				foreach ( $wp_current_filter as $filter ) {
-					if ( 'the_content' == $filter ) {
+					if ( 'the_content' === $filter ) {
 						if ( $done ) {
 							return $content;
 						} else {
@@ -268,7 +274,7 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 						"SELECT ID FROM $wpdb->posts WHERE post_name = %s AND post_status = 'publish' LIMIT 1", $attributes['page']
 					) );
 					if ( $page ) {
-						 $inserted_page = get_post( $page );
+						$inserted_page = get_post( $page );
 					}
 				}
 
@@ -282,15 +288,15 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 			$original_get = $_GET;
 			$original_request = $_REQUEST;
 			foreach ( $querystring as $param => $value ) {
-				$_GET[$param] = $value;
-				$_REQUEST[$param] = $value;
+				$_GET[ $param ] = $value;
+				$_REQUEST[ $param ] = $value;
 			}
 
 			// Use "Normal" insert method (get_post()).
-			if ( $options['wpip_insert_method'] !== 'legacy' ) {
+			if ( 'legacy' !== $options['wpip_insert_method'] ) {
 
 				// If we couldn't retrieve the page, fire the filter hook showing a not-found message.
-				if ( $inserted_page === null ) {
+				if ( null === $inserted_page ) {
 					/**
 					 * Filter the html that should be displayed if an inserted page was not found.
 					 *
@@ -354,7 +360,7 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 							}
 							if ( preg_match( '/^http/', $bundle_url ) ) {
 								$bundle_url = set_url_scheme( $bundle_url );
-							} else if ( defined( 'VCV_TF_ASSETS_IN_UPLOADS' ) && constant( 'VCV_TF_ASSETS_IN_UPLOADS' ) ) {
+							} elseif ( defined( 'VCV_TF_ASSETS_IN_UPLOADS' ) && constant( 'VCV_TF_ASSETS_IN_UPLOADS' ) ) {
 								$upload_dir = wp_upload_dir();
 								$bundle_url = set_url_scheme( $upload_dir['baseurl'] . '/' . VCV_PLUGIN_ASSETS_DIRNAME . '/' . ltrim( $bundle_url, '/\\' ) );
 							} else {
@@ -506,9 +512,9 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 							// theme directory or the /wp-includes/theme-compat/ directory).
 							$path_in_theme_or_childtheme_or_compat = (
 								// Template is in current theme folder.
-								0 === strpos( realpath( $template ), realpath( STYLESHEETPATH ) ) ||
+								0 === strpos( realpath( $template ), realpath( get_stylesheet_directory() ) ) ||
 								// Template is in current or parent theme folder.
-								0 === strpos( realpath( $template ), realpath( TEMPLATEPATH ) ) ||
+								0 === strpos( realpath( $template ), realpath( get_template_directory() ) ) ||
 								// Template is in theme-compat folder.
 								0 === strpos( realpath( $template ), realpath( ABSPATH . WPINC . '/theme-compat/' ) )
 							);
@@ -593,7 +599,7 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 								}
 								if ( preg_match( '/^http/', $bundle_url ) ) {
 									$bundle_url = set_url_scheme( $bundle_url );
-								} else if ( defined( 'VCV_TF_ASSETS_IN_UPLOADS' ) && constant( 'VCV_TF_ASSETS_IN_UPLOADS' ) ) {
+								} elseif ( defined( 'VCV_TF_ASSETS_IN_UPLOADS' ) && constant( 'VCV_TF_ASSETS_IN_UPLOADS' ) ) {
 									$upload_dir = wp_upload_dir();
 									$bundle_url = set_url_scheme( $upload_dir['baseurl'] . '/' . VCV_PLUGIN_ASSETS_DIRNAME . '/' . ltrim( $bundle_url, '/\\' ) );
 								} else {
@@ -642,15 +648,27 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 						case 'excerpt':
 							the_post();
 							?><h1><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a></h1><?php
-							if ( $attributes['should_apply_the_content_filter'] ) the_excerpt(); else echo get_the_excerpt();
+							if ( $attributes['should_apply_the_content_filter'] ) {
+								the_excerpt();
+							} else {
+								echo get_the_excerpt();
+							}
 							break;
 						case 'excerpt-only':
 							the_post();
-							if ( $attributes['should_apply_the_content_filter'] ) the_excerpt(); else echo get_the_excerpt();
+							if ( $attributes['should_apply_the_content_filter'] ) {
+								the_excerpt();
+							} else {
+								echo get_the_excerpt();
+							}
 							break;
 						case 'content':
 							the_post();
-							if ( $attributes['should_apply_the_content_filter'] ) the_content(); else echo get_the_content();
+							if ( $attributes['should_apply_the_content_filter'] ) {
+								the_content();
+							} else {
+								echo get_the_content();
+							}
 							break;
 						case 'post-thumbnail':
 							?><a href="<?php the_permalink(); ?>"><?php the_post_thumbnail(); ?></a><?php
@@ -661,7 +679,11 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 							echo "<$title_tag class='insert-page-title'>";
 							the_title();
 							echo "</$title_tag>";
-							if ( $attributes['should_apply_the_content_filter'] ) the_content(); else echo get_the_content();
+							if ( $attributes['should_apply_the_content_filter'] ) {
+								the_content();
+							} else {
+								echo get_the_content();
+							}
 							the_meta();
 							break;
 						default: // Display is either invalid, or contains a template file to use.
@@ -671,9 +693,9 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 							// theme directory or the /wp-includes/theme-compat/ directory).
 							$path_in_theme_or_childtheme_or_compat = (
 								// Template is in current theme folder.
-								0 === strpos( realpath( $template ), realpath( STYLESHEETPATH ) ) ||
+								0 === strpos( realpath( $template ), realpath( get_stylesheet_directory() ) ) ||
 								// Template is in current or parent theme folder.
-								0 === strpos( realpath( $template ), realpath( TEMPLATEPATH ) ) ||
+								0 === strpos( realpath( $template ), realpath( get_template_directory() ) ) ||
 								// Template is in theme-compat folder.
 								0 === strpos( realpath( $template ), realpath( ABSPATH . WPINC . '/theme-compat/' ) )
 							);
@@ -741,7 +763,7 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 		 * @return array          TinyMCE buttons with Insert Pages button.
 		 */
 		public function insert_pages_handle_filter_mce_buttons( $buttons ) {
-			if ( ! in_array( 'wpInsertPages_button', $buttons ) ) {
+			if ( ! in_array( 'wpInsertPages_button', $buttons, true ) ) {
 				array_push( $buttons, 'wpInsertPages_button' );
 			}
 			return $buttons;
@@ -776,7 +798,7 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 			}
 
 			$raw_excerpt = $text;
-			if ( '' == $text ) {
+			if ( '' === $text ) {
 				$text = get_post_field( 'post_content', $post_id );
 
 				$text = strip_shortcodes( $text );
@@ -803,7 +825,7 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 				 *
 				 * @param string $more_string The string shown within the more link.
 				 */
-				$excerpt_more = apply_filters( 'excerpt_more', ' ' . '[&hellip;]' );
+				$excerpt_more = apply_filters( 'excerpt_more', ' [&hellip;]' );
 				$text = wp_trim_words( $text, $excerpt_length, $excerpt_more );
 			}
 			/**
@@ -845,7 +867,7 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 			<?php wp_nonce_field( 'internal-inserting', '_ajax_inserting_nonce', false ); ?>
 			<input type="hidden" id="insertpage-parent-page-id" value="<?php echo $post_id; ?>" />
 			<div id="insertpage-modal-title">
-				<?php _e( 'Insert page', 'insert-pages' ) ?>
+				<?php _e( 'Insert page', 'insert-pages' ); ?>
 				<div id="wp-insertpage-close" tabindex="0"></div>
 			</div>
 			<div id="insertpage-selector">
@@ -942,16 +964,16 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 			if ( isset( $_POST['search'] ) ) {
 				$args['s'] = stripslashes( $_POST['search'] );
 			}
-			$args['pagenum'] = !empty( $_POST['page'] ) ? absint( $_POST['page'] ) : 1;
-			$args['pageID'] =  !empty( $_POST['pageID'] ) ? absint( $_POST['pageID'] ) : 0;
+			$args['pagenum'] = ! empty( $_POST['page'] ) ? absint( $_POST['page'] ) : 1;
+			$args['pageID'] = ! empty( $_POST['pageID'] ) ? absint( $_POST['pageID'] ) : 0;
 
 			// Change search to slug or post ID if we're not doing a plaintext
 			// search (e.g., if we're editing an existing shortcode and the
 			// search field is populated with the post's slug or ID).
-			if ( array_key_exists( 'type', $_POST ) && $_POST['type'] === 'slug' ) {
+			if ( array_key_exists( 'type', $_POST ) && 'slug' === $_POST['type'] ) {
 				$args['name'] = $args['s'];
 				unset( $args['s'] );
-			} else if ( array_key_exists( 'type', $_POST ) && $_POST['type'] === 'post_id' ) {
+			} elseif ( array_key_exists( 'type', $_POST ) && 'post_id' === $_POST['type'] ) {
 				$args['p'] = $args['s'];
 				unset( $args['s'] );
 			}
@@ -963,7 +985,7 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 				die( '0' );
 			}
 
-			echo json_encode( $results );
+			echo wp_json_encode( $results );
 			echo "\n";
 			die();
 		}
@@ -1022,7 +1044,7 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 			}
 
 			// Do main query.
-			$get_posts = new WP_Query;
+			$get_posts = new WP_Query();
 			$posts = $get_posts->query( $query );
 			// Check if any posts were found.
 			if ( ! $get_posts->post_count ) {
@@ -1032,7 +1054,7 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 			// Build results.
 			$results = array();
 			foreach ( $posts as $post ) {
-				if ( 'post' == $post->post_type ) {
+				if ( 'post' === $post->post_type ) {
 					$info = mysql2date( 'Y/m/d', $post->post_date );
 				} else {
 					$info = $pts[ $post->post_type ]->labels->singular_name;
@@ -1069,7 +1091,7 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 		 * @return boolean       Whether post type is insertable.
 		 */
 		private function is_post_type_insertable( $type ) {
-			return ! in_array( $type, array( 'nav_menu_item', 'attachment', 'revision', 'customize_changeset', 'oembed_cache' ) );
+			return ! in_array( $type, array( 'nav_menu_item', 'attachment', 'revision', 'customize_changeset', 'oembed_cache' ), true );
 		}
 
 		/**
@@ -1093,7 +1115,7 @@ if ( class_exists( 'InsertPagesPlugin' ) ) {
 if ( isset( $insert_pages_plugin ) ) {
 	// Get options set in WordPress dashboard (Settings > Insert Pages).
 	$options = get_option( 'wpip_settings' );
-	if ( $options === FALSE || ! is_array( $options ) || ! array_key_exists( 'wpip_format', $options ) || ! array_key_exists( 'wpip_wrapper', $options ) || ! array_key_exists( 'wpip_insert_method', $options ) || ! array_key_exists( 'wpip_tinymce_filter', $options ) ) {
+	if ( false === $options || ! is_array( $options ) || ! array_key_exists( 'wpip_format', $options ) || ! array_key_exists( 'wpip_wrapper', $options ) || ! array_key_exists( 'wpip_insert_method', $options ) || ! array_key_exists( 'wpip_tinymce_filter', $options ) ) {
 		$options = wpip_set_defaults();
 	}
 
@@ -1124,12 +1146,12 @@ if ( isset( $insert_pages_plugin ) ) {
 	 *
 	 * @see  https://wordpress.org/support/topic/button-in-the-toolbar-of-tinymce-disappear-conflict-page-builder/
 	 */
-	if ( $options['wpip_tinymce_filter'] === 'compatibility' ) {
+	if ( 'compatibility' === $options['wpip_tinymce_filter'] ) {
 		add_filter( 'mce_external_plugins', array( $insert_pages_plugin, 'insert_pages_handle_filter_mce_external_plugins' ) );
 		add_filter( 'mce_buttons', array( $insert_pages_plugin, 'insert_pages_handle_filter_mce_buttons' ) );
 	}
 
 	// Register Insert Pages shortcode widget.
-	require_once( dirname( __FILE__ ) . '/widget.php' );
+	require_once dirname( __FILE__ ) . '/widget.php';
 	add_action( 'widgets_init', array( $insert_pages_plugin, 'insert_pages_widgets_init' ) );
 }

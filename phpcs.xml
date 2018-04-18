@@ -25,5 +25,11 @@
 		<exclude name="PSR2.ControlStructures.SwitchDeclaration.BreakIndent"/>
 		<exclude name="PSR2.Methods.FunctionCallSignature.Indent"/>
 
+		<!-- Disable picky rules. -->
+		<exclude name="WordPress.VIP.SuperGlobalInputUsage"/>
+		<exclude name="Squiz.PHP.EmbeddedPhp"/>
+		<exclude name="WordPress.VIP.DirectDatabaseQuery"/>
+		<exclude name="WordPress.Files.FileName"/>
+		<exclude name="WordPress.Variables.GlobalVariables"/>
 	</rule>
 </ruleset>
