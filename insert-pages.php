@@ -1,63 +1,88 @@
 <?php
+/**
+ * Plugin Name: Insert Pages
+ * Plugin URI: https://github.com/uhm-coe/insert-pages
+ * Description: Insert Pages lets you embed any WordPress content (e.g., pages, posts, custom post types) into other WordPress content using the Shortcode API.
+ * Author: Paul Ryan
+ * Text Domain: insert-pages
+ * Domain Path: /languages
+ * License: GPL2
+ * Version: 3.3.0
+ *
+ * @package insert-pages
+ */
 
 /*
-Plugin Name: Insert Pages
-Plugin URI: https://github.com/uhm-coe/insert-pages
-Description: Insert Pages lets you embed any WordPress content (e.g., pages, posts, custom post types) into other WordPress content using the Shortcode API.
-Author: Paul Ryan
-Author URI: http://www.linkedin.com/in/paulrryan
-Text Domain: insert-pages
-Domain Path: /languages
-License: GPL2
-Version: 3.3.0
+Copyright 2011 Paul Ryan (email: prar@hawaii.edu)
+
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License, version 2, as
+published by the Free Software Foundation.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-/*  Copyright 2011 Paul Ryan (email: prar@hawaii.edu)
-
-	This program is free software; you can redistribute it and/or modify
-	it under the terms of the GNU General Public License, version 2, as
-	published by the Free Software Foundation.
-
-	This program is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	GNU General Public License for more details.
-
-	You should have received a copy of the GNU General Public License
-	along with this program; if not, write to the Free Software
-	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-*/
-
-/*  Shortcode Format:
-	[insert page='{slug}|{id}' display='title|link|excerpt|excerpt-only|content|post-thumbnail|all|{custom-template.php}' class='any-classes']
-*/
+/**
+ * Shortcode Format:
+ * [insert page='{slug}|{id}' display='title|link|excerpt|excerpt-only|content|post-thumbnail|all|{custom-template.php}' class='any-classes']
+ */
 
 // Define the InsertPagesPlugin class (variables and functions).
 if ( !class_exists( 'InsertPagesPlugin' ) ) {
 	class InsertPagesPlugin {
-		// Save the id of the page being edited.
+		/**
+		 * [$page_id description]
+		 * @var int
+		 */
 		protected $page_id;
 
-		// Constructor.
+		/**
+		 * Constructor.
+		 */
 		public function __construct() {
 			// Include the code that generates the options page.
 			require_once( dirname( __FILE__ ) . '/options.php' );
 		}
 
-		// Getter/Setter for page_id.
-		function getPageID() {
+		/**
+		 * Getter for page_id.
+		 *
+		 * @return int Page ID being inserted.
+		 */
+		function get_page_id() {
 			return $this->page_id;
 		}
-		function setPageID( $id ) {
+
+		/**
+		 * Setter for page_id.
+		 *
+		 * @param int $id Page ID being inserted.
+		 */
+		function set_page_id( $id ) {
 			return $this->page_id = $id;
 		}
 
-		// Action hook: Wordpress 'init'.
+		/**
+		 * Action hook: Wordpress 'init'.
+		 *
+		 * @return void
+		 */
 		function insert_pages_init() {
-			add_shortcode( 'insert', array( $this, 'insert_pages_handleShortcode_insert' ) );
+			add_shortcode( 'insert', array( $this, 'insert_pages_handle_shortcode_insert' ) );
 		}
 
-		// Action hook: Wordpress 'admin_init'.
+		/**
+		 * Action hook: Wordpress 'admin_init'.
+		 *
+		 * @return void
+		 */
 		function insert_pages_admin_init() {
 			// Get options set in WordPress dashboard (Settings > Insert Pages).
 			$options = get_option( 'wpip_settings' );
@@ -101,8 +126,8 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 			 * @see  https://wordpress.org/support/topic/button-in-the-toolbar-of-tinymce-disappear-conflict-page-builder/
 			 */
 			if ( $options['wpip_tinymce_filter'] === 'normal' ) {
-				add_filter( 'mce_external_plugins', array( $this, 'insert_pages_handleFilter_mceExternalPlugins' ) );
-				add_filter( 'mce_buttons', array( $this, 'insert_pages_handleFilter_mceButtons' ) );
+				add_filter( 'mce_external_plugins', array( $this, 'insert_pages_handle_filter_mce_external_plugins' ) );
+				add_filter( 'mce_buttons', array( $this, 'insert_pages_handle_filter_mce_buttons' ) );
 			}
 
 			load_plugin_textdomain(
@@ -114,8 +139,13 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 		}
 
 
-		// Shortcode hook: Replace the [insert ...] shortcode with the inserted page's content.
-		function insert_pages_handleShortcode_insert( $atts, $content = null ) {
+		/**
+		 * Shortcode hook: Replace the [insert ...] shortcode with the inserted page's content.
+		 * @param  array  $atts    Shortcode attributes.
+		 * @param  string $content Content to replace shortcode.
+		 * @return string          Content to replace shortcode.
+		 */
+		function insert_pages_handle_shortcode_insert( $atts, $content = null ) {
 			global $wp_query, $post, $wp_current_filter;
 
 			// Shortcode attributes.
@@ -204,7 +234,6 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 			 * @param string $display The display method for the inserted page.
 			 */
 			$attributes['display'] = apply_filters( 'insert_pages_override_display', $attributes['display'] );
-
 
 			// Don't allow inserted pages to be added to the_content more than once (prevent infinite loops).
 			if ( $attributes['should_apply_nesting_check'] ) {
@@ -492,7 +521,6 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 						}
 					}
 					wp_reset_query();
-
 				}
 
 				// Save output buffer contents.
@@ -696,29 +724,53 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 			return $content;
 		}
 
-		// Default filter for insert_pages_wrap_content.
+		/**
+		 * Default filter for insert_pages_wrap_content.
+		 *
+		 * @param  string $content    Content of shortcode.
+		 * @param  array  $posts      Post data of inserted page.
+		 * @param  array  $attributes Shortcode attributes.
+		 * @return string             Content to replace shortcode.
+		 */
 		function insert_pages_wrap_content( $content, $posts, $attributes ) {
 			return "<{$attributes['wrapper_tag']} data-post-id='{$attributes['page']}' class='insert-page insert-page-{$attributes['page']} {$attributes['class']}'>{$content}</{$attributes['wrapper_tag']}>";
 		}
 
-		// Filter hook: Add a button to the TinyMCE toolbar for our insert page tool.
-		function insert_pages_handleFilter_mceButtons( $buttons ) {
+		/**
+		 * Filter hook: Add a button to the TinyMCE toolbar for our insert page tool.
+		 *
+		 * @param  array $buttons TinyMCE buttons.
+		 * @return array          TinyMCE buttons with Insert Pages button.
+		 */
+		function insert_pages_handle_filter_mce_buttons( $buttons ) {
 			if ( ! in_array( 'wpInsertPages_button', $buttons ) ) {
 				array_push( $buttons, 'wpInsertPages_button' );
 			}
 			return $buttons;
 		}
 
-		// Filter hook: Load the javascript for our custom toolbar button.
-		function insert_pages_handleFilter_mceExternalPlugins( $plugins ) {
+		/**
+		 * Filter hook: Load the javascript for our custom toolbar button.
+		 *
+		 * @param  array $plugins TinyMCE plugins.
+		 * @return array          TinyMCE plugins with Insert Pages plugin.
+		 */
+		function insert_pages_handle_filter_mce_external_plugins( $plugins ) {
 			if ( ! array_key_exists( 'wpInsertPages', $plugins ) ) {
 				$plugins['wpInsertPages'] = plugins_url( '/js/wpinsertpages_plugin.js', __FILE__ );
 			}
 			return $plugins;
 		}
 
-		// Helper function to generate an excerpt (outside of the Loop) for a given
-		// ID (based on wp_trim_excerpt()).
+		/**
+		 * Helper function to generate an excerpt (outside of the Loop) for a given
+		 * ID (based on wp_trim_excerpt()).
+		 *
+		 * @param  string  $text                     Excerpt.
+		 * @param  integer $post_id                  Post ID of excerpt.
+		 * @param  boolean $apply_the_content_filter Whether to apply `the_content`.
+		 * @return string                            Excerpt.
+		 */
 		function insert_pages_trim_excerpt( $text = '', $post_id = 0, $apply_the_content_filter = true ) {
 			$post_id = intval( $post_id );
 			if ( $post_id < 1 ) {
@@ -745,6 +797,7 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 				 * @param int $number The number of words. Default 55.
 				 */
 				$excerpt_length = apply_filters( 'excerpt_length', 55 );
+
 				/**
 				 * Filter the string in the "more" link displayed after a trimmed excerpt.
 				 *
@@ -877,7 +930,8 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 			<?php
 		}
 
-		/** Modified from:
+		/**
+		 * Modified from:
 		 * Internal linking functions.
 		 *
 		 * @package WordPress
@@ -916,11 +970,12 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 			die();
 		}
 
-		/** Modified from:
+		/**
+		 * Modified from:
 		 * Performs post queries for internal linking.
 		 *
 		 * @since 3.1.0
-		 * @param array   $args Optional. Accepts 'pagenum' and 's' (search) arguments.
+		 * @param  array $args Optional. Accepts 'pagenum' and 's' (search) arguments.
 		 * @return array Results.
 		 */
 		function insert_pages_wp_query( $args = array() ) {
@@ -996,6 +1051,11 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 			return $results;
 		}
 
+		/**
+		 * Add Insert Page quicktag button to Text editor.
+		 *
+		 * @return void
+		 */
 		function insert_pages_add_quicktags() {
 			if ( wp_script_is( 'quicktags' ) ) : ?>
 				<script type="text/javascript">
@@ -1006,6 +1066,7 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 
 		/**
 		 * Indicates whether a particular post type is able to be inserted.
+		 *
 		 * @param  boolean $type Post type.
 		 * @return boolean       Whether post type is insertable.
 		 */
@@ -1015,7 +1076,8 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 
 		/**
 		 * Registers the theme widget for inserting a page into an area.
-		 * @return null
+		 *
+		 * @return void
 		 */
 		public function insert_pages_widgets_init() {
 			register_widget( 'InsertPagesWidget' );
@@ -1065,8 +1127,8 @@ if ( isset( $insert_pages_plugin ) ) {
 	 * @see  https://wordpress.org/support/topic/button-in-the-toolbar-of-tinymce-disappear-conflict-page-builder/
 	 */
 	if ( $options['wpip_tinymce_filter'] === 'compatibility' ) {
-		add_filter( 'mce_external_plugins', array( $insert_pages_plugin, 'insert_pages_handleFilter_mceExternalPlugins' ) );
-		add_filter( 'mce_buttons', array( $insert_pages_plugin, 'insert_pages_handleFilter_mceButtons' ) );
+		add_filter( 'mce_external_plugins', array( $insert_pages_plugin, 'insert_pages_handle_filter_mce_external_plugins' ) );
+		add_filter( 'mce_buttons', array( $insert_pages_plugin, 'insert_pages_handle_filter_mce_buttons' ) );
 	}
 
 	// Register Insert Pages shortcode widget.

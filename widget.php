@@ -1,10 +1,11 @@
 <?php
-
 /**
  * Class: InsertPagesWidget extends WP_Widget
+ *
  * Provides a widget for inserting a page into a widget area.
+ *
+ * @package insert-pages
  */
-
 class InsertPagesWidget extends WP_Widget {
 
 	/**
@@ -31,8 +32,8 @@ class InsertPagesWidget extends WP_Widget {
 	/**
 	 * Output the content of the widget.
 	 *
-	 * @param array $args
-	 * @param array $instance
+	 * @param array $args Widget args.
+	 * @param array $instance Widget instance.
 	 */
 	public function widget( $args, $instance ) {
 		global $insert_pages_plugin;
@@ -59,7 +60,7 @@ class InsertPagesWidget extends WP_Widget {
 		}
 
 		// Render the inserted page using the plugin's shortcode handler.
-		$content = $insert_pages_plugin->insert_pages_handleShortcode_insert( $atts );
+		$content = $insert_pages_plugin->insert_pages_handle_shortcode_insert( $atts );
 
 		// Print inserted page.
 		echo $content;
@@ -71,7 +72,7 @@ class InsertPagesWidget extends WP_Widget {
 	/**
 	 * Output the options form on admin.
 	 *
-	 * @param array $instance The widget options
+	 * @param array $instance The widget options.
 	 */
 	public function form( $instance ) {
 		$instance = wp_parse_args( (array)$instance, array(
@@ -109,14 +110,15 @@ class InsertPagesWidget extends WP_Widget {
 		<p>
 			<input class="checkbox" type="checkbox" name="<?php echo $this->get_field_name( 'inline' ); ?>" id="<?php echo $this->get_field_id( 'inline' ); ?>" value="1" <?php checked( $instance['inline'], '1' ); ?> />
 			<label for="<?php echo $this->get_field_id( 'inline' ); ?>"><?php _e( 'Inline?', 'insert-pages' ); ?></label>
-		</p><?php
+		</p>
+		<?php
 	}
 
 	/**
 	 * Process widget options on save.
 	 *
-	 * @param array $new_instance The new options
-	 * @param array $old_instance The previous options
+	 * @param array $new_instance The new options.
+	 * @param array $old_instance The previous options.
 	 */
 	public function update( $new_instance, $old_instance ) {
 		// Sanitize form options.
