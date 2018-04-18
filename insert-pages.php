@@ -403,11 +403,13 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 						break;
 
 					case 'link':
-						?><a href="<?php echo esc_url( get_permalink( $inserted_page->ID ) ); ?>"><?php echo get_the_title( $inserted_page->ID ); ?></a><?php
+						?><a href="<?php echo esc_url( get_permalink( $inserted_page->ID ) ); ?>"><?php echo get_the_title( $inserted_page->ID ); ?></a>
+						<?php
 						break;
 
 					case 'excerpt':
-						?><h1><a href="<?php echo esc_url( get_permalink( $inserted_page->ID ) ); ?>"><?php echo get_the_title( $inserted_page->ID ); ?></a></h1><?php
+						?><h1><a href="<?php echo esc_url( get_permalink( $inserted_page->ID ) ); ?>"><?php echo get_the_title( $inserted_page->ID ); ?></a></h1>
+						<?php
 						echo $this->insert_pages_trim_excerpt( get_post_field( 'post_excerpt', $inserted_page->ID ), $inserted_page->ID, $attributes['should_apply_the_content_filter'] );
 						break;
 
@@ -434,7 +436,8 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 						break;
 
 					case 'post-thumbnail':
-						?><a href="<?php echo esc_url( get_permalink( $inserted_page->ID ) ); ?>"><?php echo get_the_post_thumbnail( $inserted_page->ID ); ?></a><?php
+						?><a href="<?php echo esc_url( get_permalink( $inserted_page->ID ) ); ?>"><?php echo get_the_post_thumbnail( $inserted_page->ID ); ?></a>
+						<?php
 						break;
 
 					case 'all':
@@ -454,7 +457,8 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 						 *
 						 * @see https://core.trac.wordpress.org/browser/tags/4.4/src/wp-includes/post-template.php#L968
 						 */
-						if ( $keys = get_post_custom_keys( $inserted_page->ID ) ) {
+						$keys = get_post_custom_keys( $inserted_page->ID );
+						if ( $keys ) {
 							echo "<ul class='post-meta'>\n";
 							foreach ( (array) $keys as $key ) {
 								$keyt = trim( $key );
@@ -522,7 +526,8 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 								include $template; // Execute the template code.
 							} else { // Couldn't find template, so fall back to printing a link to the page.
 								the_post();
-								?><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a><?php
+								?><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a>
+								<?php
 							}
 						}
 						wp_reset_query();
@@ -643,11 +648,13 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 							break;
 						case 'link':
 							the_post();
-							?><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a><?php
+							?><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a>
+							<?php
 							break;
 						case 'excerpt':
 							the_post();
-							?><h1><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a></h1><?php
+							?><h1><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a></h1>
+							<?php
 							if ( $attributes['should_apply_the_content_filter'] ) {
 								the_excerpt();
 							} else {
@@ -671,7 +678,8 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 							}
 							break;
 						case 'post-thumbnail':
-							?><a href="<?php the_permalink(); ?>"><?php the_post_thumbnail(); ?></a><?php
+							?><a href="<?php the_permalink(); ?>"><?php the_post_thumbnail(); ?></a>
+							<?php
 							break;
 						case 'all':
 							the_post();
@@ -703,7 +711,8 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 								include $template; // Execute the template code.
 							} else { // Couldn't find template, so fall back to printing a link to the page.
 								the_post();
-								?><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a><?php
+								?><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a>
+								<?php
 							}
 							break;
 					}
@@ -855,17 +864,18 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 				return;
 			}
 
-			$options_panel_visible = 1 === intval( get_user_setting( 'wpinsertpage', '0' ) ) ? ' options-panel-visible' : '';
-
 			// Get ID of post currently being edited.
 			$post_id = array_key_exists( 'post', $_REQUEST ) && intval( $_REQUEST['post'] ) > 0 ? intval( $_REQUEST['post'] ) : '';
 
 			// display: none is required here, see #WP27605.
 			?><div id="wp-insertpage-backdrop" style="display: none"></div>
-			<div id="wp-insertpage-wrap" class="wp-core-ui<?php esc_attr_e( $options_panel_visible ); ?>" style="display: none">
+			<div id="wp-insertpage-wrap" class="wp-core-ui<?php
+			if ( 1 === intval( get_user_setting( 'wpinsertpage', 0 ) ) ) :
+				?> options-panel-visible<?php
+			endif; ?>" style="display: none">
 			<form id="wp-insertpage" tabindex="-1">
 			<?php wp_nonce_field( 'internal-inserting', '_ajax_inserting_nonce', false ); ?>
-			<input type="hidden" id="insertpage-parent-page-id" value="<?php esc_attr_e( $post_id ); ?>" />
+			<input type="hidden" id="insertpage-parent-page-id" value="<?php echo esc_attr( $post_id ); ?>" />
 			<div id="insertpage-modal-title">
 				<?php esc_html_e( 'Insert page', 'insert-pages' ); ?>
 				<div id="wp-insertpage-close" tabindex="0"></div>
@@ -962,7 +972,7 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 			check_ajax_referer( 'internal-inserting', '_ajax_inserting_nonce' );
 			$args = array();
 			if ( isset( $_POST['search'] ) ) {
-				$args['s'] = stripslashes( $_POST['search'] );
+				$args['s'] = wp_unslash( $_POST['search'] );
 			}
 			$args['pagenum'] = ! empty( $_POST['page'] ) ? absint( $_POST['page'] ) : 1;
 			$args['pageID'] = ! empty( $_POST['pageID'] ) ? absint( $_POST['pageID'] ) : 0;
@@ -1081,7 +1091,8 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 				<script type="text/javascript">
 					QTags.addButton( 'ed_insert_page', '[insert page]', "[insert page='your-page-slug' display='title|link|excerpt|excerpt-only|content|post-thumbnail|all']\n", '', '', 'Insert Page', 999 );
 				</script>
-			<?php endif;
+			<?php
+			endif;
 		}
 
 		/**
