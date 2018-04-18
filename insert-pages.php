@@ -389,145 +389,143 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 				 * @see https://codex.wordpress.org/Function_Reference/the_content#Alternative_Usage
 				 */
 				switch ( $attributes['display'] ) {
+					case 'title':
+						$title_tag = $attributes['inline'] ? 'span' : 'h1';
+						echo "<$title_tag class='insert-page-title'>";
+						echo get_the_title( $inserted_page->ID );
+						echo "</$title_tag>";
+						break;
 
-				case 'title':
-					$title_tag = $attributes['inline'] ? 'span' : 'h1';
-					echo "<$title_tag class='insert-page-title'>";
-					echo get_the_title( $inserted_page->ID );
-					echo "</$title_tag>";
-					break;
+					case 'link':
+						?><a href="<?php echo esc_url( get_permalink( $inserted_page->ID ) ); ?>"><?php echo get_the_title( $inserted_page->ID ); ?></a><?php
+						break;
 
-				case 'link':
-					?><a href="<?php echo esc_url( get_permalink( $inserted_page->ID ) ); ?>"><?php echo get_the_title( $inserted_page->ID ); ?></a><?php
-					break;
+					case 'excerpt':
+						?><h1><a href="<?php echo esc_url( get_permalink( $inserted_page->ID ) ); ?>"><?php echo get_the_title( $inserted_page->ID ); ?></a></h1><?php
+						echo $this->insert_pages_trim_excerpt( get_post_field( 'post_excerpt', $inserted_page->ID ), $inserted_page->ID, $attributes['should_apply_the_content_filter'] );
+						break;
 
-				case 'excerpt':
-					?><h1><a href="<?php echo esc_url( get_permalink( $inserted_page->ID ) ); ?>"><?php echo get_the_title( $inserted_page->ID ); ?></a></h1><?php
-					echo $this->insert_pages_trim_excerpt( get_post_field( 'post_excerpt', $inserted_page->ID ), $inserted_page->ID, $attributes['should_apply_the_content_filter'] );
-					break;
+					case 'excerpt-only':
+						echo $this->insert_pages_trim_excerpt( get_post_field( 'post_excerpt', $inserted_page->ID ), $inserted_page->ID, $attributes['should_apply_the_content_filter'] );
+						break;
 
-				case 'excerpt-only':
-					echo $this->insert_pages_trim_excerpt( get_post_field( 'post_excerpt', $inserted_page->ID ), $inserted_page->ID, $attributes['should_apply_the_content_filter'] );
-					break;
-
-				case 'content':
-					// If Elementor is installed, try to render the page with it. If there is no Elementor content, fall back to normal rendering.
-					if ( class_exists( '\Elementor\Plugin' ) ) {
-						$elementor_content = \Elementor\Plugin::$instance->frontend->get_builder_content( $inserted_page->ID );
-						if ( strlen( $elementor_content ) > 0 ) {
-							echo $elementor_content;
-							break;
-						}
-					}
-
-					// Render the content normally.
-					$content = get_post_field( 'post_content', $inserted_page->ID );
-					if ( $attributes['should_apply_the_content_filter'] ) {
-						$content = apply_filters( 'the_content', $content );
-					}
-					echo $content;
-					break;
-
-				case 'post-thumbnail':
-					?><a href="<?php echo esc_url( get_permalink( $inserted_page->ID ) ); ?>"><?php echo get_the_post_thumbnail( $inserted_page->ID ); ?></a><?php
-					break;
-
-				case 'all':
-					// Title.
-					$title_tag = $attributes['inline'] ? 'span' : 'h1';
-					echo "<$title_tag class='insert-page-title'>";
-					echo get_the_title( $inserted_page->ID );
-					echo "</$title_tag>";
-					// Content.
-					$content = get_post_field( 'post_content', $inserted_page->ID );
-					if ( $attributes['should_apply_the_content_filter'] ) {
-						$content = apply_filters( 'the_content', $content );
-					}
-					echo $content;
-					/**
-					 * Meta.
-					 *
-					 * @see https://core.trac.wordpress.org/browser/tags/4.4/src/wp-includes/post-template.php#L968
-					 */
-					if ( $keys = get_post_custom_keys( $inserted_page->ID ) ) {
-						echo "<ul class='post-meta'>\n";
-						foreach ( (array) $keys as $key ) {
-							$keyt = trim( $key );
-							if ( is_protected_meta( $keyt, 'post' ) ) {
-								continue;
+					case 'content':
+						// If Elementor is installed, try to render the page with it. If there is no Elementor content, fall back to normal rendering.
+						if ( class_exists( '\Elementor\Plugin' ) ) {
+							$elementor_content = \Elementor\Plugin::$instance->frontend->get_builder_content( $inserted_page->ID );
+							if ( strlen( $elementor_content ) > 0 ) {
+								echo $elementor_content;
+								break;
 							}
-							$value = get_post_custom_values( $key, $inserted_page->ID );
-							if ( is_array( $value ) ) {
-								$values = array_map( 'trim', $value );
-								$value = implode( $values, ', ' );
+						}
+
+						// Render the content normally.
+						$content = get_post_field( 'post_content', $inserted_page->ID );
+						if ( $attributes['should_apply_the_content_filter'] ) {
+							$content = apply_filters( 'the_content', $content );
+						}
+						echo $content;
+						break;
+
+					case 'post-thumbnail':
+						?><a href="<?php echo esc_url( get_permalink( $inserted_page->ID ) ); ?>"><?php echo get_the_post_thumbnail( $inserted_page->ID ); ?></a><?php
+						break;
+
+					case 'all':
+						// Title.
+						$title_tag = $attributes['inline'] ? 'span' : 'h1';
+						echo "<$title_tag class='insert-page-title'>";
+						echo get_the_title( $inserted_page->ID );
+						echo "</$title_tag>";
+						// Content.
+						$content = get_post_field( 'post_content', $inserted_page->ID );
+						if ( $attributes['should_apply_the_content_filter'] ) {
+							$content = apply_filters( 'the_content', $content );
+						}
+						echo $content;
+						/**
+						 * Meta.
+						 *
+						 * @see https://core.trac.wordpress.org/browser/tags/4.4/src/wp-includes/post-template.php#L968
+						 */
+						if ( $keys = get_post_custom_keys( $inserted_page->ID ) ) {
+							echo "<ul class='post-meta'>\n";
+							foreach ( (array) $keys as $key ) {
+								$keyt = trim( $key );
+								if ( is_protected_meta( $keyt, 'post' ) ) {
+									continue;
+								}
+								$value = get_post_custom_values( $key, $inserted_page->ID );
+								if ( is_array( $value ) ) {
+									$values = array_map( 'trim', $value );
+									$value = implode( $values, ', ' );
+								}
+
+								/**
+								 * Filter the HTML output of the li element in the post custom fields list.
+								 *
+								 * @since 2.2.0
+								 *
+								 * @param string $html  The HTML output for the li element.
+								 * @param string $key   Meta key.
+								 * @param string $value Meta value.
+								 */
+								echo apply_filters( 'the_meta_key', "<li><span class='post-meta-key'>$key:</span> $value</li>\n", $key, $value );
 							}
-
-							/**
-							 * Filter the HTML output of the li element in the post custom fields list.
-							 *
-							 * @since 2.2.0
-							 *
-							 * @param string $html  The HTML output for the li element.
-							 * @param string $key   Meta key.
-							 * @param string $value Meta value.
-							 */
-							echo apply_filters( 'the_meta_key', "<li><span class='post-meta-key'>$key:</span> $value</li>\n", $key, $value );
+							echo "</ul>\n";
 						}
-						echo "</ul>\n";
-					}
-					break;
+						break;
 
-				default: // Display is either invalid, or contains a template file to use.
-					/**
-					 * Legacy/compatibility code: In order to use custom templates,
-					 * we use query_posts() to provide the template with the global
-					 * state it requires for the inserted page (in other words, all
-					 * template tags will work with respect to the inserted page
-					 * instead of the parent page / main loop). Note that this may
-					 * cause some compatibility issues with other plugins.
-					 *
-					 * @see https://codex.wordpress.org/Function_Reference/query_posts
-					 */
-					if ( is_numeric( $attributes['page'] ) ) {
-						$args = array(
-							'p' => intval( $attributes['page'] ),
-							'post_type' => get_post_types(),
-						);
-					} else {
-						$args = array(
-							'name' => esc_attr( $attributes['page'] ),
-							'post_type' => get_post_types(),
-						);
-					}
-					$inserted_page = query_posts( $args );
-					if ( have_posts() ) {
-						$template = locate_template( $attributes['display'] );
-						// Only allow templates that don't have any directory traversal in
-						// them (to prevent including php files that aren't in the active
-						// theme directory or the /wp-includes/theme-compat/ directory).
-						$path_in_theme_or_childtheme_or_compat = (
-							// Template is in current theme folder.
-							0 === strpos( realpath( $template ), realpath( STYLESHEETPATH ) ) ||
-							// Template is in current or parent theme folder.
-							0 === strpos( realpath( $template ), realpath( TEMPLATEPATH ) ) ||
-							// Template is in theme-compat folder.
-							0 === strpos( realpath( $template ), realpath( ABSPATH . WPINC . '/theme-compat/' ) )
-						);
-						if ( strlen( $template ) > 0 && $path_in_theme_or_childtheme_or_compat ) {
-							include $template; // Execute the template code.
-						} else { // Couldn't find template, so fall back to printing a link to the page.
-							the_post();
-							?><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a><?php
+					default: // Display is either invalid, or contains a template file to use.
+						/**
+						 * Legacy/compatibility code: In order to use custom templates,
+						 * we use query_posts() to provide the template with the global
+						 * state it requires for the inserted page (in other words, all
+						 * template tags will work with respect to the inserted page
+						 * instead of the parent page / main loop). Note that this may
+						 * cause some compatibility issues with other plugins.
+						 *
+						 * @see https://codex.wordpress.org/Function_Reference/query_posts
+						 */
+						if ( is_numeric( $attributes['page'] ) ) {
+							$args = array(
+								'p' => intval( $attributes['page'] ),
+								'post_type' => get_post_types(),
+							);
+						} else {
+							$args = array(
+								'name' => esc_attr( $attributes['page'] ),
+								'post_type' => get_post_types(),
+							);
 						}
-					}
-					wp_reset_query();
+						$inserted_page = query_posts( $args );
+						if ( have_posts() ) {
+							$template = locate_template( $attributes['display'] );
+							// Only allow templates that don't have any directory traversal in
+							// them (to prevent including php files that aren't in the active
+							// theme directory or the /wp-includes/theme-compat/ directory).
+							$path_in_theme_or_childtheme_or_compat = (
+								// Template is in current theme folder.
+								0 === strpos( realpath( $template ), realpath( STYLESHEETPATH ) ) ||
+								// Template is in current or parent theme folder.
+								0 === strpos( realpath( $template ), realpath( TEMPLATEPATH ) ) ||
+								// Template is in theme-compat folder.
+								0 === strpos( realpath( $template ), realpath( ABSPATH . WPINC . '/theme-compat/' ) )
+							);
+							if ( strlen( $template ) > 0 && $path_in_theme_or_childtheme_or_compat ) {
+								include $template; // Execute the template code.
+							} else { // Couldn't find template, so fall back to printing a link to the page.
+								the_post();
+								?><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a><?php
+							}
+						}
+						wp_reset_query();
 				}
 
 				// Save output buffer contents.
 				$content = ob_get_clean();
 
-			// Use "Legacy" insert method (query_posts()).
-			} else {
+			} else { // Use "Legacy" insert method (query_posts()).
 
 				// Construct query_posts arguments.
 				if ( is_numeric( $attributes['page'] ) ) {
@@ -630,62 +628,62 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 					 * @see https://codex.wordpress.org/Function_Reference/the_content#Alternative_Usage
 					 */
 					switch ( $attributes['display'] ) {
-					case 'title':
-						the_post();
-						$title_tag = $attributes['inline'] ? 'span' : 'h1';
-						echo "<$title_tag class='insert-page-title'>";
-						the_title();
-						echo "</$title_tag>";
-						break;
-					case 'link':
-						the_post();
-						?><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a><?php
-						break;
-					case 'excerpt':
-						the_post();
-						?><h1><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a></h1><?php
-						if ( $attributes['should_apply_the_content_filter'] ) the_excerpt(); else echo get_the_excerpt();
-						break;
-					case 'excerpt-only':
-						the_post();
-						if ( $attributes['should_apply_the_content_filter'] ) the_excerpt(); else echo get_the_excerpt();
-						break;
-					case 'content':
-						the_post();
-						if ( $attributes['should_apply_the_content_filter'] ) the_content(); else echo get_the_content();
-						break;
-					case 'post-thumbnail':
-						?><a href="<?php the_permalink(); ?>"><?php the_post_thumbnail(); ?></a><?php
-						break;
-					case 'all':
-						the_post();
-						$title_tag = $attributes['inline'] ? 'span' : 'h1';
-						echo "<$title_tag class='insert-page-title'>";
-						the_title();
-						echo "</$title_tag>";
-						if ( $attributes['should_apply_the_content_filter'] ) the_content(); else echo get_the_content();
-						the_meta();
-						break;
-					default: // Display is either invalid, or contains a template file to use.
-						$template = locate_template( $attributes['display'] );
-						// Only allow templates that don't have any directory traversal in
-						// them (to prevent including php files that aren't in the active
-						// theme directory or the /wp-includes/theme-compat/ directory).
-						$path_in_theme_or_childtheme_or_compat = (
-							// Template is in current theme folder.
-							0 === strpos( realpath( $template ), realpath( STYLESHEETPATH ) ) ||
-							// Template is in current or parent theme folder.
-							0 === strpos( realpath( $template ), realpath( TEMPLATEPATH ) ) ||
-							// Template is in theme-compat folder.
-							0 === strpos( realpath( $template ), realpath( ABSPATH . WPINC . '/theme-compat/' ) )
-						);
-						if ( strlen( $template ) > 0 && $path_in_theme_or_childtheme_or_compat ) {
-							include $template; // Execute the template code.
-						} else { // Couldn't find template, so fall back to printing a link to the page.
+						case 'title':
+							the_post();
+							$title_tag = $attributes['inline'] ? 'span' : 'h1';
+							echo "<$title_tag class='insert-page-title'>";
+							the_title();
+							echo "</$title_tag>";
+							break;
+						case 'link':
 							the_post();
 							?><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a><?php
-						}
-						break;
+							break;
+						case 'excerpt':
+							the_post();
+							?><h1><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a></h1><?php
+							if ( $attributes['should_apply_the_content_filter'] ) the_excerpt(); else echo get_the_excerpt();
+							break;
+						case 'excerpt-only':
+							the_post();
+							if ( $attributes['should_apply_the_content_filter'] ) the_excerpt(); else echo get_the_excerpt();
+							break;
+						case 'content':
+							the_post();
+							if ( $attributes['should_apply_the_content_filter'] ) the_content(); else echo get_the_content();
+							break;
+						case 'post-thumbnail':
+							?><a href="<?php the_permalink(); ?>"><?php the_post_thumbnail(); ?></a><?php
+							break;
+						case 'all':
+							the_post();
+							$title_tag = $attributes['inline'] ? 'span' : 'h1';
+							echo "<$title_tag class='insert-page-title'>";
+							the_title();
+							echo "</$title_tag>";
+							if ( $attributes['should_apply_the_content_filter'] ) the_content(); else echo get_the_content();
+							the_meta();
+							break;
+						default: // Display is either invalid, or contains a template file to use.
+							$template = locate_template( $attributes['display'] );
+							// Only allow templates that don't have any directory traversal in
+							// them (to prevent including php files that aren't in the active
+							// theme directory or the /wp-includes/theme-compat/ directory).
+							$path_in_theme_or_childtheme_or_compat = (
+								// Template is in current theme folder.
+								0 === strpos( realpath( $template ), realpath( STYLESHEETPATH ) ) ||
+								// Template is in current or parent theme folder.
+								0 === strpos( realpath( $template ), realpath( TEMPLATEPATH ) ) ||
+								// Template is in theme-compat folder.
+								0 === strpos( realpath( $template ), realpath( ABSPATH . WPINC . '/theme-compat/' ) )
+							);
+							if ( strlen( $template ) > 0 && $path_in_theme_or_childtheme_or_compat ) {
+								include $template; // Execute the template code.
+							} else { // Couldn't find template, so fall back to printing a link to the page.
+								the_post();
+								?><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a><?php
+							}
+							break;
 					}
 					// Save output buffer contents.
 					$content = ob_get_clean();
