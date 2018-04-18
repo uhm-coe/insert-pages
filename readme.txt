@@ -86,6 +86,11 @@ Just one! The plugin prevents you from embedding a page in itself, but you can t
 
 == Changelog ==
 
+= 3.4.0 =
+* Add integration with WPBakery Page Builder (Visual Composer).
+* Fix error messages about deprecated functions in PHP 7.2.
+* Adhere to WordPress Coding Standards.
+
 = 3.3.0 =
 * Fix custom field values coming from parent post in certain contexts. Props @chrisneward for catching it!
 * Add post-thumbnail display to output just the featured image of a post. Props @pereztroff for the feature request.
