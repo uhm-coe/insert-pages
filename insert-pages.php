@@ -56,7 +56,7 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 		 *
 		 * @return int Page ID being inserted.
 		 */
-		function get_page_id() {
+		public function get_page_id() {
 			return $this->page_id;
 		}
 
@@ -65,7 +65,7 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 		 *
 		 * @param int $id Page ID being inserted.
 		 */
-		function set_page_id( $id ) {
+		public function set_page_id( $id ) {
 			return $this->page_id = $id;
 		}
 
@@ -74,7 +74,7 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 		 *
 		 * @return void
 		 */
-		function insert_pages_init() {
+		public function insert_pages_init() {
 			add_shortcode( 'insert', array( $this, 'insert_pages_handle_shortcode_insert' ) );
 		}
 
@@ -83,7 +83,7 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 		 *
 		 * @return void
 		 */
-		function insert_pages_admin_init() {
+		public function insert_pages_admin_init() {
 			// Get options set in WordPress dashboard (Settings > Insert Pages).
 			$options = get_option( 'wpip_settings' );
 			if ( $options === FALSE || ! is_array( $options ) || ! array_key_exists( 'wpip_format', $options ) || ! array_key_exists( 'wpip_wrapper', $options ) || ! array_key_exists( 'wpip_insert_method', $options ) || ! array_key_exists( 'wpip_tinymce_filter', $options ) ) {
@@ -145,7 +145,7 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 		 * @param  string $content Content to replace shortcode.
 		 * @return string          Content to replace shortcode.
 		 */
-		function insert_pages_handle_shortcode_insert( $atts, $content = null ) {
+		public function insert_pages_handle_shortcode_insert( $atts, $content = null ) {
 			global $wp_query, $post, $wp_current_filter;
 
 			// Shortcode attributes.
@@ -730,7 +730,7 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 		 * @param  array  $attributes Shortcode attributes.
 		 * @return string             Content to replace shortcode.
 		 */
-		function insert_pages_wrap_content( $content, $posts, $attributes ) {
+		public function insert_pages_wrap_content( $content, $posts, $attributes ) {
 			return "<{$attributes['wrapper_tag']} data-post-id='{$attributes['page']}' class='insert-page insert-page-{$attributes['page']} {$attributes['class']}'>{$content}</{$attributes['wrapper_tag']}>";
 		}
 
@@ -740,7 +740,7 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 		 * @param  array $buttons TinyMCE buttons.
 		 * @return array          TinyMCE buttons with Insert Pages button.
 		 */
-		function insert_pages_handle_filter_mce_buttons( $buttons ) {
+		public function insert_pages_handle_filter_mce_buttons( $buttons ) {
 			if ( ! in_array( 'wpInsertPages_button', $buttons ) ) {
 				array_push( $buttons, 'wpInsertPages_button' );
 			}
@@ -753,7 +753,7 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 		 * @param  array $plugins TinyMCE plugins.
 		 * @return array          TinyMCE plugins with Insert Pages plugin.
 		 */
-		function insert_pages_handle_filter_mce_external_plugins( $plugins ) {
+		public function insert_pages_handle_filter_mce_external_plugins( $plugins ) {
 			if ( ! array_key_exists( 'wpInsertPages', $plugins ) ) {
 				$plugins['wpInsertPages'] = plugins_url( '/js/wpinsertpages_plugin.js', __FILE__ );
 			}
@@ -769,7 +769,7 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 		 * @param  boolean $apply_the_content_filter Whether to apply `the_content`.
 		 * @return string                            Excerpt.
 		 */
-		function insert_pages_trim_excerpt( $text = '', $post_id = 0, $apply_the_content_filter = true ) {
+		public function insert_pages_trim_excerpt( $text = '', $post_id = 0, $apply_the_content_filter = true ) {
 			$post_id = intval( $post_id );
 			if ( $post_id < 1 ) {
 				return '';
@@ -823,7 +823,7 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 		 *
 		 * @since 3.1.0
 		 */
-		function insert_pages_wp_tinymce_dialog() {
+		public function insert_pages_wp_tinymce_dialog() {
 			// If wp_editor() is being called outside of an admin context,
 			// required dependencies for Insert Pages will be missing (e.g.,
 			// wp-admin/includes/template.php will not be loaded, admin_head
@@ -936,7 +936,7 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 		 * @subpackage Administration
 		 * @since 3.1.0
 		 */
-		function insert_pages_insert_page_callback() {
+		public function insert_pages_insert_page_callback() {
 			check_ajax_referer( 'internal-inserting', '_ajax_inserting_nonce' );
 			$args = array();
 			if ( isset( $_POST['search'] ) ) {
@@ -976,7 +976,7 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 		 * @param  array $args Optional. Accepts 'pagenum' and 's' (search) arguments.
 		 * @return array Results.
 		 */
-		function insert_pages_wp_query( $args = array() ) {
+		private function insert_pages_wp_query( $args = array() ) {
 			$pts = get_post_types( array( 'public' => true ), 'objects' );
 			$post_types = array_keys( $pts );
 
@@ -1054,7 +1054,7 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 		 *
 		 * @return void
 		 */
-		function insert_pages_add_quicktags() {
+		public function insert_pages_add_quicktags() {
 			if ( wp_script_is( 'quicktags' ) ) : ?>
 				<script type="text/javascript">
 					QTags.addButton( 'ed_insert_page', '[insert page]', "[insert page='your-page-slug' display='title|link|excerpt|excerpt-only|content|post-thumbnail|all']\n", '', '', 'Insert Page', 999 );
