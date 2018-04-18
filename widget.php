@@ -14,7 +14,7 @@ class InsertPagesWidget extends WP_Widget {
 		// Load admin javascript for Widget options on admin page (widgets.php).
 		add_action( 'sidebar_admin_page', array( $this, 'widget_admin_js' ) );
 
-		// Load admin javascript for Widget options on theme customize page (customize.php)
+		// Load admin javascript for Widget options on theme customize page (customize.php).
 		add_action( 'customize_controls_enqueue_scripts', array( $this, 'widget_admin_js' ) );
 
 		// Call parent constructor to initialize the widget.

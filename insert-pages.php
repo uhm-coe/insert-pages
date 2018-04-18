@@ -32,19 +32,19 @@ Version: 3.3.0
 	[insert page='{slug}|{id}' display='title|link|excerpt|excerpt-only|content|post-thumbnail|all|{custom-template.php}' class='any-classes']
 */
 
-// Define the InsertPagesPlugin class (variables and functions)
+// Define the InsertPagesPlugin class (variables and functions).
 if ( !class_exists( 'InsertPagesPlugin' ) ) {
 	class InsertPagesPlugin {
-		// Save the id of the page being edited
+		// Save the id of the page being edited.
 		protected $page_id;
 
-		// Constructor
+		// Constructor.
 		public function __construct() {
 			// Include the code that generates the options page.
 			require_once( dirname( __FILE__ ) . '/options.php' );
 		}
 
-		// Getter/Setter for page_id
+		// Getter/Setter for page_id.
 		function getPageID() {
 			return $this->page_id;
 		}
@@ -52,12 +52,12 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 			return $this->page_id = $id;
 		}
 
-		// Action hook: Wordpress 'init'
+		// Action hook: Wordpress 'init'.
 		function insert_pages_init() {
 			add_shortcode( 'insert', array( $this, 'insert_pages_handleShortcode_insert' ) );
 		}
 
-		// Action hook: Wordpress 'admin_init'
+		// Action hook: Wordpress 'admin_init'.
 		function insert_pages_admin_init() {
 			// Get options set in WordPress dashboard (Settings > Insert Pages).
 			$options = get_option( 'wpip_settings' );
@@ -65,7 +65,7 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 				$options = wpip_set_defaults();
 			}
 
-			// Register the TinyMCE toolbar button script
+			// Register the TinyMCE toolbar button script.
 			wp_enqueue_script(
 				'wpinsertpages',
 				plugins_url( '/js/wpinsertpages.js', __FILE__ ),
@@ -85,7 +85,7 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 				)
 			);
 
-			// Register the TinyMCE toolbar button styles
+			// Register the TinyMCE toolbar button styles.
 			wp_enqueue_style(
 				'wpinsertpagescss',
 				plugins_url( '/css/wpinsertpages.css', __FILE__ ),
@@ -93,10 +93,13 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 				'20151230'
 			);
 
-			// Register TinyMCE plugin for the toolbar button if in normal mode
-			// (register TinyMCE plugin filters below before plugins_loaded
-			// if in compatibility mode, to work around a SiteOrigin PageBuilder bug).
-			// Ref: https://wordpress.org/support/topic/button-in-the-toolbar-of-tinymce-disappear-conflict-page-builder/
+			/**
+			 * Register TinyMCE plugin for the toolbar button in normal mode (register
+			 * TinyMCE plugin filters below before plugins_loaded in compatibility
+			 * mode, to work around a SiteOrigin PageBuilder bug).
+			 *
+			 * @see  https://wordpress.org/support/topic/button-in-the-toolbar-of-tinymce-disappear-conflict-page-builder/
+			 */
 			if ( $options['wpip_tinymce_filter'] === 'normal' ) {
 				add_filter( 'mce_external_plugins', array( $this, 'insert_pages_handleFilter_mceExternalPlugins' ) );
 				add_filter( 'mce_buttons', array( $this, 'insert_pages_handleFilter_mceButtons' ) );
@@ -111,7 +114,7 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 		}
 
 
-		// Shortcode hook: Replace the [insert ...] shortcode with the inserted page's content
+		// Shortcode hook: Replace the [insert ...] shortcode with the inserted page's content.
 		function insert_pages_handleShortcode_insert( $atts, $content = null ) {
 			global $wp_query, $post, $wp_current_filter;
 
@@ -344,11 +347,18 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 					}
 				}
 
-				// Show either the title, link, content, everything, or everything via a custom template
-				// Note: if the sharing_display filter exists, it means Jetpack is installed and Sharing is enabled;
-				// This plugin conflicts with Sharing, because Sharing assumes the_content and the_excerpt filters
-				// are only getting called once. The fix here is to disable processing of filters on the_content in
-				// the inserted page. @see https://codex.wordpress.org/Function_Reference/the_content#Alternative_Usage
+				/**
+				 * Show either the title, link, content, everything, or everything via a
+				 * custom template.
+				 *
+				 * Note: if the sharing_display filter exists, it means Jetpack is
+				 * installed and Sharing is enabled; this plugin conflicts with Sharing,
+				 * because Sharing assumes the_content and the_excerpt filters are only
+				 * getting called once. The fix here is to disable processing of filters
+				 * on the_content in the inserted page.
+				 *
+				 * @see https://codex.wordpress.org/Function_Reference/the_content#Alternative_Usage
+				 */
 				switch ( $attributes['display'] ) {
 
 				case 'title':
@@ -405,8 +415,11 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 						$content = apply_filters( 'the_content', $content );
 					}
 					echo $content;
-					// Meta.
-					// @ref https://core.trac.wordpress.org/browser/tags/4.4/src/wp-includes/post-template.php#L968
+					/**
+					 * Meta.
+					 *
+					 * @see https://core.trac.wordpress.org/browser/tags/4.4/src/wp-includes/post-template.php#L968
+					 */
 					if ( $keys = get_post_custom_keys( $inserted_page->ID ) ) {
 						echo "<ul class='post-meta'>\n";
 						foreach ( (array) $keys as $key ) {
@@ -435,14 +448,17 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 					}
 					break;
 
-				default: // display is either invalid, or contains a template file to use
-					// Legacy/compatibility code: In order to use custom templates,
-					// we use query_posts() to provide the template with the global
-					// state it requires for the inserted page (in other words, all
-					// template tags will work with respect to the inserted page
-					// instead of the parent page / main loop). Note that this may
-					// cause some compatibility issues with other plugins.
-					// @ref https://codex.wordpress.org/Function_Reference/query_posts
+				default: // Display is either invalid, or contains a template file to use.
+					/**
+					 * Legacy/compatibility code: In order to use custom templates,
+					 * we use query_posts() to provide the template with the global
+					 * state it requires for the inserted page (in other words, all
+					 * template tags will work with respect to the inserted page
+					 * instead of the parent page / main loop). Note that this may
+					 * cause some compatibility issues with other plugins.
+					 *
+					 * @see https://codex.wordpress.org/Function_Reference/query_posts
+					 */
 					if ( is_numeric( $attributes['page'] ) ) {
 						$args = array(
 							'p' => intval( $attributes['page'] ),
@@ -469,7 +485,7 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 							0 === strpos( realpath( $template ), realpath( ABSPATH . WPINC . '/theme-compat/' ) )
 						);
 						if ( strlen( $template ) > 0 && $path_in_theme_or_childtheme_or_compat ) {
-							include $template; // execute the template code
+							include $template; // Execute the template code.
 						} else { // Couldn't find template, so fall back to printing a link to the page.
 							the_post();
 							?><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a><?php
@@ -499,7 +515,7 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 				}
 				$posts = query_posts( $args );
 				if ( have_posts() ) {
-					// Start output buffering so we can save the output to string
+					// Start output buffering so we can save the output to string.
 					ob_start();
 
 					// If Beaver Builder, SiteOrigin Page Builder, Elementor, or WPBakery
@@ -573,11 +589,18 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 						}
 					}
 
-					// Show either the title, link, content, everything, or everything via a custom template
-					// Note: if the sharing_display filter exists, it means Jetpack is installed and Sharing is enabled;
-					// This plugin conflicts with Sharing, because Sharing assumes the_content and the_excerpt filters
-					// are only getting called once. The fix here is to disable processing of filters on the_content in
-					// the inserted page. @see https://codex.wordpress.org/Function_Reference/the_content#Alternative_Usage
+					/**
+					 * Show either the title, link, content, everything, or everything via a
+					 * custom template.
+					 *
+					 * Note: if the sharing_display filter exists, it means Jetpack is
+					 * installed and Sharing is enabled; this plugin conflicts with Sharing,
+					 * because Sharing assumes the_content and the_excerpt filters are only
+					 * getting called once. The fix here is to disable processing of filters
+					 * on the_content in the inserted page.
+					 *
+					 * @see https://codex.wordpress.org/Function_Reference/the_content#Alternative_Usage
+					 */
 					switch ( $attributes['display'] ) {
 					case 'title':
 						the_post();
@@ -615,7 +638,7 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 						if ( $attributes['should_apply_the_content_filter'] ) the_content(); else echo get_the_content();
 						the_meta();
 						break;
-					default: // display is either invalid, or contains a template file to use
+					default: // Display is either invalid, or contains a template file to use.
 						$template = locate_template( $attributes['display'] );
 						// Only allow templates that don't have any directory traversal in
 						// them (to prevent including php files that aren't in the active
@@ -629,7 +652,7 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 							0 === strpos( realpath( $template ), realpath( ABSPATH . WPINC . '/theme-compat/' ) )
 						);
 						if ( strlen( $template ) > 0 && $path_in_theme_or_childtheme_or_compat ) {
-							include $template; // execute the template code
+							include $template; // Execute the template code.
 						} else { // Couldn't find template, so fall back to printing a link to the page.
 							the_post();
 							?><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a><?php
@@ -678,7 +701,7 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 			return "<{$attributes['wrapper_tag']} data-post-id='{$attributes['page']}' class='insert-page insert-page-{$attributes['page']} {$attributes['class']}'>{$content}</{$attributes['wrapper_tag']}>";
 		}
 
-		// Filter hook: Add a button to the TinyMCE toolbar for our insert page tool
+		// Filter hook: Add a button to the TinyMCE toolbar for our insert page tool.
 		function insert_pages_handleFilter_mceButtons( $buttons ) {
 			if ( ! in_array( 'wpInsertPages_button', $buttons ) ) {
 				array_push( $buttons, 'wpInsertPages_button' );
@@ -686,7 +709,7 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 			return $buttons;
 		}
 
-		// Filter hook: Load the javascript for our custom toolbar button
+		// Filter hook: Load the javascript for our custom toolbar button.
 		function insert_pages_handleFilter_mceExternalPlugins( $plugins ) {
 			if ( ! array_key_exists( 'wpInsertPages', $plugins ) ) {
 				$plugins['wpInsertPages'] = plugins_url( '/js/wpinsertpages_plugin.js', __FILE__ );
@@ -694,8 +717,8 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 			return $plugins;
 		}
 
-		// Helper function to generate an excerpt (outside of the Loop) for a given ID.
-		// @ref wp_trim_excerpt()
+		// Helper function to generate an excerpt (outside of the Loop) for a given
+		// ID (based on wp_trim_excerpt()).
 		function insert_pages_trim_excerpt( $text = '', $post_id = 0, $apply_the_content_filter = true ) {
 			$post_id = intval( $post_id );
 			if ( $post_id < 1 ) {
@@ -764,7 +787,7 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 			// Get ID of post currently being edited.
 			$post_id = array_key_exists( 'post', $_REQUEST ) && intval( $_REQUEST['post'] ) > 0 ? intval( $_REQUEST['post'] ) : '';
 
-			// display: none is required here, see #WP27605
+			// display: none is required here, see #WP27605.
 			?><div id="wp-insertpage-backdrop" style="display: none"></div>
 			<div id="wp-insertpage-wrap" class="wp-core-ui<?php echo $options_panel_visible; ?>" style="display: none">
 			<form id="wp-insertpage" tabindex="-1">
@@ -1001,12 +1024,12 @@ if ( !class_exists( 'InsertPagesPlugin' ) ) {
 	}
 }
 
-// Initialize InsertPagesPlugin object
+// Initialize InsertPagesPlugin object.
 if ( class_exists( 'InsertPagesPlugin' ) ) {
 	$insert_pages_plugin = new InsertPagesPlugin();
 }
 
-// Actions and Filters handled by InsertPagesPlugin class
+// Actions and Filters handled by InsertPagesPlugin class.
 if ( isset( $insert_pages_plugin ) ) {
 	// Get options set in WordPress dashboard (Settings > Insert Pages).
 	$options = get_option( 'wpip_settings' );
@@ -1017,8 +1040,8 @@ if ( isset( $insert_pages_plugin ) ) {
 	// Register shortcode [insert ...].
 	add_action( 'init', array( $insert_pages_plugin, 'insert_pages_init' ), 1 );
 	// Register shortcode [insert ...] when TinyMCE is included in a frontend ACF form.
-	add_action( 'acf_head-input', array( $insert_pages_plugin, 'insert_pages_init' ), 1 ); // ACF 3
-	add_action( 'acf/input/admin_head', array( $insert_pages_plugin, 'insert_pages_init' ), 1 ); // ACF 4
+	add_action( 'acf_head-input', array( $insert_pages_plugin, 'insert_pages_init' ), 1 ); // ACF 3.
+	add_action( 'acf/input/admin_head', array( $insert_pages_plugin, 'insert_pages_init' ), 1 ); // ACF 4.
 
 	// Add TinyMCE button for shortcode.
 	add_action( 'admin_head', array( $insert_pages_plugin, 'insert_pages_admin_init' ), 1 );
@@ -1035,9 +1058,12 @@ if ( isset( $insert_pages_plugin ) ) {
 	// Use internal filter to wrap inserted content in a div or span.
 	add_filter( 'insert_pages_wrap_content', array( $insert_pages_plugin, 'insert_pages_wrap_content' ), 10, 3 );
 
-	// Register TinyMCE plugin for the toolbar button if in compatibility mode.
-	// (to work around a SiteOrigin PageBuilder bug).
-	// Ref: https://wordpress.org/support/topic/button-in-the-toolbar-of-tinymce-disappear-conflict-page-builder/
+	/**
+	 * Register TinyMCE plugin for the toolbar button if in compatibility mode.
+	 * (to work around a SiteOrigin PageBuilder bug).
+	 *
+	 * @see  https://wordpress.org/support/topic/button-in-the-toolbar-of-tinymce-disappear-conflict-page-builder/
+	 */
 	if ( $options['wpip_tinymce_filter'] === 'compatibility' ) {
 		add_filter( 'mce_external_plugins', array( $insert_pages_plugin, 'insert_pages_handleFilter_mceExternalPlugins' ) );
 		add_filter( 'mce_buttons', array( $insert_pages_plugin, 'insert_pages_handleFilter_mceButtons' ) );
