@@ -855,7 +855,7 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 				return;
 			}
 
-			$options_panel_visible = '1' == get_user_setting( 'wpinsertpage', '0' ) ? ' options-panel-visible' : '';
+			$options_panel_visible = 1 === intval( get_user_setting( 'wpinsertpage', '0' ) ) ? ' options-panel-visible' : '';
 
 			// Get ID of post currently being edited.
 			$post_id = array_key_exists( 'post', $_REQUEST ) && intval( $_REQUEST['post'] ) > 0 ? intval( $_REQUEST['post'] ) : '';
