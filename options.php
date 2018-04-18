@@ -1,11 +1,25 @@
 <?php
+/**
+ * Render the Insert Pages Settings page.
+ *
+ * @package insert-pages
+ */
 
+/**
+ * Add 'Insert Pages' to the Settings menu.
+ *
+ * @return void
+ */
 function wpip_add_admin_menu() {
 	add_options_page( 'Insert Pages', 'Insert Pages', 'manage_options', 'insert_pages', 'wpip_options_page' );
 }
 add_action( 'admin_menu', 'wpip_add_admin_menu' );
 
-
+/**
+ * Register settings fields.
+ *
+ * @return void
+ */
 function wpip_settings_init() {
 	register_setting( 'wpipSettings', 'wpip_settings' );
 	add_settings_section(
@@ -45,10 +59,14 @@ function wpip_settings_init() {
 }
 add_action( 'admin_init', 'wpip_settings_init' );
 
-
+/**
+ * Set meaningful defaults for settings.
+ *
+ * @return array Insert Pages settings.
+ */
 function wpip_set_defaults() {
 	$options = get_option( 'wpip_settings' );
-	if ( $options === FALSE ) {
+	if ( false === $options ) {
 		$options = array();
 	}
 
@@ -74,12 +92,20 @@ function wpip_set_defaults() {
 }
 register_activation_hook( __FILE__, 'wpip_set_defaults' );
 
-
+/**
+ * Print heading for Insert Pages settings page.
+ *
+ * @return void
+ */
 function wpip_settings_section_callback() {
-	echo __( 'You may override some default settings here.', 'insert-pages' );
+	esc_html_e( 'You may override some default settings here.', 'insert-pages' );
 }
 
-
+/**
+ * Print Insert Pages settings page.
+ *
+ * @return void
+ */
 function wpip_options_page() {
 	?>
 	<form action='options.php' method='post'>
@@ -92,10 +118,14 @@ function wpip_options_page() {
 	<?php
 }
 
-
+/**
+ * Print 'Format' setting.
+ *
+ * @return void
+ */
 function wpip_format_render() {
 	$options = get_option( 'wpip_settings' );
-	if ( $options === FALSE || ! is_array( $options ) || ! array_key_exists( 'wpip_format', $options ) ) {
+	if ( false === $options || ! is_array( $options ) || ! array_key_exists( 'wpip_format', $options ) ) {
 		$options = wpip_set_defaults();
 	}
 	?>
@@ -105,10 +135,14 @@ function wpip_format_render() {
 	<?php
 }
 
-
+/**
+ * Print 'Wrapper' setting.
+ *
+ * @return void
+ */
 function wpip_wrapper_render() {
 	$options = get_option( 'wpip_settings' );
-	if ( $options === FALSE || ! is_array( $options ) || ! array_key_exists( 'wpip_wrapper', $options ) ) {
+	if ( false === $options || ! is_array( $options ) || ! array_key_exists( 'wpip_wrapper', $options ) ) {
 		$options = wpip_set_defaults();
 	}
 	?>
@@ -118,9 +152,14 @@ function wpip_wrapper_render() {
 	<?php
 }
 
+/**
+ * Print 'Insert Method' setting.
+ *
+ * @return void
+ */
 function wpip_insert_method_render() {
 	$options = get_option( 'wpip_settings' );
-	if ( $options === FALSE || ! is_array( $options ) || ! array_key_exists( 'wpip_insert_method', $options ) ) {
+	if ( false === $options || ! is_array( $options ) || ! array_key_exists( 'wpip_insert_method', $options ) ) {
 		$options = wpip_set_defaults();
 	}
 	?>
@@ -130,9 +169,14 @@ function wpip_insert_method_render() {
 	<?php
 }
 
+/**
+ * Print 'TinyMCE Filter' setting.
+ *
+ * @return void
+ */
 function wpip_tinymce_filter_render() {
 	$options = get_option( 'wpip_settings' );
-	if ( $options === FALSE || ! is_array( $options ) || ! array_key_exists( 'wpip_tinymce_filter', $options ) ) {
+	if ( false === $options || ! is_array( $options ) || ! array_key_exists( 'wpip_tinymce_filter', $options ) ) {
 		$options = wpip_set_defaults();
 	}
 	?>
