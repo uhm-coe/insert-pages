@@ -31,5 +31,7 @@
 		<exclude name="WordPress.VIP.DirectDatabaseQuery"/>
 		<exclude name="WordPress.Files.FileName"/>
 		<exclude name="WordPress.Variables.GlobalVariables"/>
+		<exclude name="WordPress.VIP.ValidatedSanitizedInput"/>
+		<exclude name="WordPress.WP.DiscouragedFunctions"/>
 	</rule>
 </ruleset>
