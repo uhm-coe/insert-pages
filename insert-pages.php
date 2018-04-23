@@ -687,7 +687,7 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 							}
 							break;
 						case 'post-thumbnail':
-							?><a href="<?php the_permalink(); ?>"><?php the_post_thumbnail(); ?></a>
+							?><a href="<?php echo esc_url( get_permalink( $inserted_page->ID ) ); ?>"><?php echo get_the_post_thumbnail( $inserted_page->ID ); ?></a>
 							<?php
 							break;
 						case 'all':
