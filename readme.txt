@@ -86,6 +86,10 @@ Just one! The plugin prevents you from embedding a page in itself, but you can t
 
 == Changelog ==
 
+= 3.4.1 =
+* Fix for Elementor rendering in legacy mode.
+* Fix for Post Thumbnail display in legacy mode.
+
 = 3.4.0 =
 * Add integration with WPBakery Page Builder (Visual Composer).
 * Fix error messages about deprecated functions in PHP 7.2.
