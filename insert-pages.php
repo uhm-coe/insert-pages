@@ -670,6 +670,15 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 							}
 							break;
 						case 'content':
+							// If Elementor is installed, try to render the page with it. If there is no Elementor content, fall back to normal rendering.
+							if ( class_exists( '\Elementor\Plugin' ) ) {
+								$elementor_content = \Elementor\Plugin::$instance->frontend->get_builder_content( $inserted_page->ID );
+								if ( strlen( $elementor_content ) > 0 ) {
+									echo $elementor_content;
+									break;
+								}
+							}
+							// Render the content normally.
 							the_post();
 							if ( $attributes['should_apply_the_content_filter'] ) {
 								the_content();
