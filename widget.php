@@ -67,6 +67,9 @@ class InsertPagesWidget extends WP_Widget {
 		if ( array_key_exists( 'querystring', $instance ) ) {
 			$atts['querystring'] = $instance['querystring'];
 		}
+		if ( array_key_exists( 'public', $instance ) ) {
+			$atts['public'] = '1' === $instance['public'];
+		}
 
 		// Render the inserted page using the plugin's shortcode handler.
 		$content = $insert_pages_plugin->insert_pages_handle_shortcode_insert( $atts );
@@ -91,6 +94,7 @@ class InsertPagesWidget extends WP_Widget {
 			'class' => '',
 			'inline' => '',
 			'querystring' => '',
+			'public' => '',
 		)); ?>
 		<p>
 			<label for="<?php echo esc_attr( $this->get_field_id( 'page' ) ); ?>"><?php esc_html_e( 'Page/Post ID or Slug', 'insert-pages' ); ?>:</label>
@@ -127,6 +131,10 @@ class InsertPagesWidget extends WP_Widget {
 			<label for="<?php echo esc_attr( $this->get_field_id( 'querystring' ) ); ?>"><?php esc_html_e( 'Querystring', 'insert-pages' ); ?>:</label>
 			<input type="text" class="widefat" autocomplete="off" name="<?php echo esc_attr( $this->get_field_name( 'querystring' ) ); ?>" id="<?php echo esc_attr( $this->get_field_id( 'querystring' ) ); ?>" value="<?php echo esc_attr( $instance['querystring'] ); ?>" />
 		</p>
+		<p>
+			<input class="checkbox" type="checkbox" name="<?php echo esc_attr( $this->get_field_name( 'public' ) ); ?>" id="<?php echo esc_attr( $this->get_field_id( 'public' ) ); ?>" value="1" <?php checked( $instance['public'], '1' ); ?> />
+			<label for="<?php echo esc_attr( $this->get_field_id( 'public' ) ); ?>"><?php esc_html_e( 'Anonymous users can see this inserted even if its status is private', 'insert-pages' ); ?></label>
+		</p>
 		<?php
 	}
 
@@ -145,6 +153,7 @@ class InsertPagesWidget extends WP_Widget {
 		$instance['class'] = array_key_exists( 'class', $new_instance ) ? strip_tags( $new_instance['class'] ) : '';
 		$instance['inline'] = array_key_exists( 'inline', $new_instance ) ? strip_tags( $new_instance['inline'] ) : '';
 		$instance['querystring'] = array_key_exists( 'querystring', $new_instance ) ? strip_tags( $new_instance['querystring'] ) : '';
+		$instance['public'] = array_key_exists( 'public', $new_instance ) ? strip_tags( $new_instance['public'] ) : '';
 
 		return $instance;
 	}

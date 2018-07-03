@@ -25,9 +25,10 @@ var wpInsertPages;
 			inputs.parentPageID = $( '#insertpage-parent-page-id' );
 			// Format field (title, link, content, all, choose a custom template ->)
 			inputs.format = $( '#insertpage-format-select' );
-			// Extra fields (wrapper classes, inline checkbox)
+			// Extra fields (wrapper classes, inline checkbox, "visible to all" checkbox)
 			inputs.extraClasses = $( '#insertpage-extra-classes' );
 			inputs.extraInline = $( '#insertpage-extra-inline' );
+			inputs.extraPublic = $( '#insertpage-extra-public' );
 			inputs.extraQuerystring = $( '#insertpage-extra-querystring' );
 			// Custom template select field
 			inputs.template = $( '#insertpage-template-select' );
@@ -250,6 +251,15 @@ var wpInsertPages;
 					inputs.extraInline.attr( 'checked', false );
 				}
 
+				// If this is a private page, reveal the checkbox "Visible to everyone?"
+				regexp = /public/;
+				matches = regexp.exec( shortcode );
+				if ( matches && matches.length > 1 ) {
+					inputs.extraPublic.attr( 'checked', true );
+				} else {
+					inputs.extraPublic.attr( 'checked', false );
+				}
+
 				// Update extra querystring.
 				regexp = /querystring=['"]([^['"]*)['"]/;
 				matches = regexp.exec( shortcode );
@@ -308,6 +318,7 @@ var wpInsertPages;
 				display: inputs.format.val()=='template' ? inputs.template.val() : inputs.format.val(),
 				class: inputs.extraClasses.val(),
 				inline: inputs.extraInline.is( ':checked' ),
+				public: inputs.extraPublic.is( ':checked' ),
 				querystring: inputs.extraQuerystring.val(),
 			};
 		},
@@ -340,6 +351,7 @@ var wpInsertPages;
 				"display='" + attrs.display + "'" +
 				( attrs['class'].length > 0 ? " class='" + attrs['class'] + "'" : "" ) +
 				( attrs.inline ? " inline" : "" ) +
+				( attrs.public ? " public" : "" ) +
 				( attrs.querystring ? " querystring='" +
 					attrs['querystring'].replace( /&/g, '&amp;' ).replace( /\[/g, '{' ).replace( /\]/g, '}' )
 					+ "'" : ""
@@ -582,7 +594,9 @@ var wpInsertPages;
 					list += '<input type="hidden" class="item-id" value="' + this.ID + '" />';
 					list += '<span class="item-title">';
 					list += this.title ? this.title : wpInsertPagesL10n.noTitle;
-					list += '</span><span class="item-info">' + this.info + '</span></li>';
+					list += '</span><span class="item-info">' + this.info;
+					list += this.status === 'private' ? ' (' + wpInsertPagesL10n.private + ')' : '';
+					list += '</span></li>';
 					alt = ! alt;
 				});
 			}

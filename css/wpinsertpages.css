@@ -40,7 +40,7 @@
 }
 
 #wp-insertpage-wrap.options-panel-visible {
-	height: 525px;
+	height: 550px;
 	margin-top: -250px;
 }
 
@@ -298,7 +298,7 @@
 	}
 
 	#wp-insertpage-wrap.options-panel-visible {
-		height: 530px;
+		height: 555px;
 	}
 
 	#wp-insertpage-wrap .query-results {
@@ -332,7 +332,7 @@
 	}
 
 	#wp-insertpage-wrap.options-panel-visible {
-		height: 550px;
+		height: 575px;
 	}
 }
 

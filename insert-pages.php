@@ -100,7 +100,7 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 				'wpinsertpages',
 				plugins_url( '/js/wpinsertpages.js', __FILE__ ),
 				array( 'wpdialogs' ),
-				'20180201'
+				'20180702'
 			);
 			wp_localize_script(
 				'wpinsertpages',
@@ -112,6 +112,7 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 					'noMatchesFound' => __( 'No matches found.', 'insert-pages' ),
 					'l10n_print_after' => 'try{convertEntities(wpInsertPagesL10n);}catch(e){};',
 					'format' => $options['wpip_format'],
+					'private' => __( 'Private' ),
 				)
 			);
 
@@ -120,7 +121,7 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 				'wpinsertpagescss',
 				plugins_url( '/css/wpinsertpages.css', __FILE__ ),
 				array( 'wp-jquery-ui-dialog' ),
-				'20151230'
+				'20180702'
 			);
 
 			/**
@@ -160,6 +161,7 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 				'display' => 'all',
 				'class' => '',
 				'inline' => false,
+				'public' => false,
 				'querystring' => '',
 			), $atts, 'insert' );
 
@@ -193,6 +195,8 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 			 */
 			$attributes['inline'] = apply_filters( 'insert_pages_use_inline_wrapper', $attributes['inline'] );
 			$attributes['wrapper_tag'] = $attributes['inline'] ? 'span' : 'div';
+
+			$attributes['public'] = ( false !== $attributes['public'] && 'false' !== $attributes['public'] ) || array_search( 'public', $atts, true ) === 0 || is_user_logged_in();
 
 			/**
 			 * Filter the querystring values applied to every inserted page. Useful
@@ -274,7 +278,7 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 				if ( is_null( $inserted_page ) ) {
 					global $wpdb;
 					$page = $wpdb->get_var( $wpdb->prepare(
-						"SELECT ID FROM $wpdb->posts WHERE post_name = %s AND post_status = 'publish' LIMIT 1", $attributes['page']
+						"SELECT ID FROM $wpdb->posts WHERE post_name = %s AND (post_status = 'publish' OR post_status = 'private') LIMIT 1", $attributes['page']
 					) );
 					if ( $page ) {
 						$inserted_page = get_post( $page );
@@ -284,6 +288,12 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 				$attributes['page'] = $inserted_page ? $inserted_page->ID : $attributes['page'];
 			} else {
 				$inserted_page = get_post( intval( $attributes['page'] ) );
+			}
+
+			// If inserted page's status is private, don't show to anonymous users
+			// unless 'public' option is set.
+			if ( 'private' === $inserted_page->post_status && ! $attributes['public'] ) {
+				$inserted_page = null;
 			}
 
 			// Set any querystring params included in the shortcode.
@@ -546,11 +556,13 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 					$args = array(
 						'p' => intval( $attributes['page'] ),
 						'post_type' => get_post_types(),
+						'post_status' => $attributes['public'] ? array( 'publish', 'private' ) : array( 'publish' ),
 					);
 				} else {
 					$args = array(
 						'name' => esc_attr( $attributes['page'] ),
 						'post_type' => get_post_types(),
+						'post_status' => $attributes['public'] ? array( 'publish', 'private' ) : array( 'publish' ),
 					);
 				}
 				$posts = query_posts( $args );
@@ -751,6 +763,7 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 			 *   display: Content to display from inserted page.
 			 *   class: Extra classes to add to inserted page wrapper element.
 			 *   inline: Boolean indicating wrapper element should be a span.
+			 *   public: Boolean indicating anonymous users can see private inserted pages.
 			 *   querystring: Extra querystring values provided to the custom template.
 			 *   should_apply_nesting_check: Whether to disable nested inserted pages.
 			 *   should_apply_the_content_filter: Whether to apply the_content filter to post contents and excerpts.
@@ -956,6 +969,11 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 							<?php esc_html_e( 'Querystring', 'insert-pages' ); ?>
 							<input id="insertpage-extra-querystring" type="text" autocomplete="off" />
 						</label>
+						<br>
+						<label for="insertpage-extra-public">
+							<input id="insertpage-extra-public" type="checkbox" />
+							<?php esc_html_e( 'Anonymous users can see this inserted even if its status is private', 'insert-pages' ); ?>
+						</label>
 					</div>
 				</div>
 			</div>
@@ -1040,7 +1058,7 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 				'suppress_filters' => true,
 				'update_post_term_cache' => false,
 				'update_post_meta_cache' => false,
-				'post_status' => 'publish',
+				'post_status' => array( 'publish', 'private' ),
 				'order' => 'DESC',
 				'orderby' => 'post_date',
 				'posts_per_page' => 20,
@@ -1088,6 +1106,7 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 					'slug' => $post->post_name,
 					'path' => get_page_uri( $post ),
 					'info' => $info,
+					'status' => get_post_status( $post ),
 				);
 			}
 			return $results;
