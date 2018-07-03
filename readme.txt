@@ -86,6 +86,11 @@ Just one! The plugin prevents you from embedding a page in itself, but you can t
 
 == Changelog ==
 
+= 3.4.2 =
+* Add 'public' shortcode param that lets private inserted pages be visible to anonymous users. Props @ahtcx for the suggestion.
+* Fix for inserted pages shown on BuddyPress profiles. Props @IdleWanderer for the report!
+* Fix for querystring option missing from widget settings.
+
 = 3.4.1 =
 * Fix for Elementor rendering in legacy mode.
 * Fix for Post Thumbnail display in legacy mode.
