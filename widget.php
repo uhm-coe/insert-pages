@@ -64,6 +64,9 @@ class InsertPagesWidget extends WP_Widget {
 		if ( array_key_exists( 'inline', $instance ) ) {
 			$atts['inline'] = '1' === $instance['inline'];
 		}
+		if ( array_key_exists( 'querystring', $instance ) ) {
+			$atts['querystring'] = $instance['querystring'];
+		}
 
 		// Render the inserted page using the plugin's shortcode handler.
 		$content = $insert_pages_plugin->insert_pages_handle_shortcode_insert( $atts );
@@ -87,6 +90,7 @@ class InsertPagesWidget extends WP_Widget {
 			'template' => '',
 			'class' => '',
 			'inline' => '',
+			'querystring' => '',
 		)); ?>
 		<p>
 			<label for="<?php echo esc_attr( $this->get_field_id( 'page' ) ); ?>"><?php esc_html_e( 'Page/Post ID or Slug', 'insert-pages' ); ?>:</label>
@@ -119,6 +123,10 @@ class InsertPagesWidget extends WP_Widget {
 			<input class="checkbox" type="checkbox" name="<?php echo esc_attr( $this->get_field_name( 'inline' ) ); ?>" id="<?php echo esc_attr( $this->get_field_id( 'inline' ) ); ?>" value="1" <?php checked( $instance['inline'], '1' ); ?> />
 			<label for="<?php echo esc_attr( $this->get_field_id( 'inline' ) ); ?>"><?php esc_html_e( 'Inline?', 'insert-pages' ); ?></label>
 		</p>
+		<p>
+			<label for="<?php echo esc_attr( $this->get_field_id( 'querystring' ) ); ?>"><?php esc_html_e( 'Querystring', 'insert-pages' ); ?>:</label>
+			<input type="text" class="widefat" autocomplete="off" name="<?php echo esc_attr( $this->get_field_name( 'querystring' ) ); ?>" id="<?php echo esc_attr( $this->get_field_id( 'querystring' ) ); ?>" value="<?php echo esc_attr( $instance['querystring'] ); ?>" />
+		</p>
 		<?php
 	}
 
@@ -136,6 +144,7 @@ class InsertPagesWidget extends WP_Widget {
 		$instance['template'] = array_key_exists( 'template', $new_instance ) ? strip_tags( $new_instance['template'] ) : '';
 		$instance['class'] = array_key_exists( 'class', $new_instance ) ? strip_tags( $new_instance['class'] ) : '';
 		$instance['inline'] = array_key_exists( 'inline', $new_instance ) ? strip_tags( $new_instance['inline'] ) : '';
+		$instance['querystring'] = array_key_exists( 'querystring', $new_instance ) ? strip_tags( $new_instance['querystring'] ) : '';
 
 		return $instance;
 	}
