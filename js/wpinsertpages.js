@@ -243,7 +243,7 @@ var wpInsertPages;
 				}
 
 				// Update extra inline (i.e., use span instead of div for wrapper).
-				regexp = /inline/;
+				regexp = /[\s]inline[\s\]]/;
 				matches = regexp.exec( shortcode );
 				if ( matches && matches.length > 0 ) {
 					inputs.extraInline.attr( 'checked', true );
@@ -252,9 +252,9 @@ var wpInsertPages;
 				}
 
 				// If this is a private page, reveal the checkbox "Visible to everyone?"
-				regexp = /public/;
+				regexp = /[\s]public[\s\]]/;
 				matches = regexp.exec( shortcode );
-				if ( matches && matches.length > 1 ) {
+				if ( matches && matches.length > 0 ) {
 					inputs.extraPublic.attr( 'checked', true );
 				} else {
 					inputs.extraPublic.attr( 'checked', false );
