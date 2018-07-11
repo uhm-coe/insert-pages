@@ -46,6 +46,7 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 		 */
 		protected $page_id;
 
+
 		/**
 		 * Constructor.
 		 */
@@ -53,6 +54,7 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 			// Include the code that generates the options page.
 			require_once dirname( __FILE__ ) . '/options.php';
 		}
+
 
 		/**
 		 * Getter for page_id.
@@ -62,6 +64,7 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 		public function get_page_id() {
 			return $this->page_id;
 		}
+
 
 		/**
 		 * Setter for page_id.
@@ -74,14 +77,17 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 			return $this->page_id;
 		}
 
+
 		/**
 		 * Action hook: WordPress 'init'.
 		 *
 		 * @return void
 		 */
 		public function insert_pages_init() {
+			// Register the [insert] shortcode.
 			add_shortcode( 'insert', array( $this, 'insert_pages_handle_shortcode_insert' ) );
 		}
+
 
 		/**
 		 * Action hook: WordPress 'admin_init'.
@@ -136,12 +142,12 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 				add_filter( 'mce_buttons', array( $this, 'insert_pages_handle_filter_mce_buttons' ) );
 			}
 
+			// Load the translations.
 			load_plugin_textdomain(
 				'insert-pages',
 				false,
 				plugin_basename( dirname( __FILE__ ) ) . '/languages'
 			);
-
 		}
 
 
