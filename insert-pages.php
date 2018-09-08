@@ -339,7 +339,8 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 					class_exists( 'FLBuilder' ) ||
 					class_exists( 'SiteOrigin_Panels' ) ||
 					class_exists( '\Elementor\Post_CSS_File' ) ||
-					defined( 'VCV_VERSION' )
+					defined( 'VCV_VERSION' ) ||
+					defined( 'WPB_VC_VERSION' )
 				) {
 					// If we're not in The Loop (i.e., global $post isn't assigned),
 					// temporarily populate it with the post to be inserted so we can
@@ -392,6 +393,11 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 								VCV_VERSION . '.' . $version
 							);
 						}
+					}
+
+					// Visual Composer custom CSS
+					if ( defined( 'WPB_VC_VERSION' ) && metadata_exists('post', $inserted_page->ID, '_wpb_shortcodes_custom_css') ) {
+						echo '<style type="text/css">'. get_post_meta( $inserted_page->ID, '_wpb_shortcodes_custom_css', true ) . '</style>';
 					}
 
 					if ( is_null( $old_post_id ) ) {
@@ -585,7 +591,8 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 						class_exists( 'FLBuilder' ) ||
 						class_exists( 'SiteOrigin_Panels' ) ||
 						class_exists( '\Elementor\Post_CSS_File' ) ||
-						defined( 'VCV_VERSION' )
+						defined( 'VCV_VERSION' ) ||
+						defined( 'WPB_VC_VERSION' )
 					) {
 						// If we're not in The Loop (i.e., global $post isn't assigned),
 						// temporarily populate it with the post to be inserted so we can
@@ -638,6 +645,11 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 									VCV_VERSION . '.' . $version
 								);
 							}
+						}
+
+						// Visual Composer custom CSS
+						if ( defined( 'WPB_VC_VERSION' ) && metadata_exists('post', $inserted_page->ID, '_wpb_shortcodes_custom_css') ) {
+							echo '<style type="text/css">'. get_post_meta( $inserted_page->ID, '_wpb_shortcodes_custom_css', true ) . '</style>';
 						}
 
 						if ( is_null( $old_post_id ) ) {
