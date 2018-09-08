@@ -396,8 +396,23 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 					}
 
 					// Visual Composer custom CSS
-					if ( defined( 'WPB_VC_VERSION' ) && metadata_exists('post', $inserted_page->ID, '_wpb_shortcodes_custom_css') ) {
-						echo '<style type="text/css">'. get_post_meta( $inserted_page->ID, '_wpb_shortcodes_custom_css', true ) . '</style>';
+					if ( defined( 'WPB_VC_VERSION' ) ) {
+						// Post custom CSS
+						$post_custom_css = get_post_meta( $inserted_page->ID, '_wpb_post_custom_css', true );
+						if ( ! empty( $post_custom_css ) ) {
+						  $post_custom_css = strip_tags( $post_custom_css );
+						  echo '<style type="text/css" data-type="vc_custom-css">';
+						  echo $post_custom_css;
+						  echo '</style>';
+						}
+						// Shortcodes custom CSS
+						$shortcodes_custom_css = get_post_meta( $inserted_page->ID, '_wpb_shortcodes_custom_css', true );
+						if ( ! empty( $shortcodes_custom_css ) ) {
+						  $shortcodes_custom_css = strip_tags( $shortcodes_custom_css );
+						  echo '<style type="text/css" data-type="vc_shortcodes-custom-css">';
+						  echo $shortcodes_custom_css;
+						  echo '</style>';
+						}
 					}
 
 					if ( is_null( $old_post_id ) ) {
@@ -648,8 +663,23 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 						}
 
 						// Visual Composer custom CSS
-						if ( defined( 'WPB_VC_VERSION' ) && metadata_exists('post', $inserted_page->ID, '_wpb_shortcodes_custom_css') ) {
-							echo '<style type="text/css">'. get_post_meta( $inserted_page->ID, '_wpb_shortcodes_custom_css', true ) . '</style>';
+						if ( defined( 'WPB_VC_VERSION' ) ) {
+							// Post custom CSS
+							$post_custom_css = get_post_meta( $inserted_page->ID, '_wpb_post_custom_css', true );
+							if ( ! empty( $post_custom_css ) ) {
+							  $post_custom_css = strip_tags( $post_custom_css );
+							  echo '<style type="text/css" data-type="vc_custom-css">';
+							  echo $post_custom_css;
+							  echo '</style>';
+							}
+							// Shortcodes custom CSS
+							$shortcodes_custom_css = get_post_meta( $inserted_page->ID, '_wpb_shortcodes_custom_css', true );
+							if ( ! empty( $shortcodes_custom_css ) ) {
+							  $shortcodes_custom_css = strip_tags( $shortcodes_custom_css );
+							  echo '<style type="text/css" data-type="vc_shortcodes-custom-css">';
+							  echo $shortcodes_custom_css;
+							  echo '</style>';
+							}
 						}
 
 						if ( is_null( $old_post_id ) ) {
