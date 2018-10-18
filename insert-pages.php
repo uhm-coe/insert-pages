@@ -340,7 +340,8 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 					class_exists( 'FLBuilder' ) ||
 					class_exists( 'SiteOrigin_Panels' ) ||
 					class_exists( '\Elementor\Post_CSS_File' ) ||
-					defined( 'VCV_VERSION' )
+					defined( 'VCV_VERSION' ) ||
+					defined( 'WPB_VC_VERSION' )
 				) {
 					// If we're not in The Loop (i.e., global $post isn't assigned),
 					// temporarily populate it with the post to be inserted so we can
@@ -392,6 +393,26 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 								array(),
 								VCV_VERSION . '.' . $version
 							);
+						}
+					}
+
+					// Visual Composer custom CSS
+					if ( defined( 'WPB_VC_VERSION' ) ) {
+						// Post custom CSS
+						$post_custom_css = get_post_meta( $inserted_page->ID, '_wpb_post_custom_css', true );
+						if ( ! empty( $post_custom_css ) ) {
+						  $post_custom_css = strip_tags( $post_custom_css );
+						  echo '<style type="text/css" data-type="vc_custom-css">';
+						  echo $post_custom_css;
+						  echo '</style>';
+						}
+						// Shortcodes custom CSS
+						$shortcodes_custom_css = get_post_meta( $inserted_page->ID, '_wpb_shortcodes_custom_css', true );
+						if ( ! empty( $shortcodes_custom_css ) ) {
+						  $shortcodes_custom_css = strip_tags( $shortcodes_custom_css );
+						  echo '<style type="text/css" data-type="vc_shortcodes-custom-css">';
+						  echo $shortcodes_custom_css;
+						  echo '</style>';
 						}
 					}
 
@@ -586,7 +607,8 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 						class_exists( 'FLBuilder' ) ||
 						class_exists( 'SiteOrigin_Panels' ) ||
 						class_exists( '\Elementor\Post_CSS_File' ) ||
-						defined( 'VCV_VERSION' )
+						defined( 'VCV_VERSION' ) ||
+						defined( 'WPB_VC_VERSION' )
 					) {
 						// If we're not in The Loop (i.e., global $post isn't assigned),
 						// temporarily populate it with the post to be inserted so we can
@@ -638,6 +660,26 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 									array(),
 									VCV_VERSION . '.' . $version
 								);
+							}
+						}
+
+						// Visual Composer custom CSS
+						if ( defined( 'WPB_VC_VERSION' ) ) {
+							// Post custom CSS
+							$post_custom_css = get_post_meta( $inserted_page->ID, '_wpb_post_custom_css', true );
+							if ( ! empty( $post_custom_css ) ) {
+							  $post_custom_css = strip_tags( $post_custom_css );
+							  echo '<style type="text/css" data-type="vc_custom-css">';
+							  echo $post_custom_css;
+							  echo '</style>';
+							}
+							// Shortcodes custom CSS
+							$shortcodes_custom_css = get_post_meta( $inserted_page->ID, '_wpb_shortcodes_custom_css', true );
+							if ( ! empty( $shortcodes_custom_css ) ) {
+							  $shortcodes_custom_css = strip_tags( $shortcodes_custom_css );
+							  echo '<style type="text/css" data-type="vc_shortcodes-custom-css">';
+							  echo $shortcodes_custom_css;
+							  echo '</style>';
 							}
 						}
 
