@@ -964,7 +964,7 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 					</div>
 					<div class="insertpage-extra">
 						<label for="insertpage-extra-classes">
-							<?php esc_html_e( 'Extra Classes', 'insert-pages' ); ?>
+							<?php esc_html_e( 'Extra Classes', 'insert-pages' ); ?>:
 							<input id="insertpage-extra-classes" type="text" autocomplete="off" />
 						</label>
 						<label for="insertpage-extra-inline">
