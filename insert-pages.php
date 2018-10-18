@@ -298,7 +298,7 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 
 			// If inserted page's status is private, don't show to anonymous users
 			// unless 'public' option is set.
-			if ( 'private' === $inserted_page->post_status && ! $attributes['public'] ) {
+			if ( is_object( $inserted_page ) && 'private' === $inserted_page->post_status && ! $attributes['public'] ) {
 				$inserted_page = null;
 			}
 
