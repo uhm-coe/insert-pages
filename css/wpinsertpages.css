@@ -298,7 +298,7 @@
 	}
 
 	#wp-insertpage-wrap.options-panel-visible {
-		height: 555px;
+		height: 575px;
 	}
 
 	#wp-insertpage-wrap .query-results {
@@ -329,6 +329,10 @@
 
 	#wp-insertpage label input#insertpage-extra-classes {
 		width: 48%;
+	}
+
+	#wp-insertpage label input#insertpage-extra-querystring {
+		width: 75%;
 	}
 
 	#wp-insertpage-wrap.options-panel-visible {

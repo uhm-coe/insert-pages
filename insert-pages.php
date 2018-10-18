@@ -971,11 +971,12 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 							<?php esc_html_e( 'Inline?', 'insert-pages' ); ?>
 							<input id="insertpage-extra-inline" type="checkbox" />
 						</label>
+						<br />
 						<label for="insertpage-extra-querystring">
 							<?php esc_html_e( 'Querystring', 'insert-pages' ); ?>
 							<input id="insertpage-extra-querystring" type="text" autocomplete="off" />
 						</label>
-						<br>
+						<br />
 						<label for="insertpage-extra-public">
 							<input id="insertpage-extra-public" type="checkbox" />
 							<?php esc_html_e( 'Anonymous users can see this inserted even if its status is private', 'insert-pages' ); ?>
