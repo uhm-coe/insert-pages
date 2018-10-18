@@ -27,6 +27,7 @@ var wpInsertPages;
 			inputs.format = $( '#insertpage-format-select' );
 			// Extra fields (wrapper classes, inline checkbox, "visible to all" checkbox)
 			inputs.extraClasses = $( '#insertpage-extra-classes' );
+			inputs.extraID = $( '#insertpage-extra-id' );
 			inputs.extraInline = $( '#insertpage-extra-inline' );
 			inputs.extraPublic = $( '#insertpage-extra-public' );
 			inputs.extraQuerystring = $( '#insertpage-extra-querystring' );
@@ -242,6 +243,15 @@ var wpInsertPages;
 					inputs.extraClasses.val( '' );
 				}
 
+				// Update extra ID.
+				regexp = /id=['"]([^['"]*)['"]/;
+				matches = regexp.exec( shortcode );
+				if ( matches && matches.length > 1 ) {
+					inputs.extraID.val( matches[1] );
+				} else {
+					inputs.extraID.val( '' );
+				}
+
 				// Update extra inline (i.e., use span instead of div for wrapper).
 				regexp = /[\s]inline[\s\]]/;
 				matches = regexp.exec( shortcode );
@@ -289,6 +299,7 @@ var wpInsertPages;
 			inputs.format.change();
 			inputs.template.val('all');
 			inputs.extraClasses.val('');
+			inputs.extraID.val( '' );
 			inputs.extraInline.attr( 'checked', false );
 			inputs.search.val( '' );
 			inputs.search.data( 'type', 'text' );
@@ -317,6 +328,7 @@ var wpInsertPages;
 				pageID: inputs.pageID.val(),
 				display: inputs.format.val()=='template' ? inputs.template.val() : inputs.format.val(),
 				class: inputs.extraClasses.val(),
+				id: inputs.extraID.val(),
 				inline: inputs.extraInline.is( ':checked' ),
 				public: inputs.extraPublic.is( ':checked' ),
 				querystring: inputs.extraQuerystring.val(),
@@ -350,6 +362,7 @@ var wpInsertPages;
 				"page='" + attrs.page +"' " +
 				"display='" + attrs.display + "'" +
 				( attrs['class'].length > 0 ? " class='" + attrs['class'] + "'" : "" ) +
+				( attrs['id'].length > 0 ? " id='" + attrs['id'] + "'" : "" ) +
 				( attrs.inline ? " inline" : "" ) +
 				( attrs.public ? " public" : "" ) +
 				( attrs.querystring ? " querystring='" +

@@ -31,7 +31,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 /**
  * Shortcode Format:
- * [insert page='{slug}|{id}' display='title|link|excerpt|excerpt-only|content|post-thumbnail|all|{custom-template.php}' class='any-classes']
+ * [insert page='{slug}|{id}' display='title|link|excerpt|excerpt-only|content|post-thumbnail|all|{custom-template.php}' class='any-classes' id='any-id']
  */
 
 if ( ! class_exists( 'InsertPagesPlugin' ) ) {
@@ -166,6 +166,7 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 				'page' => '0',
 				'display' => 'all',
 				'class' => '',
+				'id' => '',
 				'inline' => false,
 				'public' => false,
 				'querystring' => '',
@@ -768,6 +769,7 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 			 *   page: Page ID or slug of page to be inserted.
 			 *   display: Content to display from inserted page.
 			 *   class: Extra classes to add to inserted page wrapper element.
+			 *   id: Optional ID for the inserted page wrapper element.
 			 *   inline: Boolean indicating wrapper element should be a span.
 			 *   public: Boolean indicating anonymous users can see private inserted pages.
 			 *   querystring: Extra querystring values provided to the custom template.
@@ -793,7 +795,8 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 		 * @return string             Content to replace shortcode.
 		 */
 		public function insert_pages_wrap_content( $content, $posts, $attributes ) {
-			return "<{$attributes['wrapper_tag']} data-post-id='{$attributes['page']}' class='insert-page insert-page-{$attributes['page']} {$attributes['class']}'>{$content}</{$attributes['wrapper_tag']}>";
+			$maybe_id = isset( $attributes['id'] ) ? ' id="' . esc_attr( $attributes['id'] ) . '"' : '';
+			return "<{$attributes['wrapper_tag']} data-post-id='{$attributes['page']}' class='insert-page insert-page-{$attributes['page']} {$attributes['class']}'$maybe_id>{$content}</{$attributes['wrapper_tag']}>";
 		}
 
 		/**
@@ -966,6 +969,10 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 						<label for="insertpage-extra-classes">
 							<?php esc_html_e( 'Extra Classes', 'insert-pages' ); ?>:
 							<input id="insertpage-extra-classes" type="text" autocomplete="off" />
+						</label>
+						<label for="insertpage-extra-id">
+							<?php esc_html_e( 'ID', 'insert-pages' ); ?>:
+							<input id="insertpage-extra-id" type="text" autocomplete="off" />
 						</label>
 						<label for="insertpage-extra-inline">
 							<?php esc_html_e( 'Inline?', 'insert-pages' ); ?>

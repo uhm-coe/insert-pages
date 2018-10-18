@@ -61,6 +61,9 @@ class InsertPagesWidget extends WP_Widget {
 		if ( array_key_exists( 'class', $instance ) ) {
 			$atts['class'] = $instance['class'];
 		}
+		if ( array_key_exists( 'id', $instance ) ) {
+			$atts['id'] = $instance['id'];
+		}
 		if ( array_key_exists( 'inline', $instance ) ) {
 			$atts['inline'] = '1' === $instance['inline'];
 		}
@@ -92,6 +95,7 @@ class InsertPagesWidget extends WP_Widget {
 			'display' => 'link',
 			'template' => '',
 			'class' => '',
+			'id' => '',
 			'inline' => '',
 			'querystring' => '',
 			'public' => '',
@@ -124,6 +128,10 @@ class InsertPagesWidget extends WP_Widget {
 			<input type="text" class="widefat" autocomplete="off" name="<?php echo esc_attr( $this->get_field_name( 'class' ) ); ?>" id="<?php echo esc_attr( $this->get_field_id( 'class' ) ); ?>" value="<?php echo esc_attr( $instance['class'] ); ?>" />
 		</p>
 		<p>
+			<label for="<?php echo esc_attr( $this->get_field_id( 'id' ) ); ?>"><?php esc_html_e( 'ID', 'insert-pages' ); ?>:</label>
+			<input type="text" class="widefat" autocomplete="off" name="<?php echo esc_attr( $this->get_field_name( 'id' ) ); ?>" id="<?php echo esc_attr( $this->get_field_id( 'id' ) ); ?>" value="<?php echo esc_attr( $instance['id'] ); ?>" />
+		</p>
+		<p>
 			<input class="checkbox" type="checkbox" name="<?php echo esc_attr( $this->get_field_name( 'inline' ) ); ?>" id="<?php echo esc_attr( $this->get_field_id( 'inline' ) ); ?>" value="1" <?php checked( $instance['inline'], '1' ); ?> />
 			<label for="<?php echo esc_attr( $this->get_field_id( 'inline' ) ); ?>"><?php esc_html_e( 'Inline?', 'insert-pages' ); ?></label>
 		</p>
@@ -151,6 +159,7 @@ class InsertPagesWidget extends WP_Widget {
 		$instance['display'] = array_key_exists( 'display', $new_instance ) ? strip_tags( $new_instance['display'] ) : '';
 		$instance['template'] = array_key_exists( 'template', $new_instance ) ? strip_tags( $new_instance['template'] ) : '';
 		$instance['class'] = array_key_exists( 'class', $new_instance ) ? strip_tags( $new_instance['class'] ) : '';
+		$instance['id'] = array_key_exists( 'id', $new_instance ) ? strip_tags( $new_instance['id'] ) : '';
 		$instance['inline'] = array_key_exists( 'inline', $new_instance ) ? strip_tags( $new_instance['inline'] ) : '';
 		$instance['querystring'] = array_key_exists( 'querystring', $new_instance ) ? strip_tags( $new_instance['querystring'] ) : '';
 		$instance['public'] = array_key_exists( 'public', $new_instance ) ? strip_tags( $new_instance['public'] ) : '';

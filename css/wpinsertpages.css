@@ -142,7 +142,10 @@
 	width: 77%;
 }
 #wp-insertpage label input#insertpage-extra-classes {
-	width: 66%;
+	width: 30%;
+}
+#wp-insertpage label input#insertpage-extra-id {
+	width: 30%;
 }
 
 #wp-insertpage #insertpage-search-panel label span.search-label {
@@ -294,7 +297,11 @@
 	}
 
 	#wp-insertpage label input#insertpage-extra-classes {
-		width: 62%;
+		width: 28%;
+	}
+
+	#wp-insertpage label input#insertpage-extra-id {
+		width: 28%;
 	}
 
 	#wp-insertpage-wrap.options-panel-visible {
@@ -328,7 +335,11 @@
 	}
 
 	#wp-insertpage label input#insertpage-extra-classes {
-		width: 48%;
+		width: 21%;
+	}
+
+	#wp-insertpage label input#insertpage-extra-id {
+		width: 21%;
 	}
 
 	#wp-insertpage label input#insertpage-extra-querystring {
