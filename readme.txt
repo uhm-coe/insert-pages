@@ -86,6 +86,10 @@ Just one! The plugin prevents you from embedding a page in itself, but you can t
 
 == Changelog ==
 
+= 3.4.3 =
+* Add 'id' shortcode param that sets the html id attribute on the wrapper element for an inserted page. Useful for anchor links. Props @Seb33300 for the suggestion!
+* Fix for WPBakery Visual Composer inline styles in inserted pages. Props @Seb33300 for the pull request!
+
 = 3.4.2 =
 * Add 'public' shortcode param that lets private inserted pages be visible to anonymous users. Props @ahtcx for the suggestion.
 * Fix for inserted pages shown on BuddyPress profiles. Props @IdleWanderer for the report!
