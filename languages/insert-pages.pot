@@ -3,137 +3,161 @@ msgid ""
 msgstr ""
 "Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
 "Project-Id-Version: Insert Pages\n"
-"POT-Creation-Date: 2016-11-14 10:04-1000\n"
+"POT-Creation-Date: 2018-10-18 14:51-1000\n"
 "PO-Revision-Date: 2016-11-14 10:04-1000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 1.8.11\n"
+"X-Generator: Poedit 1.8.12\n"
 "X-Poedit-Basepath: ..\n"
 "X-Poedit-WPHeader: insert-pages.php\n"
 "X-Poedit-SourceCharset: UTF-8\n"
 "X-Poedit-KeywordsList: __;_e;_n:1,2;_x:1,2c;_ex:1,2c;_nx:4c,1,2;esc_attr__;"
-"esc_attr_e;esc_attr_x:1,2c;esc_html__;esc_html_e;esc_html_x:1,2c;_n_noop:1,2;"
-"_nx_noop:3c,1,2;__ngettext_noop:1,2\n"
+"esc_attr_e;esc_attr_x:1,2c;esc_html__;esc_html_e;esc_html_x:1,2c;"
+"_n_noop:1,2;_nx_noop:3c,1,2;__ngettext_noop:1,2\n"
 "X-Poedit-SearchPath-0: .\n"
 "X-Poedit-SearchPathExcluded-0: *.js\n"
 
-#: insert-pages.php:77
+#: insert-pages.php:115
 msgid "Update"
 msgstr ""
 
-#: insert-pages.php:78 insert-pages.php:637 widget.php:21
+#: insert-pages.php:116 insert-pages.php:1038 widget.php:28
 msgid "Insert Page"
 msgstr ""
 
-#: insert-pages.php:79
+#: insert-pages.php:117
 msgid "(no title)"
 msgstr ""
 
-#: insert-pages.php:80
+#: insert-pages.php:118
 msgid "No matches found."
 msgstr ""
 
-#: insert-pages.php:570
+#: insert-pages.php:121
+msgid "Private"
+msgstr ""
+
+#: insert-pages.php:956
 msgid "Insert page"
 msgstr ""
 
-#: insert-pages.php:577
+#: insert-pages.php:963
 msgid "Search"
 msgstr ""
 
-#: insert-pages.php:589
+#: insert-pages.php:975
 msgid "No search term specified. Showing recent items."
 msgstr ""
 
-#: insert-pages.php:596
+#: insert-pages.php:982
 msgid "Options"
 msgstr ""
 
-#: insert-pages.php:600
+#: insert-pages.php:986
 msgid "Slug or ID"
 msgstr ""
 
-#: insert-pages.php:607 widget.php:89
+#: insert-pages.php:993 widget.php:108
 msgid "Display"
 msgstr ""
 
-#: insert-pages.php:609 widget.php:91
+#: insert-pages.php:995 widget.php:110
 msgid "Title"
 msgstr ""
 
-#: insert-pages.php:610 widget.php:92
+#: insert-pages.php:996 widget.php:111
 msgid "Link"
 msgstr ""
 
-#: insert-pages.php:611
+#: insert-pages.php:997
 msgid "Excerpt with title"
 msgstr ""
 
-#: insert-pages.php:612 widget.php:94
+#: insert-pages.php:998 widget.php:113
 msgid "Excerpt only (no title)"
 msgstr ""
 
-#: insert-pages.php:613 widget.php:95
+#: insert-pages.php:999 widget.php:114
 msgid "Content"
 msgstr ""
 
-#: insert-pages.php:614 widget.php:96
+#: insert-pages.php:1000 widget.php:115
+msgid "Post Thumbnail"
+msgstr ""
+
+#: insert-pages.php:1001 widget.php:116
 msgid "All (includes custom fields)"
 msgstr ""
 
-#: insert-pages.php:615 widget.php:97
+#: insert-pages.php:1002 widget.php:117
 msgid "Use a custom template"
 msgstr ""
 
-#: insert-pages.php:618 widget.php:100
+#: insert-pages.php:1005 widget.php:120
 msgid "Default Template"
 msgstr ""
 
-#: insert-pages.php:625 widget.php:105
+#: insert-pages.php:1012 widget.php:127
 msgid "Extra Classes"
 msgstr ""
 
-#: insert-pages.php:629 widget.php:110
+#: insert-pages.php:1016 widget.php:131
+msgid "ID"
+msgstr ""
+
+#: insert-pages.php:1020 widget.php:136
 msgid "Inline?"
 msgstr ""
 
-#: insert-pages.php:640
+#: insert-pages.php:1025 widget.php:139
+msgid "Querystring"
+msgstr ""
+
+#: insert-pages.php:1031 widget.php:144
+msgid "Anonymous users can see this inserted even if its status is private"
+msgstr ""
+
+#: insert-pages.php:1041
 msgid "Cancel"
 msgstr ""
 
 #. Plugin Name of the plugin/theme
-#: options.php:13
+#: options.php:27
 msgid "Insert Pages"
 msgstr ""
 
-#: options.php:19
+#: options.php:33
 msgid "Shortcode format"
 msgstr ""
 
-#: options.php:26
+#: options.php:40
 msgid "Wrapper for inserts"
 msgstr ""
 
-#: options.php:33
+#: options.php:47
 msgid "Insert method"
 msgstr ""
 
-#: options.php:68
+#: options.php:54
+msgid "TinyMCE filter"
+msgstr ""
+
+#: options.php:108
 msgid "You may override some default settings here."
 msgstr ""
 
-#: widget.php:21
+#: widget.php:28
 msgid "Insert a page into a widget area."
 msgstr ""
 
-#: widget.php:85
+#: widget.php:104
 msgid "Page/Post ID or Slug"
 msgstr ""
 
-#: widget.php:93
+#: widget.php:112
 msgid "Excerpt"
 msgstr ""
 
@@ -149,8 +173,4 @@ msgstr ""
 
 #. Author of the plugin/theme
 msgid "Paul Ryan"
-msgstr ""
-
-#. Author URI of the plugin/theme
-msgid "http://www.linkedin.com/in/paulrryan"
 msgstr ""
