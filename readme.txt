@@ -86,6 +86,10 @@ Just one! The plugin prevents you from embedding a page in itself, but you can t
 
 == Changelog ==
 
+= 3.4.4 =
+* Fix incorrect link in excerpt's 'Continue reading' link. Props @bogyo74 for discovering the bug!
+* Fix empty id attribute rendering if no custom ID provided. Props @theschappy for finding and fixing this bug!
+
 = 3.4.3 =
 * Add 'id' shortcode param that sets the html id attribute on the wrapper element for an inserted page. Useful for anchor links. Props @Seb33300 for the suggestion!
 * Fix for WPBakery Visual Composer inline styles in inserted pages. Props @Seb33300 for the pull request!
