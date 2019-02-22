@@ -549,6 +549,12 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 								'post_type' => get_post_types(),
 							);
 						}
+						// We save the previous query state here instead of using
+						// wp_reset_query() because wp_reset_query() only has a single stack
+						// variable ($GLOBALS['wp_the_query']). This allows us to support
+						// pages inserted into other pages (multiple nested pages, which
+						// requires insert_pages_apply_nesting_check to be turned off).
+						$old_query = $GLOBALS['wp_query'];
 						$inserted_page = query_posts( $args );
 						if ( have_posts() ) {
 							$template = locate_template( $attributes['display'] );
@@ -571,7 +577,9 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 								<?php
 							}
 						}
-						wp_reset_query();
+						// Restore previous query and update the global template variables.
+						$GLOBALS['wp_query'] = $old_query;
+						wp_reset_postdata();
 				}
 
 				// Save output buffer contents.
@@ -593,6 +601,12 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 						'post_status' => $attributes['public'] ? array( 'publish', 'private' ) : array( 'publish' ),
 					);
 				}
+				// We save the previous query state here instead of using
+				// wp_reset_query() because wp_reset_query() only has a single stack
+				// variable ($GLOBALS['wp_the_query']). This allows us to support
+				// pages inserted into other pages (multiple nested pages, which
+				// requires insert_pages_apply_nesting_check to be turned off).
+				$old_query = $GLOBALS['wp_query'];
 				$posts = query_posts( $args );
 				if ( have_posts() ) {
 					// Start output buffering so we can save the output to string.
@@ -799,7 +813,9 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 					 */
 					$content = apply_filters( 'insert_pages_not_found_message', $content );
 				}
-				wp_reset_query();
+				// Restore previous query and update the global template variables.
+				$GLOBALS['wp_query'] = $old_query;
+				wp_reset_postdata();
 			}
 
 			/**
