@@ -106,7 +106,8 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 				'wpinsertpages',
 				plugins_url( '/js/wpinsertpages.js', __FILE__ ),
 				array( 'wpdialogs' ),
-				'20180702'
+				'20180702',
+				false
 			);
 			wp_localize_script(
 				'wpinsertpages',
@@ -162,15 +163,19 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 			global $wp_query, $post, $wp_current_filter;
 
 			// Shortcode attributes.
-			$attributes = shortcode_atts( array(
-				'page' => '0',
-				'display' => 'all',
-				'class' => '',
-				'id' => '',
-				'inline' => false,
-				'public' => false,
-				'querystring' => '',
-			), $atts, 'insert' );
+			$attributes = shortcode_atts(
+				array(
+					'page' => '0',
+					'display' => 'all',
+					'class' => '',
+					'id' => '',
+					'inline' => false,
+					'public' => false,
+					'querystring' => '',
+				),
+				$atts,
+				'insert'
+			);
 
 			// Validation checks.
 			if ( '0' === $attributes['page'] ) {
@@ -214,7 +219,8 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 			 *
 			 * @param string $querystring The querystring value for the inserted page.
 			 */
-			$attributes['querystring'] = apply_filters( 'insert_pages_override_querystring',
+			$attributes['querystring'] = apply_filters(
+				'insert_pages_override_querystring',
 				str_replace( '{', '[', str_replace( '}', ']', htmlspecialchars_decode( $attributes['querystring'] ) ) )
 			);
 
@@ -284,9 +290,12 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 				// that are nested under another page).
 				if ( is_null( $inserted_page ) ) {
 					global $wpdb;
-					$page = $wpdb->get_var( $wpdb->prepare(
-						"SELECT ID FROM $wpdb->posts WHERE post_name = %s AND (post_status = 'publish' OR post_status = 'private') LIMIT 1", $attributes['page']
-					) );
+					$page = $wpdb->get_var( // phpcs:ignore WordPress.DB.DirectDatabaseQuery
+						$wpdb->prepare(
+							"SELECT ID FROM $wpdb->posts WHERE post_name = %s AND (post_status = 'publish' OR post_status = 'private') LIMIT 1",
+							$attributes['page']
+						)
+					);
 					if ( $page ) {
 						$inserted_page = get_post( $page );
 					}
@@ -305,14 +314,14 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 
 			// Set any querystring params included in the shortcode.
 			parse_str( $attributes['querystring'], $querystring );
-			$original_get = $_GET;
-			$original_request = $_REQUEST;
+			$original_get = $_GET; // phpcs:ignore WordPress.Security.NonceVerification
+			$original_request = $_REQUEST; // phpcs:ignore WordPress.Security.NonceVerification
 			foreach ( $querystring as $param => $value ) {
 				$_GET[ $param ] = $value;
 				$_REQUEST[ $param ] = $value;
 			}
 
-			// Use "Normal" insert method (get_post()).
+			// Use "Normal" insert method (get_post).
 			if ( 'legacy' !== $options['wpip_insert_method'] ) {
 
 				// If we couldn't retrieve the page, fire the filter hook showing a not-found message.
@@ -349,7 +358,7 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 					// after we're done.
 					if ( is_null( $post ) ) {
 						$old_post_id = null;
-						$post = $inserted_page;
+						$post = $inserted_page; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 					} else {
 						$old_post_id = $post->ID;
 						$post->ID = $inserted_page->ID;
@@ -396,28 +405,28 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 						}
 					}
 
-					// Visual Composer custom CSS
+					// Visual Composer custom CSS.
 					if ( defined( 'WPB_VC_VERSION' ) ) {
-						// Post custom CSS
+						// Post custom CSS.
 						$post_custom_css = get_post_meta( $inserted_page->ID, '_wpb_post_custom_css', true );
 						if ( ! empty( $post_custom_css ) ) {
-						  $post_custom_css = strip_tags( $post_custom_css );
-						  echo '<style type="text/css" data-type="vc_custom-css">';
-						  echo $post_custom_css;
-						  echo '</style>';
+							$post_custom_css = wp_strip_all_tags( $post_custom_css );
+							echo '<style type="text/css" data-type="vc_custom-css">';
+							echo $post_custom_css;
+							echo '</style>';
 						}
-						// Shortcodes custom CSS
+						// Shortcodes custom CSS.
 						$shortcodes_custom_css = get_post_meta( $inserted_page->ID, '_wpb_shortcodes_custom_css', true );
 						if ( ! empty( $shortcodes_custom_css ) ) {
-						  $shortcodes_custom_css = strip_tags( $shortcodes_custom_css );
-						  echo '<style type="text/css" data-type="vc_shortcodes-custom-css">';
-						  echo $shortcodes_custom_css;
-						  echo '</style>';
+							$shortcodes_custom_css = wp_strip_all_tags( $shortcodes_custom_css );
+							echo '<style type="text/css" data-type="vc_shortcodes-custom-css">';
+							echo $shortcodes_custom_css;
+							echo '</style>';
 						}
 					}
 
 					if ( is_null( $old_post_id ) ) {
-						$post = null;
+						$post = null; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 					} else {
 						$post->ID = $old_post_id;
 					}
@@ -578,14 +587,14 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 							}
 						}
 						// Restore previous query and update the global template variables.
-						$GLOBALS['wp_query'] = $old_query;
+						$GLOBALS['wp_query'] = $old_query; // phpcs:ignore WordPress.WP.GlobalVariablesOverride
 						wp_reset_postdata();
 				}
 
 				// Save output buffer contents.
 				$content = ob_get_clean();
 
-			} else { // Use "Legacy" insert method (query_posts()).
+			} else { // Use "Legacy" insert method (query_posts).
 
 				// Construct query_posts arguments.
 				if ( is_numeric( $attributes['page'] ) ) {
@@ -630,7 +639,7 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 						// after we're done.
 						if ( is_null( $post ) ) {
 							$old_post_id = null;
-							$post = $inserted_page;
+							$post = $inserted_page; // phpcs:ignore WordPress.WP.GlobalVariablesOverride
 						} else {
 							$old_post_id = $post->ID;
 							$post->ID = $inserted_page->ID;
@@ -677,28 +686,28 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 							}
 						}
 
-						// Visual Composer custom CSS
+						// Visual Composer custom CSS.
 						if ( defined( 'WPB_VC_VERSION' ) ) {
-							// Post custom CSS
+							// Post custom CSS.
 							$post_custom_css = get_post_meta( $inserted_page->ID, '_wpb_post_custom_css', true );
 							if ( ! empty( $post_custom_css ) ) {
-							  $post_custom_css = strip_tags( $post_custom_css );
-							  echo '<style type="text/css" data-type="vc_custom-css">';
-							  echo $post_custom_css;
-							  echo '</style>';
+								$post_custom_css = wp_strip_all_tags( $post_custom_css );
+								echo '<style type="text/css" data-type="vc_custom-css">';
+								echo $post_custom_css;
+								echo '</style>';
 							}
-							// Shortcodes custom CSS
+							// Shortcodes custom CSS.
 							$shortcodes_custom_css = get_post_meta( $inserted_page->ID, '_wpb_shortcodes_custom_css', true );
 							if ( ! empty( $shortcodes_custom_css ) ) {
-							  $shortcodes_custom_css = strip_tags( $shortcodes_custom_css );
-							  echo '<style type="text/css" data-type="vc_shortcodes-custom-css">';
-							  echo $shortcodes_custom_css;
-							  echo '</style>';
+								$shortcodes_custom_css = wp_strip_all_tags( $shortcodes_custom_css );
+								echo '<style type="text/css" data-type="vc_shortcodes-custom-css">';
+								echo $shortcodes_custom_css;
+								echo '</style>';
 							}
 						}
 
 						if ( is_null( $old_post_id ) ) {
-							$post = null;
+							$post = null; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 						} else {
 							$post->ID = $old_post_id;
 						}
@@ -814,7 +823,7 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 					$content = apply_filters( 'insert_pages_not_found_message', $content );
 				}
 				// Restore previous query and update the global template variables.
-				$GLOBALS['wp_query'] = $old_query;
+				$GLOBALS['wp_query'] = $old_query; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 				wp_reset_postdata();
 			}
 
@@ -962,7 +971,8 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 			}
 
 			// Get ID of post currently being edited.
-			$post_id = array_key_exists( 'post', $_REQUEST ) && intval( $_REQUEST['post'] ) > 0 ? intval( $_REQUEST['post'] ) : '';
+			// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			$post_id = isset( $_REQUEST['post'] ) && intval( $_REQUEST['post'] ) > 0 ? intval( $_REQUEST['post'] ) : '';
 
 			// display: none is required here, see #WP27605.
 			?><div id="wp-insertpage-backdrop" style="display: none"></div>
@@ -1079,7 +1089,7 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 			check_ajax_referer( 'internal-inserting', '_ajax_inserting_nonce' );
 			$args = array();
 			if ( isset( $_POST['search'] ) ) {
-				$args['s'] = wp_unslash( $_POST['search'] );
+				$args['s'] = wp_unslash( $_POST['search'] ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 			}
 			$args['pagenum'] = ! empty( $_POST['page'] ) ? absint( $_POST['page'] ) : 1;
 			$args['pageID'] = ! empty( $_POST['pageID'] ) ? absint( $_POST['pageID'] ) : 0;
@@ -1087,7 +1097,7 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 			// Change search to slug or post ID if we're not doing a plaintext
 			// search (e.g., if we're editing an existing shortcode and the
 			// search field is populated with the post's slug or ID).
-			if ( array_key_exists( 'type', $_POST ) && 'slug' === $_POST['type'] ) {
+			if ( isset( $_POST['type'] ) && 'slug' === $_POST['type'] ) {
 				$args['name'] = $args['s'];
 				unset( $args['s'] );
 			} elseif ( array_key_exists( 'type', $_POST ) && 'post_id' === $_POST['type'] ) {
@@ -1178,7 +1188,7 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 				}
 				$results[] = array(
 					'ID' => $post->ID,
-					'title' => trim( esc_html( strip_tags( get_the_title( $post ) ) ) ),
+					'title' => trim( esc_html( wp_strip_all_tags( get_the_title( $post ) ) ) ),
 					'permalink' => get_permalink( $post->ID ),
 					'slug' => $post->post_name,
 					'path' => get_page_uri( $post ),
@@ -1199,7 +1209,7 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 				<script type="text/javascript">
 					QTags.addButton( 'ed_insert_page', '[insert page]', "[insert page='your-page-slug' display='title|link|excerpt|excerpt-only|content|post-thumbnail|all']\n", '', '', 'Insert Page', 999 );
 				</script>
-			<?php
+				<?php
 			endif;
 		}
 

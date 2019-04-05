@@ -6,8 +6,6 @@
 	<rule ref="WordPress">
 		<exclude name="WordPress.Arrays.MultipleStatementAlignment" />
 		<exclude name="Generic.Formatting.MultipleStatementAlignment" />
-		<exclude name="WordPress.VIP.SlowDBQuery" />
-		<exclude name="WordPress.VIP.RestrictedFunctions" />
 
 		<!-- Allow opening and closing braces for functions and classes to be on the same line -->
 		<exclude name="Squiz.PHP.EmbeddedPhp.ContentAfterOpen"/>
@@ -25,13 +23,12 @@
 		<exclude name="PSR2.ControlStructures.SwitchDeclaration.BreakIndent"/>
 		<exclude name="PSR2.Methods.FunctionCallSignature.Indent"/>
 
+		<!-- Disable output escaping rules. -->
+		<exclude name="WordPress.Security.EscapeOutput.OutputNotEscaped"/>
+
 		<!-- Disable picky rules. -->
-		<exclude name="WordPress.VIP.SuperGlobalInputUsage"/>
 		<exclude name="Squiz.PHP.EmbeddedPhp"/>
-		<exclude name="WordPress.VIP.DirectDatabaseQuery"/>
 		<exclude name="WordPress.Files.FileName"/>
-		<exclude name="WordPress.Variables.GlobalVariables"/>
-		<exclude name="WordPress.VIP.ValidatedSanitizedInput"/>
 		<exclude name="WordPress.WP.DiscouragedFunctions"/>
 	</rule>
 </ruleset>
