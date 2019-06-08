@@ -913,35 +913,46 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 
 				$text = strip_shortcodes( $text );
 
+				// Look for a <!--more--> quicktag and trim the excerpt there if it exists.
+				$has_more_quicktag = false;
+				if ( preg_match( '/<!--more(.*?)?-->/', $text, $matches ) ) {
+					$has_more_quicktag = true;
+					$text = explode( $matches[0], $text, 2 );
+					$text = $text[0];
+				}
+
 				/** This filter is documented in wp-includes/post-template.php */
 				if ( $apply_the_content_filter ) {
 					$text = apply_filters( 'the_content', $text );
 				}
 				$text = str_replace( ']]>', ']]&gt;', $text );
 
-				/**
-				 * Filter the number of words in an excerpt.
-				 *
-				 * @since 2.7.0
-				 *
-				 * @param int $number The number of words. Default 55.
-				 */
-				$excerpt_length = apply_filters( 'excerpt_length', 55 );
+				// Only trim excerpt if there wasn't an existing <!--more--> quicktag.
+				if ( ! $has_more_quicktag ) {
+					/**
+					 * Filter the number of words in an excerpt.
+					 *
+					 * @since 2.7.0
+					 *
+					 * @param int $number The number of words. Default 55.
+					 */
+					$excerpt_length = apply_filters( 'excerpt_length', 55 );
 
-				/**
-				 * Filter the string in the "more" link displayed after a trimmed excerpt.
-				 *
-				 * @since 2.9.0
-				 *
-				 * @param string $more_string The string shown within the more link.
-				 */
-				global $post;
-				$old_post_id = $post->ID;
-				$post->ID = $post_id;
-				$excerpt_more = apply_filters( 'excerpt_more', ' [&hellip;]' );
-				$post->ID = $old_post_id;
+					/**
+					 * Filter the string in the "more" link displayed after a trimmed excerpt.
+					 *
+					 * @since 2.9.0
+					 *
+					 * @param string $more_string The string shown within the more link.
+					 */
+					global $post;
+					$old_post_id = $post->ID;
+					$post->ID = $post_id;
+					$excerpt_more = apply_filters( 'excerpt_more', ' [&hellip;]' );
+					$post->ID = $old_post_id;
 
-				$text = wp_trim_words( $text, $excerpt_length, $excerpt_more );
+					$text = wp_trim_words( $text, $excerpt_length, $excerpt_more );
+				}
 			}
 			/**
 			 * Filter the trimmed excerpt string.
