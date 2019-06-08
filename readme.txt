@@ -86,6 +86,10 @@ Just one! The plugin prevents you from embedding a page in itself, but you can t
 
 == Changelog ==
 
+= 3.4.6 =
+* Respect <!--more--> quicktag in excerpt and excerpt-only displays (in normal insert method).
+* Add a custom <!--crop--> quicktag in excerpt and excerpt-only displays (in normal insert method). Excerpt can be trimmed to anything between <!--crop--> and <!--more--> quicktags.
+
 = 3.4.5 =
 * Fix for nested inserted pages all using custom templates. Props @masterbip for discovering the issue!
 
