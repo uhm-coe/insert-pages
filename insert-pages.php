@@ -919,6 +919,12 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 					$has_more_quicktag = true;
 					$text = explode( $matches[0], $text, 2 );
 					$text = $text[0];
+					// Look for a custom <!--crop--> quicktag that will trim any text before
+					// it out of the excerpt.
+					if ( preg_match( '/<!--crop-->/', $text, $matches ) ) {
+						$text = explode( $matches[0], $text, 2 );
+						$text = $text[1];
+					}
 				}
 
 				/** This filter is documented in wp-includes/post-template.php */
