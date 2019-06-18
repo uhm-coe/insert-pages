@@ -104,6 +104,10 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 							'type' => 'string',
 							'default' => 'title',
 						),
+						'template' => array(
+							'type' => 'string',
+							'default' => '',
+						),
 						'class' => array(
 							'type' => 'string',
 							'default' => '',
@@ -137,10 +141,21 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 		 * @return string      Rendered inserted page.
 		 */
 		public function block_render_callback( $attr ) {
+			// Display attribute defaults to 'title'; otherwise it is the passed param,
+			// and if the display param is 'custom', it is the value of the 'template'
+			// param.
+			$display = 'title';
+			if ( isset( $attr['display'] ) && strlen( $attr['display'] ) > 0 ) {
+				$display = esc_attr( $attr['display'] );
+			}
+			if ( 'custom' === $display && isset( $attr['template'] ) && strlen( $attr['template'] ) > 0) {
+				$display = esc_attr( $attr['template'] );
+			}
+
 			$shortcode = sprintf(
 				'[insert page="%1$s" display="%2$s"%3$s%4$s%5$s%6$s%7$s]',
 				isset( $attr['page'] ) && strlen( $attr['page'] ) > 0 ? esc_attr( $attr['page'] ) : '0',
-				isset( $attr['display'] ) && strlen( $attr['display'] ) > 0 ? esc_attr( $attr['display'] ) : 'title',
+				$display,
 				isset( $attr['class'] ) && strlen( $attr['class'] ) > 0 ? ' class="' . esc_attr( $attr['class'] ) . '"' : '',
 				isset( $attr['id'] ) && strlen( $attr['id'] ) > 0 ? ' id="' . esc_attr( $attr['id'] ) . '"' : '',
 				isset( $attr['querystring'] ) && strlen( $attr['querystring'] ) > 0 ? ' querystring="' . esc_attr( $attr['querystring'] ) . '"' : '',
