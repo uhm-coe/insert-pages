@@ -126,6 +126,7 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 						),
 						'querystring' => array(
 							'type' => 'string',
+							'default' => '',
 						),
 					),
 					'render_callback' => array( $this, 'block_render_callback' ),
