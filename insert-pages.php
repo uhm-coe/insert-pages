@@ -86,6 +86,92 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 		public function insert_pages_init() {
 			// Register the [insert] shortcode.
 			add_shortcode( 'insert', array( $this, 'insert_pages_handle_shortcode_insert' ) );
+
+			// Register the gutenberg block so we can populate it via server side rendering.
+			register_block_type(
+				'insert-pages/block',
+				array(
+					'attributes' => array(
+						'url' => array(
+							'type' => 'string',
+							'default' => '',
+						),
+						'page' => array(
+							'type' => 'number',
+							'default' => 0,
+						),
+						'display' => array(
+							'type' => 'string',
+							'default' => 'title',
+						),
+						'class' => array(
+							'type' => 'string',
+							'default' => '',
+						),
+						'id' => array(
+							'type' => 'string',
+							'default' => '',
+						),
+						'inline' => array(
+							'type' => 'bool',
+							'default' => false,
+						),
+						'public' => array(
+							'type' => 'bool',
+							'default' => false,
+						),
+						'querystring' => array(
+							'type' => 'string',
+						),
+					),
+					'render_callback' => array( $this, 'block_render_callback' ),
+				)
+			);
+		}
+
+
+		/**
+		 * Renders the gutenberg block (using legacy server-side rendering).
+		 *
+		 * @param  array $attr Array of block attributes.
+		 * @return string      Rendered inserted page.
+		 */
+		public function block_render_callback( $attr ) {
+			$shortcode = sprintf(
+				'[insert page="%1$s" display="%2$s"%3$s%4$s%5$s%6$s%7$s]',
+				isset( $attr['page'] ) && strlen( $attr['page'] ) > 0 ? esc_attr( $attr['page'] ) : '0',
+				isset( $attr['display'] ) && strlen( $attr['display'] ) > 0 ? esc_attr( $attr['display'] ) : 'title',
+				isset( $attr['class'] ) && strlen( $attr['class'] ) > 0 ? ' class="' . esc_attr( $attr['class'] ) . '"' : '',
+				isset( $attr['id'] ) && strlen( $attr['id'] ) > 0 ? ' id="' . esc_attr( $attr['id'] ) . '"' : '',
+				isset( $attr['querystring'] ) && strlen( $attr['querystring'] ) > 0 ? ' querystring="' . esc_attr( $attr['querystring'] ) . '"' : '',
+				isset( $attr['inline'] ) && 'true' === $attr['inline'] ? ' inline' : '',
+				isset( $attr['public'] ) && 'true' === $attr['public'] ? ' public' : ''
+			);
+
+			return do_shortcode( $shortcode );
+		}
+
+
+		/**
+		 * Action hook: enqueue_block_assets
+		 *
+		 * @return void
+		 */
+		public function insert_pages_enqueue_block_assets() {
+			// Load the gutenberg block.
+			wp_enqueue_script(
+				'insert-pages-gutenberg-block',
+				plugins_url( 'lib/gutenberg-block/dist/block.js', __FILE__ ),
+				array( 'wp-i18n', 'wp-blocks', 'wp-editor', 'wp-components', 'wp-compose' ),
+				'20190613',
+				false
+			);
+			wp_enqueue_style(
+				'insert-pages-gutenberg-block',
+				plugins_url( 'lib/gutenberg-block/dist/block.css', __FILE__ ),
+				array(),
+				'20190613'
+			);
 		}
 
 
@@ -1300,4 +1386,7 @@ if ( isset( $insert_pages_plugin ) ) {
 	// Register Insert Pages shortcode widget.
 	require_once dirname( __FILE__ ) . '/widget.php';
 	add_action( 'widgets_init', array( $insert_pages_plugin, 'insert_pages_widgets_init' ) );
+
+	// Register Gutenberg block.
+	add_action( 'enqueue_block_assets', array( $insert_pages_plugin, 'insert_pages_enqueue_block_assets' ) );
 }

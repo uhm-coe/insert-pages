@@ -1,0 +1,22 @@
+// Customize display of edit block.
+[data-type="insert-pages/block"] {
+	// Make URLInput fit in toolbar height.
+	.block-editor-insert-page__button {
+		input[type=text] {
+			padding: 4px 8px;
+		}
+		.components-button {
+			height: 34px;
+		}
+	}
+	// Don't follow links or allow other interactions with rendered inserted page.
+	.insert-page {
+		pointer-events: none;
+	}
+}
+
+// Constrain the URLInput field in the InspectorControls sidebar.
+.width-100,
+.width-100 input {
+	width: 100% !important;
+}
