@@ -1038,10 +1038,14 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 					 * @param string $more_string The string shown within the more link.
 					 */
 					global $post;
-					$old_post_id = $post->ID;
-					$post->ID = $post_id;
+					if ( isset( $post->ID ) ) {
+						$old_post_id = $post->ID;
+						$post->ID = $post_id;
+					}
 					$excerpt_more = apply_filters( 'excerpt_more', ' [&hellip;]' );
-					$post->ID = $old_post_id;
+					if ( isset( $post->ID ) ) {
+						$post->ID = $old_post_id;
+					}
 
 					$text = wp_trim_words( $text, $excerpt_length, $excerpt_more );
 				}
