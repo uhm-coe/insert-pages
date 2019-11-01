@@ -86,6 +86,11 @@ Just one! The plugin prevents you from embedding a page in itself, but you can t
 
 == Changelog ==
 
+= 3.4.7 =
+* Larger Insert Page modal height in Classic Editor (accommodate larger WP 5.3 form elements).
+* Update npm packages (gutenberg build dependencies).
+* Tested up to WordPress 5.3.
+
 = 3.4.6 =
 * Respect <!--more--> quicktag in excerpt and excerpt-only displays (in normal insert method).
 * Add a custom <!--crop--> quicktag in excerpt and excerpt-only displays (in normal insert method). Excerpt can be trimmed to anything between <!--crop--> and <!--more--> quicktags.
