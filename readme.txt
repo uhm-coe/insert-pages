@@ -86,6 +86,11 @@ Just one! The plugin prevents you from embedding a page in itself, but you can t
 
 == Changelog ==
 
+= 3.5.0 =
+* Add Gutenberg block.
+* Fix for [WSOD](https://wordpress.org/support/topic/app-v3-4-7-not-compatible-with-wp-v4-9-6) in WordPress versions before 5.0 (unintentionally included Gutenberg block in last release).
+* Fix PHP warnings in some contexts.
+
 = 3.4.7 =
 * Larger Insert Page modal height in Classic Editor (accommodate larger WP 5.3 form elements).
 * Update npm packages (gutenberg build dependencies).
