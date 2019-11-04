@@ -88,50 +88,52 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 			add_shortcode( 'insert', array( $this, 'insert_pages_handle_shortcode_insert' ) );
 
 			// Register the gutenberg block so we can populate it via server side rendering.
-			register_block_type(
-				'insert-pages/block',
-				array(
-					'attributes' => array(
-						'url' => array(
-							'type' => 'string',
-							'default' => '',
+			if ( function_exists( 'register_block_type' ) ) {
+				register_block_type(
+					'insert-pages/block',
+					array(
+						'attributes' => array(
+							'url' => array(
+								'type' => 'string',
+								'default' => '',
+							),
+							'page' => array(
+								'type' => 'number',
+								'default' => 0,
+							),
+							'display' => array(
+								'type' => 'string',
+								'default' => 'title',
+							),
+							'template' => array(
+								'type' => 'string',
+								'default' => '',
+							),
+							'class' => array(
+								'type' => 'string',
+								'default' => '',
+							),
+							'id' => array(
+								'type' => 'string',
+								'default' => '',
+							),
+							'inline' => array(
+								'type' => 'bool',
+								'default' => false,
+							),
+							'public' => array(
+								'type' => 'bool',
+								'default' => false,
+							),
+							'querystring' => array(
+								'type' => 'string',
+								'default' => '',
+							),
 						),
-						'page' => array(
-							'type' => 'number',
-							'default' => 0,
-						),
-						'display' => array(
-							'type' => 'string',
-							'default' => 'title',
-						),
-						'template' => array(
-							'type' => 'string',
-							'default' => '',
-						),
-						'class' => array(
-							'type' => 'string',
-							'default' => '',
-						),
-						'id' => array(
-							'type' => 'string',
-							'default' => '',
-						),
-						'inline' => array(
-							'type' => 'bool',
-							'default' => false,
-						),
-						'public' => array(
-							'type' => 'bool',
-							'default' => false,
-						),
-						'querystring' => array(
-							'type' => 'string',
-							'default' => '',
-						),
-					),
-					'render_callback' => array( $this, 'block_render_callback' ),
-				)
-			);
+						'render_callback' => array( $this, 'block_render_callback' ),
+					)
+				);
+			}
 		}
 
 
