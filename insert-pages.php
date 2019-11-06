@@ -171,11 +171,13 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 
 
 		/**
-		 * Action hook: enqueue_block_assets
+		 * Load gutenberg block resources only when editing.
+		 *
+		 * Action hook: enqueue_block_editor_assets
 		 *
 		 * @return void
 		 */
-		public function insert_pages_enqueue_block_assets() {
+		public function insert_pages_enqueue_block_editor_assets() {
 			// Load the gutenberg block.
 			wp_enqueue_script(
 				'insert-pages-gutenberg-block',
@@ -1410,5 +1412,5 @@ if ( isset( $insert_pages_plugin ) ) {
 	add_action( 'widgets_init', array( $insert_pages_plugin, 'insert_pages_widgets_init' ) );
 
 	// Register Gutenberg block.
-	add_action( 'enqueue_block_assets', array( $insert_pages_plugin, 'insert_pages_enqueue_block_assets' ) );
+	add_action( 'enqueue_block_editor_assets', array( $insert_pages_plugin, 'insert_pages_enqueue_block_editor_assets' ) );
 }
