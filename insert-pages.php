@@ -84,11 +84,13 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 		 * @return void
 		 */
 		public function insert_pages_init() {
+			$options = get_option( 'wpip_settings' );
+
 			// Register the [insert] shortcode.
 			add_shortcode( 'insert', array( $this, 'insert_pages_handle_shortcode_insert' ) );
 
 			// Register the gutenberg block so we can populate it via server side rendering.
-			if ( function_exists( 'register_block_type' ) ) {
+			if ( function_exists( 'register_block_type' ) && isset( $options['wpip_gutenberg_block'] ) && 'enabled' === $options['wpip_gutenberg_block'] ) {
 				register_block_type(
 					'insert-pages/block',
 					array(
@@ -171,27 +173,31 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 
 
 		/**
-		 * Load gutenberg block resources only when editing.
+		 * Load gutenberg block resources only when editing (only if Gutenberg block
+		 * setting is enabled in Insert Pages settings).
 		 *
 		 * Action hook: enqueue_block_editor_assets
 		 *
 		 * @return void
 		 */
 		public function insert_pages_enqueue_block_editor_assets() {
-			// Load the gutenberg block.
-			wp_enqueue_script(
-				'insert-pages-gutenberg-block',
-				plugins_url( 'lib/gutenberg-block/dist/block.js', __FILE__ ),
-				array( 'wp-i18n', 'wp-blocks', 'wp-editor', 'wp-components', 'wp-compose' ),
-				'20190613',
-				false
-			);
-			wp_enqueue_style(
-				'insert-pages-gutenberg-block',
-				plugins_url( 'lib/gutenberg-block/dist/block.css', __FILE__ ),
-				array(),
-				'20190613'
-			);
+			$options = get_option( 'wpip_settings' );
+			if ( isset( $options['wpip_gutenberg_block'] ) && 'enabled' === $options['wpip_gutenberg_block'] ) {
+				// Load the gutenberg block.
+				wp_enqueue_script(
+					'insert-pages-gutenberg-block',
+					plugins_url( 'lib/gutenberg-block/dist/block.js', __FILE__ ),
+					array( 'wp-i18n', 'wp-blocks', 'wp-editor', 'wp-components', 'wp-compose' ),
+					'20190613',
+					false
+				);
+				wp_enqueue_style(
+					'insert-pages-gutenberg-block',
+					plugins_url( 'lib/gutenberg-block/dist/block.css', __FILE__ ),
+					array(),
+					'20190613'
+				);
+			}
 		}
 
 

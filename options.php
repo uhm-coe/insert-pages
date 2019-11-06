@@ -56,6 +56,13 @@ function wpip_settings_init() {
 		'wpipSettings',
 		'wpip_section'
 	);
+	add_settings_field(
+		'wpip_gutenberg_block',
+		__( 'Gutenberg block', 'insert-pages' ),
+		'wpip_gutenberg_block_render',
+		'wpipSettings',
+		'wpip_section'
+	);
 }
 add_action( 'admin_init', 'wpip_settings_init' );
 
@@ -91,6 +98,10 @@ function wpip_set_defaults() {
 
 	if ( ! array_key_exists( 'wpip_tinymce_filter', $options ) ) {
 		$options['wpip_tinymce_filter'] = 'normal';
+	}
+
+	if ( ! array_key_exists( 'wpip_gutenberg_block', $options ) ) {
+		$options['wpip_gutenberg_block'] = 'enabled';
 	}
 
 	update_option( 'wpip_settings', $options );
@@ -188,7 +199,23 @@ function wpip_tinymce_filter_render() {
 	}
 	?>
 	<input type='radio' name='wpip_settings[wpip_tinymce_filter]' <?php checked( $options['wpip_tinymce_filter'], 'normal' ); ?> id="wpip_tinymce_filter_normal" value='normal'><label for="wpip_tinymce_filter_normal">Use normal method (compatible with Divi theme and most situations). </label><br />
-	<input type='radio' name='wpip_settings[wpip_tinymce_filter]' <?php checked( $options['wpip_tinymce_filter'], 'compatibility' ); ?> id="wpip_tinymce_filter_compatibility" value='compatibility'><label for="wpip_tinymce_filter_normal">Use compatibility method (works with <a href="https://wordpress.org/plugins/siteorigin-panels/" target="_blank">Page Builder by SiteOrigin</a>).</label><br />
+	<input type='radio' name='wpip_settings[wpip_tinymce_filter]' <?php checked( $options['wpip_tinymce_filter'], 'compatibility' ); ?> id="wpip_tinymce_filter_compatibility" value='compatibility'><label for="wpip_tinymce_filter_compatibility">Use compatibility method (works with <a href="https://wordpress.org/plugins/siteorigin-panels/" target="_blank">Page Builder by SiteOrigin</a>).</label><br />
 	<small><em>The normal method adds the TinyMCE plugin filters in the <a href="https://developer.wordpress.org/reference/hooks/admin_head/" target="_blank">admin_head</a> hook. For users using SiteOrigin PageBuilder with the so-widgets-bundle enabled and using Contact Form, Editor, Google Maps, Hero Image, or Testimonials widgets, a bug in that plugin prevents other plugins from registering TinyMCE plugins. Use compatibility mode here to use a workaround.</em></small>
+	<?php
+}
+
+/**
+ * Print 'Gutenberg block' setting.
+ *
+ * @return void
+ */
+function wpip_gutenberg_block_render() {
+	$options = get_option( 'wpip_settings' );
+	if ( false === $options || ! is_array( $options ) || ! array_key_exists( 'wpip_gutenberg_block', $options ) ) {
+		$options = wpip_set_defaults();
+	}
+	?>
+	<input type='radio' name='wpip_settings[wpip_gutenberg_block]' <?php checked( $options['wpip_gutenberg_block'], 'enabled' ); ?> id="wpip_gutenberg_block_enabled" value='enabled'><label for="wpip_gutenberg_block_enabled">Enable Insert Pages Gutenberg block.</label><br />
+	<input type='radio' name='wpip_settings[wpip_gutenberg_block]' <?php checked( $options['wpip_gutenberg_block'], 'disabled' ); ?> id="wpip_gutenberg_block_disabled" value='disabled'><label for="wpip_gutenberg_block_disabled">Disable Insert Pages Gutenberg block.</label>
 	<?php
 }
