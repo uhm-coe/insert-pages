@@ -86,6 +86,10 @@ Just one! The plugin prevents you from embedding a page in itself, but you can t
 
 == Changelog ==
 
+= 3.5.1 =
+* Fix Gutenberg block assets (js, css) loading on front end.
+* Add option to disable Insert Pages Gutenberg block.
+
 = 3.5.0 =
 * Add Gutenberg block.
 * Fix for [WSOD](https://wordpress.org/support/topic/app-v3-4-7-not-compatible-with-wp-v4-9-6) in WordPress versions before 5.0 (unintentionally included Gutenberg block in last release).
