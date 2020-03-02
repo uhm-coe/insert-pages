@@ -884,6 +884,11 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 							} else {
 								echo get_the_content();
 							}
+							// Render any <!--nextpage--> pagination links.
+							wp_link_pages( array(
+								'before' => '<div class="page-links">' . __( 'Pages:', 'twentynineteen' ),
+								'after'  => '</div>',
+							) );
 							break;
 						case 'post-thumbnail':
 							?><a href="<?php echo esc_url( get_permalink( $inserted_page->ID ) ); ?>"><?php echo get_the_post_thumbnail( $inserted_page->ID ); ?></a>
@@ -901,6 +906,11 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 								echo get_the_content();
 							}
 							the_meta();
+							// Render any <!--nextpage--> pagination links.
+							wp_link_pages( array(
+								'before' => '<div class="page-links">' . __( 'Pages:', 'twentynineteen' ),
+								'after'  => '</div>',
+							) );
 							break;
 						default: // Display is either invalid, or contains a template file to use.
 							$template = locate_template( $attributes['display'] );
