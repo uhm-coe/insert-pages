@@ -21,6 +21,10 @@ class InsertPagesWidget extends WP_Widget {
 		// Load admin javascript for Widget options on admin page (widgets.php).
 		add_action( 'sidebar_admin_page', array( $this, 'widget_admin_js' ) );
 
+		// Load widget javascript in supported builders (Beaver Builder, Elementor).
+		add_action( 'fl_builder_layout_style_dependencies', array( $this, 'widget_admin_js' ) );
+		add_action( 'elementor/editor/before_enqueue_scripts', array( $this, 'widget_admin_js' ) );
+
 		// Load admin javascript for Widget options on theme customize page (customize.php).
 		add_action( 'customize_controls_enqueue_scripts', array( $this, 'widget_admin_js' ) );
 
@@ -90,6 +94,18 @@ class InsertPagesWidget extends WP_Widget {
 	 * @param array $instance The widget options.
 	 */
 	public function form( $instance ) {
+
+		// Beaver Builder loads the widget without some required wp-admin
+		// dependencies. Add them here.
+		if ( ! function_exists( 'page_template_dropdown' ) ) {
+			// For page_template_dropdown():
+			/** WordPress Template Administration API */
+			require_once( ABSPATH . 'wp-admin/includes/template.php' );
+			// For get_page_templates():
+			/** WordPress Theme Administration API */
+			require_once( ABSPATH . 'wp-admin/includes/theme.php' );
+		}
+
 		$instance = wp_parse_args( (array) $instance, array(
 			'page' => '',
 			'display' => 'link',
