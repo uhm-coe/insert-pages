@@ -48,6 +48,29 @@ The possibilities are endless!
 
 == Frequently Asked Questions ==
 
+= How do I create a custom template for use by Insert Pages?
+
+A basic template would look like the following. This would be a file on your theme directory, e.g., `your-custom-template.php`:
+
+`<?php
+/**
+ * Template Name: Name of your custom template
+ */
+?>
+<div id="your-wrapper-div">
+  <?php while ( have_posts() ) : the_post(); ?>
+    <div id="your-container-div-for-each-post">
+      <?php the_content(); ?>
+      <?php the_post_thumbnail(); ?>
+    </div>
+  <?php endwhile; ?>
+</div>`
+
+You can use whatever template tags that you'd like, check out the WordPress documentation.
+
+* https://developer.wordpress.org/themes/basics/template-tags/
+* https://developer.wordpress.org/themes/references/list-of-template-tags/
+
 = How do I limit the list of pages in the dialog to certain post types? =
 
 You can hook into the 'insert_pages_available_post_types' filter to limit the post types displayed in the dialog. Here's an example filter that just shows Posts:
