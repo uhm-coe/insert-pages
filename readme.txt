@@ -109,6 +109,11 @@ Just one! The plugin prevents you from embedding a page in itself, but you can t
 
 == Changelog ==
 
+= 3.5.2 =
+* Add FAQ for creating a custom template. [Details](https://wordpress.org/support/topic/suggestion-for-faq-documentation/)
+* Parse `<!--nextpage-->` separators in Content and All displays on legacy insert mode. [Details](https://wordpress.org/support/topic/not-working-with-insert-page/)
+* Add support for custom templates for Insert Pages within Elementor and Beaver Builder. [Details](https://wordpress.org/support/topic/use-a-custom-template-doesnt-show-custom-template-filename-in-builder/)
+
 = 3.5.1 =
 * Fix Gutenberg block assets (js, css) loading on front end.
 * Add option to disable Insert Pages Gutenberg block.
