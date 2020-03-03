@@ -68,8 +68,8 @@ A basic template would look like the following. This would be a file on your the
 
 You can use whatever template tags that you'd like, check out the WordPress documentation.
 
-* https://developer.wordpress.org/themes/basics/template-tags/
-* https://developer.wordpress.org/themes/references/list-of-template-tags/
+* [https://developer.wordpress.org/themes/basics/template-tags/](https://developer.wordpress.org/themes/basics/template-tags/)
+* [https://developer.wordpress.org/themes/references/list-of-template-tags/](https://developer.wordpress.org/themes/references/list-of-template-tags/)
 
 = How do I limit the list of pages in the dialog to certain post types? =
 
