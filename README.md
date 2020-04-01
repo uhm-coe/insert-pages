@@ -9,6 +9,9 @@ The real power of Insert Pages comes when you start creating custom post types, 
 
 ## Examples
 
+### Tutorial
+Contributor Wes Modes has graciously written an updated tutorial for the Gutenberg era, published Mar 13, 2020, focused on creating a custom post type with custom fields and a custom template for rendering content. Read it here: [https://medium.com/@wesmodes/using-wordpress-insert-pages-plugin-with-your-custom-post-types-and-custom-templates-535c141f9635](https://medium.com/@wesmodes/using-wordpress-insert-pages-plugin-with-your-custom-post-types-and-custom-templates-535c141f9635)
+
 ### Normal Use
 Say you teach a course and you're constantly referring to an assignment due date in your course website. The next semester the due date changes, and you have to go change all of the locations you referred to it. Instead, you'd rather just change the date once! With Insert Pages, you can do the following:
 
