@@ -40,41 +40,9 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 	 */
 	class InsertPagesPlugin {
 		/**
-		 * Page ID being inserted.
-		 *
-		 * @var int
-		 */
-		protected $page_id;
-
-
-		/**
 		 * Constructor.
 		 */
 		public function __construct() {
-			// Include the code that generates the options page.
-			require_once dirname( __FILE__ ) . '/options.php';
-		}
-
-
-		/**
-		 * Getter for page_id.
-		 *
-		 * @return int Page ID being inserted.
-		 */
-		public function get_page_id() {
-			return $this->page_id;
-		}
-
-
-		/**
-		 * Setter for page_id.
-		 *
-		 * @param int $id Page ID being inserted.
-		 */
-		public function set_page_id( $id ) {
-			$this->page_id = $id;
-
-			return $this->page_id;
 		}
 
 
@@ -1385,6 +1353,9 @@ if ( class_exists( 'InsertPagesPlugin' ) ) {
 
 // Actions and Filters handled by InsertPagesPlugin class.
 if ( isset( $insert_pages_plugin ) ) {
+	// Include the code that generates the options page.
+	require_once dirname( __FILE__ ) . '/options.php';
+
 	// Get options set in WordPress dashboard (Settings > Insert Pages).
 	$options = get_option( 'wpip_settings' );
 	if ( false === $options || ! is_array( $options ) || ! array_key_exists( 'wpip_format', $options ) || ! array_key_exists( 'wpip_wrapper', $options ) || ! array_key_exists( 'wpip_insert_method', $options ) || ! array_key_exists( 'wpip_tinymce_filter', $options ) ) {
