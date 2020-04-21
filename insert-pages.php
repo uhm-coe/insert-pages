@@ -40,7 +40,33 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 	 */
 	class InsertPagesPlugin {
 		/**
-		 * Constructor.
+		 * Stack tracking inserted pages (for loop detection).
+		 *
+		 * @var  array Array of page ids inserted.
+		 */
+		protected $inserted_page_ids;
+
+
+		/**
+		 * Singleton plugin instance.
+		 *
+		 * @var object Plugin instance.
+		 */
+		protected static $instance = null;
+
+
+		/**
+		 * Access this plugin's working instance.
+		 *
+		 * @return object Object of this class.
+		 */
+		public static function get_instance() {
+			return null === static::$instance ? new static() : static::$instance;
+		}
+
+
+		/**
+		 * Constructor intentionally left empty and public.
 		 */
 		public function __construct() {
 		}
@@ -1348,7 +1374,7 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 
 // Initialize InsertPagesPlugin object.
 if ( class_exists( 'InsertPagesPlugin' ) ) {
-	$insert_pages_plugin = new InsertPagesPlugin();
+	$insert_pages_plugin = InsertPagesPlugin::get_instance();
 }
 
 // Actions and Filters handled by InsertPagesPlugin class.
