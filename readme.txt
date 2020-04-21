@@ -111,6 +111,11 @@ Just one! The plugin prevents you from embedding a page in itself, but you can t
 
 == Changelog ==
 
+= 3.5.3 =
+* Update Gutenberg block (replace deprecated calls).
+* Add automatic loop detection; nested inserts now work by default.
+* Deprecate `insert_pages_apply_nesting_check` filter since it's now unnecessary.
+
 = 3.5.2 =
 * Add FAQ for creating a custom template. [Details](https://wordpress.org/support/topic/suggestion-for-faq-documentation/)
 * Parse `<!--nextpage-->` separators in Content and All displays on legacy insert mode. [Details](https://wordpress.org/support/topic/not-working-with-insert-page/)
