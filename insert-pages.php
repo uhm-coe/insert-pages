@@ -345,17 +345,6 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 				$attributes['should_apply_the_content_filter'] = false;
 			}
 
-			$attributes['should_apply_nesting_check'] = true;
-			/**
-			 * Filter the flag indicating whether to apply deep nesting check
-			 * that can prevent circular loops. Note that some use cases rely
-			 * on inserting pages that themselves have inserted pages, so this
-			 * check should be disabled for those individuals.
-			 *
-			 * @param bool $apply_nesting_check Indicates whether to apply deep nesting check.
-			 */
-			$attributes['should_apply_nesting_check'] = apply_filters( 'insert_pages_apply_nesting_check', $attributes['should_apply_nesting_check'] );
-
 			/**
 			 * Filter the chosen display method, where display can be one of:
 			 * title, link, excerpt, excerpt-only, content, post-thumbnail, all, {custom-template.php}
@@ -366,20 +355,6 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 			 * @param string $display The display method for the inserted page.
 			 */
 			$attributes['display'] = apply_filters( 'insert_pages_override_display', $attributes['display'] );
-
-			// Don't allow inserted pages to be added to the_content more than once (prevent infinite loops).
-			if ( $attributes['should_apply_nesting_check'] ) {
-				$done = false;
-				foreach ( $wp_current_filter as $filter ) {
-					if ( 'the_content' === $filter ) {
-						if ( $done ) {
-							return $content;
-						} else {
-							$done = true;
-						}
-					}
-				}
-			}
 
 			// Get the WP_Post object from the provided slug or ID.
 			if ( ! is_numeric( $attributes['page'] ) ) {
@@ -416,6 +391,22 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 			// unless 'public' option is set.
 			if ( is_object( $inserted_page ) && 'private' === $inserted_page->post_status && ! $attributes['public'] ) {
 				$inserted_page = null;
+			}
+
+			// Loop detection: check if the page we are inserting has already been
+			// inserted; if so, short circuit here.
+			if ( ! is_array( $this->inserted_page_ids ) ) {
+				// Initialize stack to the main page that contains inserted page(s).
+				$this->inserted_page_ids = array( get_the_ID() );
+			}
+			if ( isset( $inserted_page->ID ) ) {
+				if ( ! in_array( $inserted_page->ID, $this->inserted_page_ids ) ) {
+					// Add the page being inserted to the stack.
+					$this->inserted_page_ids[] = $inserted_page->ID;
+				} else {
+					// Loop detected, so exit without rendering this post.
+					return $content;
+				}
 			}
 
 			// Set any querystring params included in the shortcode.
@@ -667,8 +658,7 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 						// We save the previous query state here instead of using
 						// wp_reset_query() because wp_reset_query() only has a single stack
 						// variable ($GLOBALS['wp_the_query']). This allows us to support
-						// pages inserted into other pages (multiple nested pages, which
-						// requires insert_pages_apply_nesting_check to be turned off).
+						// pages inserted into other pages (multiple nested pages).
 						$old_query = $GLOBALS['wp_query'];
 						$inserted_page = query_posts( $args );
 						if ( have_posts() ) {
@@ -719,8 +709,7 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 				// We save the previous query state here instead of using
 				// wp_reset_query() because wp_reset_query() only has a single stack
 				// variable ($GLOBALS['wp_the_query']). This allows us to support
-				// pages inserted into other pages (multiple nested pages, which
-				// requires insert_pages_apply_nesting_check to be turned off).
+				// pages inserted into other pages (multiple nested pages).
 				$old_query = $GLOBALS['wp_query'];
 				$posts = query_posts( $args );
 				if ( have_posts() ) {
@@ -956,7 +945,6 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 			 *   inline: Boolean indicating wrapper element should be a span.
 			 *   public: Boolean indicating anonymous users can see private inserted pages.
 			 *   querystring: Extra querystring values provided to the custom template.
-			 *   should_apply_nesting_check: Whether to disable nested inserted pages.
 			 *   should_apply_the_content_filter: Whether to apply the_content filter to post contents and excerpts.
 			 *   wrapper_tag: Tag to use for the wrapper element (e.g., div, span).
 			 */

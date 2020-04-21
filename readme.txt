@@ -253,7 +253,6 @@ Example 1:
  *   display: Content to display from inserted page.
  *   class: Extra classes to add to inserted page wrapper element.
  *   inline: Boolean indicating wrapper element should be a span.
- *   should_apply_nesting_check: Whether to disable nested inserted pages.
  *   should_apply_the_content_filter: Whether to apply the_content filter to post contents and excerpts.
  *   wrapper_tag: Tag to use for the wrapper element (e.g., div, span).
  */
@@ -272,7 +271,6 @@ Example 2:
  *   display: Content to display from inserted page.
  *   class: Extra classes to add to inserted page wrapper element.
  *   inline: Boolean indicating wrapper element should be a span.
- *   should_apply_nesting_check: Whether to disable nested inserted pages.
  *   should_apply_the_content_filter: Whether to apply the_content filter to post contents and excerpts.
  *   wrapper_tag: Tag to use for the wrapper element (e.g., div, span).
  */
