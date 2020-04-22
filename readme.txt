@@ -111,6 +111,9 @@ Just one! The plugin prevents you from embedding a page in itself, but you can t
 
 == Changelog ==
 
+= 3.5.3.2 =
+* Fix for loop detection: we had accidentally prevented pages from inserting another page multiple times (not in a loop).
+
 = 3.5.3.1 =
 * Revert change affecting Elementor using legacy insert method. Props @progameinc for reporting it so quickly!
 
