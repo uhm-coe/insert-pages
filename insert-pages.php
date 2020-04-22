@@ -954,6 +954,18 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 			$_GET = $original_get;
 			$_REQUEST = $original_request;
 
+			// Loop detection: remove the page from the stack (so we can still insert
+			// the same page multiple times on another page, but prevent it from being
+			// inserted multiple times within the same recursive chain).
+			if ( isset( $inserted_page->ID ) ) {
+				foreach ( $this->inserted_page_ids as $key => $page_id ) {
+					if ( $page_id === $inserted_page->ID ) {
+						unset( $this->inserted_page_ids[ $key ] );
+					}
+				}
+			}
+
+
 			return $content;
 		}
 
