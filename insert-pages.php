@@ -854,7 +854,7 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 						case 'content':
 							// If Elementor is installed, try to render the page with it. If there is no Elementor content, fall back to normal rendering.
 							if ( class_exists( '\Elementor\Plugin' ) ) {
-								$elementor_content = \Elementor\Plugin::$instance->frontend->get_builder_content( get_the_ID() );
+								$elementor_content = \Elementor\Plugin::$instance->frontend->get_builder_content( $inserted_page->ID );
 								if ( strlen( $elementor_content ) > 0 ) {
 									echo $elementor_content;
 									break;
@@ -874,7 +874,7 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 							) );
 							break;
 						case 'post-thumbnail':
-							?><a href="<?php the_permalink(); ?>"><?php the_post_thumbnail(); ?></a>
+							?><a href="<?php echo esc_url( get_permalink( $inserted_page->ID ) ); ?>"><?php echo get_the_post_thumbnail( $inserted_page->ID ); ?></a>
 							<?php
 							break;
 						case 'all':
