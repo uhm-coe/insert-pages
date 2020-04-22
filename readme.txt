@@ -111,6 +111,9 @@ Just one! The plugin prevents you from embedding a page in itself, but you can t
 
 == Changelog ==
 
+= 3.5.3.1 =
+* Revert change affecting Elementor using legacy insert method. Props @progameinc for reporting it so quickly!
+
 = 3.5.3 =
 * Update Gutenberg block (replace deprecated calls).
 * Add automatic loop detection; nested inserts now work by default.
