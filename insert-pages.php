@@ -493,8 +493,10 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 							} elseif ( class_exists( 'VisualComposer\Helpers\AssetsEnqueue' ) ) {
 								// These methods should work for Visual Composer 26.0.
 								// Enqueue custom css/js stored in vcvSourceAssetsFiles postmeta.
-								$v = new \VisualComposer\Helpers\AssetsEnqueue;
-								$v->enqueueAssets($inserted_page->ID);
+								$vc = new \VisualComposer\Helpers\AssetsEnqueue;
+								if ( method_exists( $vc, 'enqueueAssets' ) ) {
+									$vc->enqueueAssets($inserted_page->ID);
+								}
 								// Enqueue custom CSS stored in vcvSourceCssFileUrl postmeta.
 								$upload_dir = wp_upload_dir();
 								$bundle_url = set_url_scheme( $upload_dir['baseurl'] . '/' . VCV_PLUGIN_ASSETS_DIRNAME . '/' . ltrim( $bundle_url, '/\\' ) );
@@ -780,8 +782,10 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 								} elseif ( class_exists( 'VisualComposer\Helpers\AssetsEnqueue' ) ) {
 									// These methods should work for Visual Composer 26.0.
 									// Enqueue custom css/js stored in vcvSourceAssetsFiles postmeta.
-									$v = new \VisualComposer\Helpers\AssetsEnqueue;
-									$v->enqueueAssets($inserted_page->ID);
+									$vc = new \VisualComposer\Helpers\AssetsEnqueue;
+									if ( method_exists( $vc, 'enqueueAssets' ) ) {
+										$vc->enqueueAssets($inserted_page->ID);
+									}
 									// Enqueue custom CSS stored in vcvSourceCssFileUrl postmeta.
 									$upload_dir = wp_upload_dir();
 									$bundle_url = set_url_scheme( $upload_dir['baseurl'] . '/' . VCV_PLUGIN_ASSETS_DIRNAME . '/' . ltrim( $bundle_url, '/\\' ) );
