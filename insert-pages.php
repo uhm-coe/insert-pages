@@ -490,6 +490,14 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 							} elseif ( defined( 'VCV_TF_ASSETS_IN_UPLOADS' ) && constant( 'VCV_TF_ASSETS_IN_UPLOADS' ) ) {
 								$upload_dir = wp_upload_dir();
 								$bundle_url = set_url_scheme( $upload_dir['baseurl'] . '/' . VCV_PLUGIN_ASSETS_DIRNAME . '/' . ltrim( $bundle_url, '/\\' ) );
+							} elseif ( class_exists( 'VisualComposer\Helpers\AssetsEnqueue' ) ) {
+								// These methods should work for Visual Composer 26.0.
+								// Enqueue custom css/js stored in vcvSourceAssetsFiles postmeta.
+								$v = new \VisualComposer\Helpers\AssetsEnqueue;
+								$v->enqueueAssets($inserted_page->ID);
+								// Enqueue custom CSS stored in vcvSourceCssFileUrl postmeta.
+								$upload_dir = wp_upload_dir();
+								$bundle_url = set_url_scheme( $upload_dir['baseurl'] . '/' . VCV_PLUGIN_ASSETS_DIRNAME . '/' . ltrim( $bundle_url, '/\\' ) );
 							} else {
 								$bundle_url = content_url() . '/' . VCV_PLUGIN_ASSETS_DIRNAME . '/' . ltrim( $bundle_url, '/\\' );
 							}
@@ -767,6 +775,14 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 								if ( preg_match( '/^http/', $bundle_url ) ) {
 									$bundle_url = set_url_scheme( $bundle_url );
 								} elseif ( defined( 'VCV_TF_ASSETS_IN_UPLOADS' ) && constant( 'VCV_TF_ASSETS_IN_UPLOADS' ) ) {
+									$upload_dir = wp_upload_dir();
+									$bundle_url = set_url_scheme( $upload_dir['baseurl'] . '/' . VCV_PLUGIN_ASSETS_DIRNAME . '/' . ltrim( $bundle_url, '/\\' ) );
+								} elseif ( class_exists( 'VisualComposer\Helpers\AssetsEnqueue' ) ) {
+									// These methods should work for Visual Composer 26.0.
+									// Enqueue custom css/js stored in vcvSourceAssetsFiles postmeta.
+									$v = new \VisualComposer\Helpers\AssetsEnqueue;
+									$v->enqueueAssets($inserted_page->ID);
+									// Enqueue custom CSS stored in vcvSourceCssFileUrl postmeta.
 									$upload_dir = wp_upload_dir();
 									$bundle_url = set_url_scheme( $upload_dir['baseurl'] . '/' . VCV_PLUGIN_ASSETS_DIRNAME . '/' . ltrim( $bundle_url, '/\\' ) );
 								} else {
