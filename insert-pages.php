@@ -61,14 +61,18 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 		 * @return object Object of this class.
 		 */
 		public static function get_instance() {
-			return null === static::$instance ? new static() : static::$instance;
+			if ( null === self::$instance ) {
+				self::$instance = new self();
+			}
+
+			return self::$instance;
 		}
 
 
 		/**
-		 * Constructor intentionally left empty and public.
+		 * Disable constructor to enforce a single plugin instance..
 		 */
-		public function __construct() {
+		protected function __construct() {
 		}
 
 
