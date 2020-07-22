@@ -216,7 +216,7 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 				'wpinsertpages',
 				plugins_url( '/js/wpinsertpages.js', __FILE__ ),
 				array( 'wpdialogs' ),
-				'20180702',
+				'20200722',
 				false
 			);
 			wp_localize_script(
@@ -1131,6 +1131,15 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 				return;
 			}
 
+			// Get user's previously selected display and template to restore (if any).
+			$tinymce_state = get_user_meta( get_current_user_id(), 'insert_pages_tinymce_state', true );
+			if ( empty( $tinymce_state ) ) {
+					$tinymce_state = array(
+						'format'   => 'title',
+						'template' => 'all',
+					);
+			}
+
 			// Get ID of post currently being edited.
 			// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			$post_id = isset( $_REQUEST['post'] ) && intval( $_REQUEST['post'] ) > 0 ? intval( $_REQUEST['post'] ) : '';
@@ -1184,18 +1193,18 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 						<label for="insertpage-format-select">
 							<?php esc_html_e( 'Display', 'insert-pages' ); ?>
 							<select name="insertpage-format-select" id="insertpage-format-select">
-								<option value='title'><?php esc_html_e( 'Title', 'insert-pages' ); ?></option>
-								<option value='link'><?php esc_html_e( 'Link', 'insert-pages' ); ?></option>
-								<option value='excerpt'><?php esc_html_e( 'Excerpt with title', 'insert-pages' ); ?></option>
-								<option value='excerpt-only'><?php esc_html_e( 'Excerpt only (no title)', 'insert-pages' ); ?></option>
-								<option value='content'><?php esc_html_e( 'Content', 'insert-pages' ); ?></option>
-								<option value='post-thumbnail'><?php esc_html_e( 'Post Thumbnail', 'insert-pages' ); ?></option>
-								<option value='all'><?php esc_html_e( 'All (includes custom fields)', 'insert-pages' ); ?></option>
-								<option value='template'><?php esc_html_e( 'Use a custom template', 'insert-pages' ); ?> &raquo;</option>
+								<option value='title' <?php selected( $tinymce_state['format'], 'title' ); ?>><?php esc_html_e( 'Title', 'insert-pages' ); ?></option>
+								<option value='link' <?php selected( $tinymce_state['format'], 'link' ); ?>><?php esc_html_e( 'Link', 'insert-pages' ); ?></option>
+								<option value='excerpt' <?php selected( $tinymce_state['format'], 'excerpt' ); ?>><?php esc_html_e( 'Excerpt with title', 'insert-pages' ); ?></option>
+								<option value='excerpt-only' <?php selected( $tinymce_state['format'], 'excerpt-only' ); ?>><?php esc_html_e( 'Excerpt only (no title)', 'insert-pages' ); ?></option>
+								<option value='content' <?php selected( $tinymce_state['format'], 'content' ); ?>><?php esc_html_e( 'Content', 'insert-pages' ); ?></option>
+								<option value='post-thumbnail' <?php selected( $tinymce_state['format'], 'post-thumbnail' ); ?>><?php esc_html_e( 'Post Thumbnail', 'insert-pages' ); ?></option>
+								<option value='all' <?php selected( $tinymce_state['format'], 'all' ); ?>><?php esc_html_e( 'All (includes custom fields)', 'insert-pages' ); ?></option>
+								<option value='template' <?php selected( $tinymce_state['format'], 'template' ); ?>><?php esc_html_e( 'Use a custom template', 'insert-pages' ); ?> &raquo;</option>
 							</select>
 							<select name="insertpage-template-select" id="insertpage-template-select" disabled="true">
-								<option value='all'><?php esc_html_e( 'Default Template', 'insert-pages' ); ?></option>
-								<?php page_template_dropdown(); ?>
+								<option value='all' <?php selected( $tinymce_state['template'], 'all' ); ?>><?php esc_html_e( 'Default Template', 'insert-pages' ); ?></option>
+								<?php page_template_dropdown( $tinymce_state['template'] ); ?>
 							</select>
 						</label>
 					</div>
@@ -1274,6 +1283,44 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 			}
 
 			echo wp_json_encode( $results );
+			echo "\n";
+			die();
+		}
+
+		/**
+		 * Save the user's last-selected display or template in the TinyMCE widget
+		 * whenever it changes.
+		 *
+		 * @hook wp_ajax_insertpage_save_presets
+		 */
+		public function insert_pages_save_presets() {
+			check_ajax_referer( 'internal-inserting', '_ajax_inserting_nonce' );
+			$args = array();
+			if ( isset( $_POST['format'] ) ) {
+				$args['format'] = sanitize_key( wp_unslash( $_POST['format'] ) );
+			}
+			if ( isset( $_POST['template'] ) ) {
+				$args['template'] = sanitize_file_name( wp_unslash( $_POST['template'] ) );
+			}
+
+			if ( ! empty( $args ) ) {
+				$tinymce_state = get_user_meta( get_current_user_id(), 'insert_pages_tinymce_state', true );
+				if ( empty( $tinymce_state ) ) {
+					$tinymce_state = array(
+						'format'   => 'title',
+						'template' => 'all',
+					);
+				}
+				$tinymce_state = array_merge( $tinymce_state, $args );
+				update_user_meta( get_current_user_id(), 'insert_pages_tinymce_state', $tinymce_state );
+			}
+
+			// Fail if our query didn't work.
+			if ( ! isset( $results ) ) {
+				die( '0' );
+			}
+
+			echo wp_json_encode( 'Success' );
 			echo "\n";
 			die();
 		}
@@ -1429,6 +1476,9 @@ if ( isset( $insert_pages_plugin ) ) {
 
 	// Ajax: Populate page search in TinyMCE button popup.
 	add_action( 'wp_ajax_insertpage', array( $insert_pages_plugin, 'insert_pages_insert_page_callback' ) );
+
+	// Ajax: save user's last selected display and template inputs.
+	add_action( 'wp_ajax_insertpage_save_presets', array( $insert_pages_plugin, 'insert_pages_save_presets' ) );
 
 	// Use internal filter to wrap inserted content in a div or span.
 	add_filter( 'insert_pages_wrap_content', array( $insert_pages_plugin, 'insert_pages_wrap_content' ), 10, 3 );

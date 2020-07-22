@@ -62,6 +62,22 @@ var wpInsertPages;
 				} else {
 					inputs.template.attr( 'disabled', 'disabled' );
 				}
+
+				// Save last selected template for this user.
+				$.post( ajaxurl, {
+					action : 'insertpage_save_presets',
+					format : inputs.format.val(),
+					'_ajax_inserting_nonce' : $('#_ajax_inserting_nonce').val(),
+				}, function (r) {}, 'json' );
+			});
+
+			inputs.template.change( function() {
+				// Save last selected template for this user.
+				$.post( ajaxurl, {
+					action : 'insertpage_save_presets',
+					template : inputs.template.val(),
+					'_ajax_inserting_nonce' : $('#_ajax_inserting_nonce').val(),
+				}, function (r) {}, 'json' );
 			});
 
 			// Set search type to plaintext if someone types in the search field.
@@ -293,17 +309,25 @@ var wpInsertPages;
 		setDefaultValues : function() {
 			// Set URL and description to defaults.
 			// Leave the new tab setting as-is.
+			// Leave the display and template inputs as-is (use values in user meta).
 			inputs.slug.val('');
 			inputs.pageID.val('');
-			inputs.format.val('title');
-			inputs.format.change();
-			inputs.template.val('all');
 			inputs.extraClasses.val('');
 			inputs.extraID.val( '' );
 			inputs.extraInline.attr( 'checked', false );
 			inputs.search.val( '' );
 			inputs.search.data( 'type', 'text' );
 			inputs.search.keyup();
+
+			// inputs.format.val('title');
+			// inputs.format.change();
+			// inputs.template.val('all');
+			if ( inputs.format.val() == 'template' ) {
+				inputs.template.removeAttr( 'disabled' );
+				inputs.template.focus();
+			} else {
+				inputs.template.attr( 'disabled', 'disabled' );
+			}
 		},
 
 		close: function() {
