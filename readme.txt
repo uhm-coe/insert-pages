@@ -111,6 +111,11 @@ Just one! The plugin prevents you from embedding a page in itself, but you can t
 
 == Changelog ==
 
+= 3.5.5 =
+* Save user’s selected display and template in the TinyMCE dialog for restoring next time they insert a page. Props @ladygeekgeek for the idea!
+* Tested up to WordPress 5.4.2.
+* Bump lodash from 4.17.15 to 4.17.19 (dev dependency only).
+
 = 3.5.4 =
 * Support custom scripts and styles in inserted pages created with Visual Composer version 26.0.
 
