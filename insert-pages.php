@@ -87,8 +87,17 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 			// Register the [insert] shortcode.
 			add_shortcode( 'insert', array( $this, 'insert_pages_handle_shortcode_insert' ) );
 
-			// Register the gutenberg block so we can populate it via server side rendering.
-			if ( function_exists( 'register_block_type' ) && isset( $options['wpip_gutenberg_block'] ) && 'enabled' === $options['wpip_gutenberg_block'] ) {
+			// Register the gutenberg block so we can populate it via server side
+			// rendering. Note: only register it once (some plugins, like Advanced
+			// Custom Fields, create a scenario where this init hook gets called
+			// multiple times).
+			if (
+				function_exists( 'register_block_type' ) &&
+				isset( $options['wpip_gutenberg_block'] ) &&
+				'enabled' === $options['wpip_gutenberg_block'] &&
+				class_exists( 'WP_Block_Type_Registry' ) &&
+				! WP_Block_Type_Registry::get_instance()->is_registered( 'insert-pages/block' )
+			) {
 				// Automatically load dependencies and version.
 				$asset_file = include( plugin_dir_path( __FILE__ ) . 'lib/gutenberg-block/build/index.asset.php');
 
