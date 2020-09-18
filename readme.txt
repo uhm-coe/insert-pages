@@ -111,6 +111,13 @@ Just one! The plugin prevents you from embedding a page in itself, but you can t
 
 == Changelog ==
 
+= 3.5.6 =
+* Tested up to WordPress 5.5.1.
+* Update gutenberg block loading method to newer version.
+* Fix warning about Gutenberg block being registered multiple times if ACF is installed.
+* Fix Gutenberg devDependency security warnings.
+* Fix being unable to insert the same page twice if the first insert uses a custom template.
+
 = 3.5.5 =
 * Save user’s selected display and template in the TinyMCE dialog for restoring next time they insert a page. Props @ladygeekgeek for the idea!
 * Tested up to WordPress 5.4.2.
