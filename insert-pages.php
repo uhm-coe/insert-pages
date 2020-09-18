@@ -89,9 +89,28 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 
 			// Register the gutenberg block so we can populate it via server side rendering.
 			if ( function_exists( 'register_block_type' ) && isset( $options['wpip_gutenberg_block'] ) && 'enabled' === $options['wpip_gutenberg_block'] ) {
+				// Automatically load dependencies and version.
+				$asset_file = include( plugin_dir_path( __FILE__ ) . 'lib/gutenberg-block/build/index.asset.php');
+
+				wp_register_script(
+					'insert-pages-gutenberg-block',
+					plugins_url( 'lib/gutenberg-block/build/index.js', __FILE__ ),
+					$asset_file['dependencies'],
+					$asset_file['version']
+				);
+
+				wp_register_style(
+					'insert-pages-gutenberg-block',
+					plugins_url( 'lib/gutenberg-block/build/index.css', __FILE__ ),
+					array(),
+					$asset_file['version']
+				);
+
 				register_block_type(
 					'insert-pages/block',
 					array(
+						'editor_style' => 'insert-pages-gutenberg-block',
+						'editor_script' => 'insert-pages-gutenberg-block',
 						'attributes' => array(
 							'url' => array(
 								'type' => 'string',
@@ -181,20 +200,6 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 		public function insert_pages_enqueue_block_editor_assets() {
 			$options = get_option( 'wpip_settings' );
 			if ( isset( $options['wpip_gutenberg_block'] ) && 'enabled' === $options['wpip_gutenberg_block'] ) {
-				// Load the gutenberg block.
-				wp_enqueue_script(
-					'insert-pages-gutenberg-block',
-					plugins_url( 'lib/gutenberg-block/dist/block.js', __FILE__ ),
-					array( 'wp-i18n', 'wp-blocks', 'wp-editor', 'wp-components', 'wp-compose' ),
-					'20190613',
-					false
-				);
-				wp_enqueue_style(
-					'insert-pages-gutenberg-block',
-					plugins_url( 'lib/gutenberg-block/dist/block.css', __FILE__ ),
-					array(),
-					'20190613'
-				);
 			}
 		}
 
@@ -1497,7 +1502,4 @@ if ( isset( $insert_pages_plugin ) ) {
 	// Register Insert Pages shortcode widget.
 	require_once dirname( __FILE__ ) . '/widget.php';
 	add_action( 'widgets_init', array( $insert_pages_plugin, 'insert_pages_widgets_init' ) );
-
-	// Register Gutenberg block.
-	add_action( 'enqueue_block_editor_assets', array( $insert_pages_plugin, 'insert_pages_enqueue_block_editor_assets' ) );
 }
