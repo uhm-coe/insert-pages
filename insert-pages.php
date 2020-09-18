@@ -1001,6 +1001,16 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 						unset( $this->inserted_page_ids[ $key ] );
 					}
 				}
+			} elseif ( is_array( $inserted_page ) && ! empty( $inserted_page ) ) {
+				// Legacy template code populates $inserted_page with query_posts()
+				// output. Remove each from the stack (should just be a single page).
+				foreach ( $inserted_page as $page ) {
+					foreach ( $this->inserted_page_ids as $key => $page_id ) {
+						if ( $page_id === $page->ID ) {
+							unset( $this->inserted_page_ids[ $key ] );
+						}
+					}
+				}
 			}
 
 
