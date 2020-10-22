@@ -111,6 +111,9 @@ Just one! The plugin prevents you from embedding a page in itself, but you can t
 
 == Changelog ==
 
+= 3.5.7 =
+* Prevent Flamingo (Contact Forms 7 plugin) inbound messages with the same slug as an existing inserted page from showing up.
+
 = 3.5.6 =
 * Tested up to WordPress 5.5.1.
 * Update gutenberg block loading method to newer version.
