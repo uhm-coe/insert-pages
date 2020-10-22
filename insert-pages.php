@@ -1460,6 +1460,9 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 					'revision',
 					'customize_changeset',
 					'oembed_cache',
+					// Exclude Flamingo messages (created via Contact Form 7 submissions).
+					// See: https://wordpress.org/support/topic/plugin-hacked-14/
+					'flamingo_inbound',
 				),
 				true
 			);
