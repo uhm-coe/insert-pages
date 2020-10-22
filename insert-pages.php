@@ -1452,7 +1452,17 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 		 * @return boolean       Whether post type is insertable.
 		 */
 		private function is_post_type_insertable( $type ) {
-			return ! in_array( $type, array( 'nav_menu_item', 'attachment', 'revision', 'customize_changeset', 'oembed_cache' ), true );
+			return ! in_array(
+				$type,
+				array(
+					'nav_menu_item',
+					'attachment',
+					'revision',
+					'customize_changeset',
+					'oembed_cache',
+				),
+				true
+			);
 		}
 
 		/**
