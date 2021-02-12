@@ -7,7 +7,7 @@
  * Text Domain: insert-pages
  * Domain Path: /languages
  * License: GPL2
- * Version: 3.5.7
+ * Version: 3.5.8
  *
  * @package insert-pages
  */
