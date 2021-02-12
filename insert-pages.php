@@ -435,6 +435,10 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 				$_GET[ $param ] = $value;
 				$_REQUEST[ $param ] = $value;
 			}
+			$original_wp_query_vars = $GLOBALS['wp']->query_vars;
+			if ( ! empty( $querystring ) && isset( $GLOBALS['wp'] ) && method_exists( $GLOBALS['wp'], 'parse_request' ) ) {
+				$GLOBALS['wp']->parse_request( $querystring );
+			}
 
 			// Use "Normal" insert method (get_post).
 			if ( 'legacy' !== $options['wpip_insert_method'] ) {
@@ -991,6 +995,7 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 			// Unset any querystring params included in the shortcode.
 			$_GET = $original_get;
 			$_REQUEST = $original_request;
+			$GLOBALS['wp']->query_vars = $original_wp_query_vars;
 
 			// Loop detection: remove the page from the stack (so we can still insert
 			// the same page multiple times on another page, but prevent it from being
