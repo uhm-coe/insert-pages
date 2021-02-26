@@ -111,6 +111,10 @@ Just one! The plugin prevents you from embedding a page in itself, but you can t
 
 == Changelog ==
 
+= 3.5.9 =
+* Fix jQuery deprecation notices in WordPress 5.7.
+* Tested up to WordPress 5.7.
+
 = 3.5.8 =
 * Allow adding query vars for the inserted page (for example, to insert a specific tab of the WooCommerce My Account page: `[insert page=‘my-account’ display=‘content’ querystring=‘pagename=my-account&downloads’]`).
 * Tested up to WordPress 5.6.1.
