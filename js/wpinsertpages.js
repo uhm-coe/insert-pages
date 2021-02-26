@@ -1,9 +1,16 @@
-// Modified from WordPress Advanced Link dialog, wp-includes/js/wplink.js
+/**
+ * Modified from WordPress Advanced Link dialog, wp-includes/js/wplink.js
+ */
+
 /* global ajaxurl, tinymce, wpLinkL10n, setUserSetting, wpActiveEditor */
+
 var wpInsertPages;
 
 (function ( $ ) {
-	var inputs = {}, rivers = {}, editor, searchTimer, RiverInsertPages, QueryInsertPages;
+	var editor, searchTimer, RiverInsertPages, QueryInsertPages, correctedURL,
+		inputs = {},
+		rivers = {},
+		isTouch = ( 'ontouchend' in document );
 
 	wpInsertPages = {
 		timeToTriggerRiverInsertPages: 150,
@@ -19,43 +26,48 @@ var wpInsertPages;
 			inputs.backdrop = $( '#wp-insertpage-backdrop' );
 			inputs.submit = $('#wp-insertpage-submit' );
 			inputs.close = $( '#wp-insertpage-close' );
-			// Page info
+
+			// Input.
 			inputs.slug = $( '#insertpage-slug-field' );
 			inputs.pageID = $( '#insertpage-page-id' );
 			inputs.parentPageID = $( '#insertpage-parent-page-id' );
-			// Format field (title, link, content, all, choose a custom template ->)
+
+			// Format field (title, link, content, all, choose a custom template ->).
 			inputs.format = $( '#insertpage-format-select' );
-			// Extra fields (wrapper classes, inline checkbox, "visible to all" checkbox)
+
+			// Extra fields (wrapper classes, inline checkbox, "visible to all" checkbox).
 			inputs.extraClasses = $( '#insertpage-extra-classes' );
 			inputs.extraID = $( '#insertpage-extra-id' );
 			inputs.extraInline = $( '#insertpage-extra-inline' );
 			inputs.extraPublic = $( '#insertpage-extra-public' );
 			inputs.extraQuerystring = $( '#insertpage-extra-querystring' );
-			// Custom template select field
+
+			// Custom template select field.
 			inputs.template = $( '#insertpage-template-select' );
 			inputs.search = $( '#insertpage-search-field' );
-			// Build RiverInsertPagess
+
+			// Build rivers.
 			rivers.search = new RiverInsertPages( $( '#insertpage-search-results' ) );
 			rivers.recent = new RiverInsertPages( $( '#insertpage-most-recent-results' ) );
 			rivers.elements = inputs.dialog.find( '.query-results' );
 
-			// Bind event handlers
-			inputs.dialog.keydown( wpInsertPages.keydown );
-			inputs.dialog.keyup( wpInsertPages.keyup );
-			inputs.submit.click( function( event ){
+			// Bind event handlers.
+			inputs.dialog.on( 'keydown', wpInsertPages.keydown );
+			inputs.dialog.on( 'keyup', wpInsertPages.keyup );
+			inputs.submit.on( 'click', function( event ) {
 				event.preventDefault();
 				wpInsertPages.update();
 			});
-			inputs.close.add( inputs.backdrop ).add( '#wp-insertpage-cancel a' ).click( function( event ) {
+			inputs.close.add( inputs.backdrop ).add( '#wp-insertpage-cancel a' ).on( 'click', function( event ) {
 				event.preventDefault();
 				wpInsertPages.close();
 			});
 
-			$( '#insertpage-options-toggle' ).click( wpInsertPages.toggleInternalLinking );
+			$( '#insertpage-options-toggle' ).on( 'click', wpInsertPages.toggleInternalLinking );
 
 			rivers.elements.on('river-select', wpInsertPages.updateFields );
 
-			inputs.format.change( function() {
+			inputs.format.on( 'change', function() {
 				if ( inputs.format.val() == 'template' ) {
 					inputs.template.removeAttr( 'disabled' );
 					inputs.template.focus();
@@ -71,7 +83,7 @@ var wpInsertPages;
 				}, function (r) {}, 'json' );
 			});
 
-			inputs.template.change( function() {
+			inputs.template.on( 'change', function() {
 				// Save last selected template for this user.
 				$.post( ajaxurl, {
 					action : 'insertpage_save_presets',
@@ -81,12 +93,12 @@ var wpInsertPages;
 			});
 
 			// Set search type to plaintext if someone types in the search field.
-			// (Might have been set to 'slug' or 'id' if editing a current shortcode.)
-			inputs.search.keydown( function () {
+			// Might have been set to 'slug' or 'id' if editing a current shortcode.
+			inputs.search.on( 'keydown', function () {
 				inputs.search.data( 'type', 'text' );
 			});
 
-			inputs.search.keyup( function() {
+			inputs.search.on( 'keyup', function() {
 				var self = this;
 
 				window.clearTimeout( searchTimer );
@@ -520,7 +532,7 @@ var wpInsertPages;
 		this.change( search, type );
 		this.refresh();
 
-		$( '#wp-insertpage .query-results, #wp-insertpage #link-selector' ).scroll( function() {
+		$( '#wp-insertpage .query-results, #wp-insertpage #link-selector' ).on( 'scroll', function() {
 			self.maybeLoad();
 		});
 		element.on( 'click', 'li', function( event ) {

@@ -230,7 +230,7 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 				'wpinsertpages',
 				plugins_url( '/js/wpinsertpages.js', __FILE__ ),
 				array( 'wpdialogs' ),
-				'20200722',
+				'20210225',
 				false
 			);
 			wp_localize_script(
