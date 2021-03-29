@@ -111,6 +111,9 @@ Just one! The plugin prevents you from embedding a page in itself, but you can t
 
 == Changelog ==
 
+= 3.5.10 =
+* Allow Insert Pages TinyMCE widget to run in a front-end wp_editor().
+
 = 3.5.9 =
 * Fix jQuery deprecation notices in WordPress 5.7.
 * Tested up to WordPress 5.7.
