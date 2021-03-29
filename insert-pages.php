@@ -1156,7 +1156,7 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 			// wp-admin/includes/template.php will not be loaded, admin_head
 			// action will not be fired). If that's the case, just skip loading
 			// the Insert Pages tinymce button.
-			if ( ! is_admin() || ! function_exists( 'page_template_dropdown' ) ) {
+			if ( ! function_exists( 'page_template_dropdown' ) ) {
 				return;
 			}
 
