@@ -230,7 +230,7 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 				'wpinsertpages',
 				plugins_url( '/js/wpinsertpages.js', __FILE__ ),
 				array( 'wpdialogs' ),
-				'20210225',
+				'20210308',
 				false
 			);
 			wp_localize_script(
@@ -252,7 +252,7 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 				'wpinsertpagescss',
 				plugins_url( '/css/wpinsertpages.css', __FILE__ ),
 				array( 'wp-jquery-ui-dialog' ),
-				'20191101'
+				'20210408'
 			);
 
 			/**
