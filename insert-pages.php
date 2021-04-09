@@ -1200,6 +1200,13 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 				$templates[ $file ] = $name;
 			}
 
+			/**
+			 * Filter the available templates shown in the template dropdown.
+			 *
+			 * @param array $templates Array of template names keyed by their filename.
+			 */
+			$templates = apply_filters( 'insert_pages_available_templates', $templates );
+
 			// Get default values for the TinyMCE dialog fields. Note: can be
 			// overridden by the `insert_pages_tinymce_state` filter.
 			$tinymce_state = $this->get_tinymce_state();
