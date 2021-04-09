@@ -1174,54 +1174,53 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 			$post_id = isset( $_REQUEST['post'] ) && intval( $_REQUEST['post'] ) > 0 ? intval( $_REQUEST['post'] ) : '';
 
 			// display: none is required here, see #WP27605.
-			?><div id="wp-insertpage-backdrop" style="display: none"></div>
-			<div id="wp-insertpage-wrap" class="wp-core-ui<?php
-			if ( 1 === intval( get_user_setting( 'wpinsertpage', 0 ) ) ) :
-				?> options-panel-visible<?php
-			endif; ?>" style="display: none">
+			?>
+			<div id="wp-insertpage-backdrop" style="display: none"></div>
+			<div id="wp-insertpage-wrap" class="wp-core-ui<?php echo 1 === intval( get_user_setting( 'wpinsertpage', 0 ) ) ? ' options-panel-visible' : ''; ?>" style="display: none" role="dialog" aria-labelledby="insertpage-modal-title">
 			<form id="wp-insertpage" tabindex="-1">
 			<?php wp_nonce_field( 'internal-inserting', '_ajax_inserting_nonce', false ); ?>
 			<input type="hidden" id="insertpage-parent-page-id" value="<?php echo esc_attr( $post_id ); ?>" />
-			<div id="insertpage-modal-title">
-				<?php esc_html_e( 'Insert page', 'insert-pages' ); ?>
-				<div id="wp-insertpage-close" tabindex="0"></div>
-			</div>
+			<h1 id="insertpage-modal-title"><?php _e( 'Insert page', 'insert-pages' ); ?></h1>
+			<button type="button" id="wp-insertpage-close"><span class="screen-reader-text"><?php _e( 'Close' ); ?></span></button>
 			<div id="insertpage-selector">
 				<div id="insertpage-search-panel">
 					<div class="insertpage-search-wrapper">
 						<label>
-							<span class="search-label"><?php esc_html_e( 'Search', 'insert-pages' ); ?></span>
+							<span class="search-label"><?php _e( 'Search', 'insert-pages' ); ?></span>
 							<input type="search" id="insertpage-search-field" class="insertpage-search-field" autocomplete="off" />
 							<span class="spinner"></span>
 						</label>
 					</div>
-					<div id="insertpage-search-results" class="query-results">
+					<div id="insertpage-search-results" class="query-results" tabindex="0">
 						<ul></ul>
 						<div class="river-waiting">
 							<span class="spinner"></span>
 						</div>
 					</div>
-					<div id="insertpage-most-recent-results" class="query-results">
-						<div class="query-notice"><em><?php esc_html_e( 'No search term specified. Showing recent items.', 'insert-pages' ); ?></em></div>
+					<div id="insertpage-most-recent-results" class="query-results" tabindex="0">
+						<div class="query-notice" id="insertpage-query-notice-message">
+							<em class="query-notice-default"><?php _e( 'No search term specified. Showing recent items.', 'insert-pages' ); ?></em>
+							<em class="query-notice-hint screen-reader-text"><?php _e( 'Search or use up and down arrow keys to select an item.' ); ?></em>
+						</div>
 						<ul></ul>
 						<div class="river-waiting">
 							<span class="spinner"></span>
 						</div>
 					</div>
 				</div>
-				<p class="howto" id="insertpage-options-toggle"><?php esc_html_e( 'Options', 'insert-pages' ); ?></p>
+				<p class="howto" id="insertpage-options-toggle"><?php _e( 'Options', 'insert-pages' ); ?></p>
 				<div id="insertpage-options-panel">
 					<div class="insertpage-options-wrapper">
 						<label for="insertpage-slug-field">
-							<span><?php esc_html_e( 'Slug or ID', 'insert-pages' ); ?></span>
+							<span><?php _e( 'Slug or ID', 'insert-pages' ); ?></span>
 							<input id="insertpage-slug-field" type="text" autocomplete="off" />
 							<input id="insertpage-page-id" type="hidden" />
 						</label>
 					</div>
 					<div class="insertpage-format">
 						<label for="insertpage-format-select">
-							<?php esc_html_e( 'Display', 'insert-pages' ); ?>
 							<select name="insertpage-format-select" id="insertpage-format-select">
+							<?php esc_html_e( 'Display', 'insert-pages' ); ?>
 								<option value='title' <?php selected( $tinymce_state['format'], 'title' ); ?>><?php esc_html_e( 'Title', 'insert-pages' ); ?></option>
 								<option value='link' <?php selected( $tinymce_state['format'], 'link' ); ?>><?php esc_html_e( 'Link', 'insert-pages' ); ?></option>
 								<option value='excerpt' <?php selected( $tinymce_state['format'], 'excerpt' ); ?>><?php esc_html_e( 'Excerpt with title', 'insert-pages' ); ?></option>
@@ -1239,26 +1238,26 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 					</div>
 					<div class="insertpage-extra">
 						<label for="insertpage-extra-classes">
-							<?php esc_html_e( 'Extra Classes', 'insert-pages' ); ?>:
+							<?php _e( 'Extra Classes', 'insert-pages' ); ?>
 							<input id="insertpage-extra-classes" type="text" autocomplete="off" />
 						</label>
 						<label for="insertpage-extra-id">
-							<?php esc_html_e( 'ID', 'insert-pages' ); ?>:
+							<?php _e( 'ID', 'insert-pages' ); ?>
 							<input id="insertpage-extra-id" type="text" autocomplete="off" />
 						</label>
 						<label for="insertpage-extra-inline">
-							<?php esc_html_e( 'Inline?', 'insert-pages' ); ?>
+							<?php _e( 'Inline?', 'insert-pages' ); ?>
 							<input id="insertpage-extra-inline" type="checkbox" />
 						</label>
 						<br />
 						<label for="insertpage-extra-querystring">
-							<?php esc_html_e( 'Querystring', 'insert-pages' ); ?>
+							<?php _e( 'Querystring', 'insert-pages' ); ?>
 							<input id="insertpage-extra-querystring" type="text" autocomplete="off" />
 						</label>
 						<br />
 						<label for="insertpage-extra-public">
 							<input id="insertpage-extra-public" type="checkbox" />
-							<?php esc_html_e( 'Anonymous users can see this inserted even if its status is private', 'insert-pages' ); ?>
+							<?php _e( 'Anonymous users can see this inserted even if its status is private', 'insert-pages' ); ?>
 						</label>
 					</div>
 				</div>
@@ -1268,7 +1267,7 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 					<input type="submit" value="<?php esc_attr_e( 'Insert Page', 'insert-pages' ); ?>" class="button button-primary" id="wp-insertpage-submit" name="wp-insertpage-submit">
 				</div>
 				<div id="wp-insertpage-cancel">
-					<a class="submitdelete deletion" href="#"><?php esc_html_e( 'Cancel', 'insert-pages' ); ?></a>
+					<a class="submitdelete deletion" href="#"><?php _e( 'Cancel', 'insert-pages' ); ?></a>
 				</div>
 			</div>
 			</form>
