@@ -1536,6 +1536,23 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 				)
 			);
 
+			/**
+			 * Filter the TinyMCE dialog field defaults.
+			 *
+			 * @param array $tinymce_state Array of field defaults for the TinyMCE modal.
+			 *  'format'           (string) Display format. Default 'title'.
+			 *  'template'         (string) Custom template. Default 'all'.
+			 *  'class'            (string) HTML wrapper class. Default ''.
+			 *  'id'               (string) HTML wrapper id. Default ''.
+			 *  'querystring'      (string) Querystring params. Default ''.
+			 *  'inline'           (bool)   Use <span> element for wrapper. Default false.
+			 *  'public'           (bool)   Whether anonymous users can see this page if
+			 *                              its status is Private. Default false.
+			 *  'hide_querystring' (bool)   Skip rendering querystring field. Default false.
+			 *  'hide_public'      (bool)   Skip rendering public field. Default false.
+			 */
+			$tinymce_state = apply_filters( 'insert_pages_tinymce_state', $tinymce_state );
+
 			return $tinymce_state;
 		}
 
