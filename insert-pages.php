@@ -46,6 +46,12 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 		 */
 		protected $inserted_page_ids;
 
+		/**
+		 * Flag to only render the TinyMCE plugin dialog once.
+		 *
+		 * @var boolean
+		 */
+		private static $link_dialog_printed = false;
 
 		/**
 		 * Singleton plugin instance.
@@ -1145,7 +1151,9 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 		}
 
 		/**
-		 * Modified from /wp-admin/includes/internal-linking.php, function wp_link_dialog()
+		 * Modified from /wp-includes/class-wp-editor.php, function
+		 * wp_link_dialog().
+		 *
 		 * Dialog for internal linking.
 		 *
 		 * @since 3.1.0
@@ -1159,6 +1167,13 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 			if ( ! function_exists( 'page_template_dropdown' ) ) {
 				return;
 			}
+
+			// Run once.
+			if ( self::$link_dialog_printed ) {
+				return;
+			}
+
+			self::$link_dialog_printed = true;
 
 			// Get user's previously selected display and template to restore (if any).
 			$tinymce_state = get_user_meta( get_current_user_id(), 'insert_pages_tinymce_state', true );
