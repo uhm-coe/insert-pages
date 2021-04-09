@@ -1386,7 +1386,7 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 				'order' => 'DESC',
 				'orderby' => 'post_date',
 				'posts_per_page' => 20,
-				'post__not_in' => array( $args['pageID'] ),
+				// 'post__not_in' => array( $args['pageID'] ), // Remove?
 			);
 
 			$args['pagenum'] = isset( $args['pagenum'] ) ? absint( $args['pagenum'] ) : 1;

@@ -734,7 +734,7 @@
 
 			this.querying = true;
 
-			query.pageID = inputs.pageID.val();
+			// query.pageID = inputs.pageID.val(); // Remove?
 
 			$.post( window.ajaxurl, query, function( r ) {
 				self.page++;
