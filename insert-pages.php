@@ -54,6 +54,14 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 		private static $link_dialog_printed = false;
 
 		/**
+		 * Flag checked when rendering TinyMCE modal to ensure that required scripts
+		 * and styles were enqueued (normally done in `admin_init` hook).
+		 *
+		 * @var boolean
+		 */
+		private static $is_admin_initialized = false;
+
+		/**
 		 * Singleton plugin instance.
 		 *
 		 * @var object Plugin instance.
@@ -279,6 +287,8 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 				false,
 				plugin_basename( dirname( __FILE__ ) ) . '/languages'
 			);
+
+			self::$is_admin_initialized = true;
 		}
 
 
@@ -1048,7 +1058,7 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 		 * @return array          TinyMCE buttons with Insert Pages button.
 		 */
 		public function insert_pages_handle_filter_mce_buttons( $buttons ) {
-			if ( ! in_array( 'wpInsertPages_button', $buttons, true ) ) {
+			if ( self::$is_admin_initialized && ! in_array( 'wpInsertPages_button', $buttons, true ) ) {
 				array_push( $buttons, 'wpInsertPages_button' );
 			}
 			return $buttons;
@@ -1061,7 +1071,7 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 		 * @return array          TinyMCE plugins with Insert Pages plugin.
 		 */
 		public function insert_pages_handle_filter_mce_external_plugins( $plugins ) {
-			if ( ! array_key_exists( 'wpInsertPages', $plugins ) ) {
+			if ( self::$is_admin_initialized && ! array_key_exists( 'wpInsertPages', $plugins ) ) {
 				$plugins['wpInsertPages'] = plugins_url( '/js/wpinsertpages_plugin.js', __FILE__ );
 			}
 			return $plugins;
@@ -1159,12 +1169,8 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 		 * @since 3.1.0
 		 */
 		public function insert_pages_wp_tinymce_dialog() {
-			// If wp_editor() is being called outside of an admin context,
-			// required dependencies for Insert Pages will be missing (e.g.,
-			// wp-admin/includes/template.php will not be loaded, admin_head
-			// action will not be fired). If that's the case, just skip loading
-			// the Insert Pages tinymce button.
-			if ( ! function_exists( 'page_template_dropdown' ) ) {
+			// Don't run if required scripts and styles weren't enqueued.
+			if ( ! self::$is_admin_initialized ) {
 				return;
 			}
 
