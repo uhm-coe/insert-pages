@@ -299,7 +299,7 @@
 				if ( matches && matches.length > 1 ) {
 					inputs.extraClasses.val( matches[1] );
 				} else {
-					inputs.extraClasses.val( '' );
+					inputs.extraClasses.val( wpInsertPagesL10n.hasOwnProperty( 'tinymce_state' ) ? wpInsertPagesL10n.tinymce_state.class : '' );
 				}
 
 				// Update extra ID.
@@ -308,7 +308,7 @@
 				if ( matches && matches.length > 1 ) {
 					inputs.extraID.val( matches[1] );
 				} else {
-					inputs.extraID.val( '' );
+					inputs.extraID.val( wpInsertPagesL10n.hasOwnProperty( 'tinymce_state' ) ? wpInsertPagesL10n.tinymce_state.id : '' );
 				}
 
 				// Update extra inline (i.e., use span instead of div for wrapper).
@@ -317,7 +317,7 @@
 				if ( matches && matches.length > 0 ) {
 					inputs.extraInline.attr( 'checked', true );
 				} else {
-					inputs.extraInline.attr( 'checked', false );
+					inputs.extraInline.attr( 'checked', wpInsertPagesL10n.hasOwnProperty( 'tinymce_state' ) ? wpInsertPagesL10n.tinymce_state.inline : false );
 				}
 
 				// If this is a private page, reveal the checkbox "Visible to everyone?"
@@ -326,7 +326,7 @@
 				if ( matches && matches.length > 0 ) {
 					inputs.extraPublic.attr( 'checked', true );
 				} else {
-					inputs.extraPublic.attr( 'checked', false );
+					inputs.extraPublic.attr( 'checked', wpInsertPagesL10n.hasOwnProperty( 'tinymce_state' ) ? wpInsertPagesL10n.tinymce_state.public : false );
 				}
 
 				// Update extra querystring.
@@ -337,7 +337,7 @@
 					// closing bracket will terminate the shortcode).
 					inputs.extraQuerystring.val( matches[1].replace( /&amp;/g, '&' ) );
 				} else {
-					inputs.extraQuerystring.val( '' );
+					inputs.extraQuerystring.val( wpInsertPagesL10n.hasOwnProperty( 'tinymce_state' ) ? wpInsertPagesL10n.tinymce_state.querystring : '' );
 				}
 
 				// Update save prompt.
@@ -428,24 +428,25 @@
 		},
 
 		setDefaultValues: function() {
-			// Set URL and description to defaults.
-			// Leave the new tab setting as-is.
-			// Leave the display and template inputs as-is (use values in user meta).
+			// Set inserted page slug/ID and search term to defaults.
 			inputs.slug.val('');
 			inputs.pageID.val('');
-			inputs.extraClasses.val('');
-			inputs.extraID.val( '' );
-			inputs.extraInline.attr( 'checked', false );
 			inputs.search.val( '' );
 			inputs.search.data( 'type', 'text' );
 			inputs.search.keyup();
 
-			// inputs.format.val('title');
-			// inputs.format.change();
-			// inputs.template.val('all');
+			// Restore field defaults from initial defaults.
+			// inputs.format.val('title'); // Leave at last-selected value.
+			// inputs.template.val('all'); // Leave at last-selected value.
+			inputs.extraClasses.val( wpInsertPagesL10n.hasOwnProperty( 'tinymce_state' ) ? wpInsertPagesL10n.tinymce_state.class : '' );
+			inputs.extraID.val( wpInsertPagesL10n.hasOwnProperty( 'tinymce_state' ) ? wpInsertPagesL10n.tinymce_state.id : '' );
+			inputs.extraQuerystring.val( wpInsertPagesL10n.hasOwnProperty( 'tinymce_state' ) ? wpInsertPagesL10n.tinymce_state.querystring : '' );
+			inputs.extraInline.attr( 'checked', wpInsertPagesL10n.hasOwnProperty( 'tinymce_state' ) ? wpInsertPagesL10n.tinymce_state.inline : false );
+			inputs.extraPublic.attr( 'checked', wpInsertPagesL10n.hasOwnProperty( 'tinymce_state' ) ? wpInsertPagesL10n.tinymce_state.public : false );
+
+			// Enable template dropdown if display format is set to 'template'.
 			if ( inputs.format.val() == 'template' ) {
 				inputs.template.removeAttr( 'disabled' );
-				inputs.template.focus();
 			} else {
 				inputs.template.attr( 'disabled', 'disabled' );
 			}

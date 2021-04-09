@@ -258,6 +258,7 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 					'l10n_print_after' => 'try{convertEntities(wpInsertPagesL10n);}catch(e){};',
 					'format' => $options['wpip_format'],
 					'private' => __( 'Private' ),
+					'tinymce_state' => $this->get_tinymce_state(),
 				)
 			);
 
@@ -305,13 +306,13 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 			// Shortcode attributes.
 			$attributes = shortcode_atts(
 				array(
-					'page' => '0',
-					'display' => 'all',
-					'class' => '',
-					'id' => '',
-					'inline' => false,
-					'public' => false,
+					'page'        => '0',
+					'display'     => 'all',
+					'class'       => '',
+					'id'          => '',
 					'querystring' => '',
+					'inline'      => false,
+					'public'      => false,
 				),
 				$atts,
 				'insert'
@@ -1181,14 +1182,27 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 
 			self::$link_dialog_printed = true;
 
-			// Get user's previously selected display and template to restore (if any).
-			$tinymce_state = get_user_meta( get_current_user_id(), 'insert_pages_tinymce_state', true );
-			if ( empty( $tinymce_state ) ) {
-					$tinymce_state = array(
-						'format'   => 'title',
-						'template' => 'all',
-					);
+			$formats = array(
+				'title'          => __( 'Title', 'insert-pages' ),
+				'link'           => __( 'Link', 'insert-pages' ),
+				'excerpt'        => __( 'Excerpt with title', 'insert-pages' ),
+				'excerpt-only'   => __( 'Excerpt only (no title)', 'insert-pages' ),
+				'content'        => __( 'Content', 'insert-pages' ),
+				'post-thumbnail' => __( 'Post Thumbnail', 'insert-pages' ),
+				'all'            => __( 'All (includes custom fields)', 'insert-pages' ),
+				'template'       => __( 'Use a custom template', 'insert-pages' ) . ' &raquo;',
+			);
+
+			$templates = array(
+				'all' => __( 'Default Template', 'insert-pages' ),
+			);
+			foreach ( wp_get_theme()->get_page_templates() as $file => $name ) {
+				$templates[ $file ] = $name;
 			}
+
+			// Get default values for the TinyMCE dialog fields. Note: can be
+			// overridden by the `insert_pages_tinymce_state` filter.
+			$tinymce_state = $this->get_tinymce_state();
 
 			// Get ID of post currently being edited.
 			// phpcs:ignore WordPress.Security.NonceVerification.Recommended
@@ -1197,7 +1211,7 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 			// display: none is required here, see #WP27605.
 			?>
 			<div id="wp-insertpage-backdrop" style="display: none"></div>
-			<div id="wp-insertpage-wrap" class="wp-core-ui<?php echo 1 === intval( get_user_setting( 'wpinsertpage', 0 ) ) ? ' options-panel-visible' : ''; ?>" style="display: none" role="dialog" aria-labelledby="insertpage-modal-title">
+			<div id="wp-insertpage-wrap" class="wp-core-ui<?php echo 1 === intval( get_user_setting( 'wpinsertpage', 0 ) ) ? ' options-panel-visible' : ''; ?><?php echo empty( $tinymce_state['hide_querystring'] ) ? '' : ' querystring-hidden'; ?><?php echo empty( $tinymce_state['hide_public'] ) ? '' : ' public-hidden'; ?>" style="display: none;" role="dialog" aria-labelledby="insertpage-modal-title">
 			<form id="wp-insertpage" tabindex="-1">
 			<?php wp_nonce_field( 'internal-inserting', '_ajax_inserting_nonce', false ); ?>
 			<input type="hidden" id="insertpage-parent-page-id" value="<?php echo esc_attr( $post_id ); ?>" />
@@ -1240,44 +1254,40 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 					</div>
 					<div class="insertpage-format">
 						<label for="insertpage-format-select">
-							<select name="insertpage-format-select" id="insertpage-format-select">
-							<?php esc_html_e( 'Display', 'insert-pages' ); ?>
-								<option value='title' <?php selected( $tinymce_state['format'], 'title' ); ?>><?php esc_html_e( 'Title', 'insert-pages' ); ?></option>
-								<option value='link' <?php selected( $tinymce_state['format'], 'link' ); ?>><?php esc_html_e( 'Link', 'insert-pages' ); ?></option>
-								<option value='excerpt' <?php selected( $tinymce_state['format'], 'excerpt' ); ?>><?php esc_html_e( 'Excerpt with title', 'insert-pages' ); ?></option>
-								<option value='excerpt-only' <?php selected( $tinymce_state['format'], 'excerpt-only' ); ?>><?php esc_html_e( 'Excerpt only (no title)', 'insert-pages' ); ?></option>
-								<option value='content' <?php selected( $tinymce_state['format'], 'content' ); ?>><?php esc_html_e( 'Content', 'insert-pages' ); ?></option>
-								<option value='post-thumbnail' <?php selected( $tinymce_state['format'], 'post-thumbnail' ); ?>><?php esc_html_e( 'Post Thumbnail', 'insert-pages' ); ?></option>
-								<option value='all' <?php selected( $tinymce_state['format'], 'all' ); ?>><?php esc_html_e( 'All (includes custom fields)', 'insert-pages' ); ?></option>
-								<option value='template' <?php selected( $tinymce_state['format'], 'template' ); ?>><?php esc_html_e( 'Use a custom template', 'insert-pages' ); ?> &raquo;</option>
-							</select>
-							<select name="insertpage-template-select" id="insertpage-template-select" disabled="true">
-								<option value='all' <?php selected( $tinymce_state['template'], 'all' ); ?>><?php esc_html_e( 'Default Template', 'insert-pages' ); ?></option>
-								<?php page_template_dropdown( $tinymce_state['template'] ); ?>
-							</select>
+							<?php _e( 'Display', 'insert-pages' ); ?>
 						</label>
+						<select name="insertpage-format-select" id="insertpage-format-select">
+							<?php foreach ( $formats as $format => $label ) : ?>
+								<option value='<?php echo esc_attr( $format ); ?>' <?php selected( $tinymce_state['format'], $format ); ?>><?php echo esc_html( $label ); ?></option>
+							<?php endforeach; ?>
+						</select>
+						<select name="insertpage-template-select" id="insertpage-template-select" disabled="true">
+							<?php foreach ( $templates as $template => $label ) : ?>
+								<option value='<?php echo esc_attr( $template ); ?>' <?php selected( $tinymce_state['template'], $template ); ?>><?php echo esc_html( $label ); ?></option>
+							<?php endforeach; ?>
+						</select>
 					</div>
 					<div class="insertpage-extra">
 						<label for="insertpage-extra-classes">
 							<?php _e( 'Extra Classes', 'insert-pages' ); ?>
-							<input id="insertpage-extra-classes" type="text" autocomplete="off" />
+							<input id="insertpage-extra-classes" type="text" autocomplete="off" value="<?php echo empty( $tinymce_state['class'] ) ? '' : esc_attr( $tinymce_state['class'] ); ?>" />
 						</label>
 						<label for="insertpage-extra-id">
 							<?php _e( 'ID', 'insert-pages' ); ?>
-							<input id="insertpage-extra-id" type="text" autocomplete="off" />
+							<input id="insertpage-extra-id" type="text" autocomplete="off" value="<?php echo empty( $tinymce_state['id'] ) ? '' : esc_attr( $tinymce_state['id'] ); ?>" />
 						</label>
 						<label for="insertpage-extra-inline">
 							<?php _e( 'Inline?', 'insert-pages' ); ?>
-							<input id="insertpage-extra-inline" type="checkbox" />
+							<input id="insertpage-extra-inline" type="checkbox" <?php checked( $tinymce_state['inline'] ); ?> />
 						</label>
-						<br />
-						<label for="insertpage-extra-querystring">
+						<br class="<?php echo empty( $tinymce_state['hide_querystring'] ) ? '' : 'hidden'; ?>" />
+						<label for="insertpage-extra-querystring" class="<?php echo empty( $tinymce_state['hide_querystring'] ) ? '' : 'hidden'; ?>">
 							<?php _e( 'Querystring', 'insert-pages' ); ?>
-							<input id="insertpage-extra-querystring" type="text" autocomplete="off" />
+							<input id="insertpage-extra-querystring" type="text" autocomplete="off" value="<?php echo empty( $tinymce_state['querystring'] ) ? '' : esc_attr( $tinymce_state['querystring'] ); ?>" />
 						</label>
-						<br />
-						<label for="insertpage-extra-public">
-							<input id="insertpage-extra-public" type="checkbox" />
+						<br class="<?php echo empty( $tinymce_state['hide_public'] ) ? '' : 'hidden'; ?>" />
+						<label for="insertpage-extra-public" class="<?php echo empty( $tinymce_state['hide_public'] ) ? '' : 'hidden'; ?>">
+							<input id="insertpage-extra-public" type="checkbox" <?php checked( $tinymce_state['public'] ); ?> />
 							<?php _e( 'Anonymous users can see this inserted even if its status is private', 'insert-pages' ); ?>
 						</label>
 					</div>
@@ -1491,6 +1501,35 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 				),
 				true
 			);
+		}
+
+		/**
+		 * Fetch the default values for the TinyMCE modal fields.
+		 */
+		private function get_tinymce_state() {
+			// Get user's previously selected display and template to restore (if any).
+			$tinymce_state = get_user_meta( get_current_user_id(), 'insert_pages_tinymce_state', true );
+			if ( empty( $tinymce_state ) ) {
+				$tinymce_state = array();
+			}
+
+			// Merge user's format and template defaults with global defaults.
+			$tinymce_state = wp_parse_args(
+				$tinymce_state,
+				array(
+					'format'           => 'title',
+					'template'         => 'all',
+					'class'            => '',
+					'id'               => '',
+					'querystring'      => '',
+					'inline'           => false,
+					'public'           => false,
+					'hide_querystring' => false,
+					'hide_public'      => false,
+				)
+			);
+
+			return $tinymce_state;
 		}
 
 		/**
