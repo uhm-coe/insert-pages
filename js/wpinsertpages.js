@@ -4,9 +4,9 @@
  * @output wp-includes/js/wplink.js
  */
 
-/* global wpInsertPages */
+ /* global wpInsertPages */
 
-(function ( $, wpInsertPagesL10n, wp ) {
+( function( $, wpInsertPagesL10n, wp ) {
 	var editor, searchTimer, RiverInsertPages, QueryInsertPages, correctedURL,
 		inputs = {},
 		rivers = {},
