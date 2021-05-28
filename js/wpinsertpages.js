@@ -349,20 +349,27 @@
 			}
 		},
 
-		close: function() {
-			if ( ! wpInsertPages.isMCE() ) {
-				wpInsertPages.textarea.focus();
+		close: function( reset ) {
+			$( document.body ).removeClass( 'modal-open' );
+			wpInsertPages.modalOpen = false;
 
-				if ( wpInsertPages.range ) {
-					wpInsertPages.range.moveToBookmark( wpInsertPages.range.getBookmark() );
-					wpInsertPages.range.select();
+			if ( reset !== 'noReset' ) {
+				if ( ! wpInsertPages.isMCE() ) {
+					wpInsertPages.textarea.focus();
+
+					if ( wpInsertPages.range ) {
+						wpInsertPages.range.moveToBookmark( wpInsertPages.range.getBookmark() );
+						wpInsertPages.range.select();
+					}
+				} else {
+					editor.focus();
 				}
-			} else {
-				editor.focus();
 			}
 
 			inputs.backdrop.hide();
 			inputs.wrap.hide();
+
+			$( document ).trigger( 'wpinsertpages-close', inputs.wrap );
 		},
 
 		getAttrs: function() {

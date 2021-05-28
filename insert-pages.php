@@ -244,7 +244,7 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 				'wpinsertpages',
 				plugins_url( '/js/wpinsertpages.js', __FILE__ ),
 				array( 'wpdialogs' ),
-				'20210308',
+				'20210528',
 				false
 			);
 			wp_localize_script(
@@ -1301,11 +1301,11 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 				</div>
 			</div>
 			<div class="submitbox">
+				<div id="wp-insertpage-cancel">
+					<button type="button" class="button"><?php _e( 'Cancel', 'insert-pages' ); ?></button>
+				</div>
 				<div id="wp-insertpage-update">
 					<input type="submit" value="<?php esc_attr_e( 'Insert Page', 'insert-pages' ); ?>" class="button button-primary" id="wp-insertpage-submit" name="wp-insertpage-submit">
-				</div>
-				<div id="wp-insertpage-cancel">
-					<a class="submitdelete deletion" href="#"><?php _e( 'Cancel', 'insert-pages' ); ?></a>
 				</div>
 			</div>
 			</form>
