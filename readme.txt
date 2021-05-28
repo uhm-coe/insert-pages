@@ -111,6 +111,9 @@ Just one! The plugin prevents you from embedding a page in itself, but you can t
 
 == Changelog ==
 
+= 3.6.1 =
+* Fix TinyMCE dialog not closing properly. Props @astaryne for the report!
+
 = 3.6.0 =
 * Add `insert_pages_tinymce_state` filter to set TinyMCE modal field defaults. [Details](https://wordpress.org/support/topic/customise-modal-content/)
 * Add `insert_pages_available_templates` filter to customize the list of allowed custom templates. [Details](https://wordpress.org/support/topic/customise-modal-content/)
