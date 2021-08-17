@@ -1,7 +1,6 @@
 === Insert Pages ===
 Contributors: figureone, the_magician
 Tags: insert, pages, shortcode, embed
-Requires at least: 3.0.1
 Tested up to: 5.7
 Stable tag: trunk
 License: GPLv2 or later
