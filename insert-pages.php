@@ -649,38 +649,7 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 							$content = apply_filters( 'the_content', $content );
 						}
 						echo $content;
-						/**
-						 * Meta.
-						 *
-						 * @see https://core.trac.wordpress.org/browser/tags/4.4/src/wp-includes/post-template.php#L968
-						 */
-						$keys = get_post_custom_keys( $inserted_page->ID );
-						if ( $keys ) {
-							echo "<ul class='post-meta'>\n";
-							foreach ( (array) $keys as $key ) {
-								$keyt = trim( $key );
-								if ( is_protected_meta( $keyt, 'post' ) ) {
-									continue;
-								}
-								$value = get_post_custom_values( $key, $inserted_page->ID );
-								if ( is_array( $value ) ) {
-									$values = array_map( 'trim', $value );
-									$value = implode( $values, ', ' );
-								}
-
-								/**
-								 * Filter the HTML output of the li element in the post custom fields list.
-								 *
-								 * @since 2.2.0
-								 *
-								 * @param string $html  The HTML output for the li element.
-								 * @param string $key   Meta key.
-								 * @param string $value Meta value.
-								 */
-								echo apply_filters( 'the_meta_key', "<li><span class='post-meta-key'>$key:</span> $value</li>\n", $key, $value );
-							}
-							echo "</ul>\n";
-						}
+						$this->the_meta( $inserted_page->ID );
 						break;
 
 					default: // Display is either invalid, or contains a template file to use.
@@ -948,7 +917,7 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 							} else {
 								echo get_the_content();
 							}
-							the_meta();
+							$this->the_meta();
 							// Render any <!--nextpage--> pagination links.
 							wp_link_pages( array(
 								'before' => '<div class="page-links">' . __( 'Pages:', 'twentynineteen' ),
@@ -1564,6 +1533,61 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 		 */
 		public function insert_pages_widgets_init() {
 			register_widget( 'InsertPagesWidget' );
+		}
+
+		/**
+		 * Render post meta as an unordered list.
+		 *
+		 * Note: This function sanitizes postmeta value via wp_kses_post(); the
+ 		 * core WordPress function the_meta() does not.
+		 *
+		 * @see https://developer.wordpress.org/reference/functions/the_meta/
+		 *
+		 * @param  int $post_id Post ID.
+		 */
+		public function the_meta( $post_id = 0 ) {
+			if ( empty( $post_id ) ) {
+				$post_id = get_the_ID();
+			}
+
+			$keys = get_post_custom_keys( $post_id );
+			if ( $keys ) {
+				$li_html = '';
+				foreach ( (array) $keys as $key ) {
+					$keyt = trim( $key );
+					if ( is_protected_meta( $keyt, 'post' ) ) {
+						continue;
+					}
+
+					$values = array_map( 'trim', get_post_custom_values( $key, $post_id ) );
+					$value  = implode( ', ', $values );
+
+					// Sanitize post meta values.
+					$value = wp_kses_post( $value );
+
+					$html = sprintf(
+						"<li><span class='post-meta-key'>%s</span> %s</li>\n",
+						/* translators: %s: Post custom field name. */
+						sprintf( _x( '%s:', 'Post custom field name' ), $key ),
+						$value
+					);
+
+					/**
+					 * Filters the HTML output of the li element in the post custom fields list.
+					 *
+					 * @since 2.2.0
+					 *
+					 * @param string $html  The HTML output for the li element.
+					 * @param string $key   Meta key.
+					 * @param string $value Meta value.
+					 */
+					$li_html .= apply_filters( 'the_meta_key', $html, $key, $value );
+				}
+
+				if ( $li_html ) {
+					echo "<ul class='post-meta'>\n{$li_html}</ul>\n";
+				}
+			}
 		}
 
 	}
