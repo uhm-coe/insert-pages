@@ -1422,6 +1422,16 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 				// 'post__not_in' => array( $args['pageID'] ), // Remove?
 			);
 
+			// Show non-admins only their own posts if the option is enabled.
+			$options = get_option( 'wpip_settings' );
+			if (
+				! empty( $options['wpip_classic_editor_hide_others_posts'] ) &&
+				'enabled' === $options['wpip_classic_editor_hide_others_posts'] &&
+				! current_user_can( 'edit_others_posts' )
+			) {
+				$query['author'] = get_current_user_id();
+			}
+
 			$args['pagenum'] = isset( $args['pagenum'] ) ? absint( $args['pagenum'] ) : 1;
 			$query['offset'] = $args['pagenum'] > 1 ? $query['posts_per_page'] * ( $args['pagenum'] - 1 ) : 0;
 

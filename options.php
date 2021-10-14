@@ -63,6 +63,13 @@ function wpip_settings_init() {
 		'wpipSettings',
 		'wpip_section'
 	);
+	add_settings_field(
+		'wpip_classic_editor_hide_others_posts',
+		__( 'TinyMCE capabilities', 'insert-pages' ),
+		'wpip_classic_editor_hide_others_posts_render',
+		'wpipSettings',
+		'wpip_section'
+	);
 }
 add_action( 'admin_init', 'wpip_settings_init' );
 
@@ -102,6 +109,10 @@ function wpip_set_defaults() {
 
 	if ( ! array_key_exists( 'wpip_gutenberg_block', $options ) ) {
 		$options['wpip_gutenberg_block'] = 'enabled';
+	}
+
+	if ( empty( $options['wpip_classic_editor_hide_others_posts'] ) ) {
+		$options['wpip_classic_editor_hide_others_posts'] = 'disabled';
 	}
 
 	update_option( 'wpip_settings', $options );
@@ -217,5 +228,23 @@ function wpip_gutenberg_block_render() {
 	?>
 	<input type='radio' name='wpip_settings[wpip_gutenberg_block]' <?php checked( $options['wpip_gutenberg_block'], 'enabled' ); ?> id="wpip_gutenberg_block_enabled" value='enabled'><label for="wpip_gutenberg_block_enabled">Enable Insert Pages Gutenberg block.</label><br />
 	<input type='radio' name='wpip_settings[wpip_gutenberg_block]' <?php checked( $options['wpip_gutenberg_block'], 'disabled' ); ?> id="wpip_gutenberg_block_disabled" value='disabled'><label for="wpip_gutenberg_block_disabled">Disable Insert Pages Gutenberg block.</label>
+	<?php
+}
+
+/**
+ * Print 'TinyMCE capabilities' setting.
+ *
+ * @return void
+ */
+function wpip_classic_editor_hide_others_posts_render() {
+	$options = get_option( 'wpip_settings' );
+	if ( false === $options || ! is_array( $options ) || empty( $options['wpip_classic_editor_hide_others_posts'] ) ) {
+		$options = wpip_set_defaults();
+	}
+dl($options);
+	?>
+	<input type='radio' name='wpip_settings[wpip_classic_editor_hide_others_posts]' <?php checked( $options['wpip_classic_editor_hide_others_posts'], 'enabled' ); ?> id="wpip_classic_editor_hide_others_posts_enabled" value='enabled'><label for="wpip_classic_editor_hide_others_posts_enabled">Authors and Contributors only see their own content to insert.</label><br />
+	<input type='radio' name='wpip_settings[wpip_classic_editor_hide_others_posts]' <?php checked( $options['wpip_classic_editor_hide_others_posts'], 'disabled' ); ?> id="wpip_classic_editor_hide_others_posts_disabled" value='disabled'><label for="wpip_classic_editor_hide_others_posts_disabled">Authors and Contributors see all published content to insert.</label><br />
+	<small><em>Note: this option only restricts Contributors and Authors (i.e., the roles without the <code>edit_others_posts</code> capability) from seeing other's content in the TinyMCE Insert Page popup; they can still insert any published content if they know the page slug.</em></small>
 	<?php
 }
