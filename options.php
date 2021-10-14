@@ -241,7 +241,6 @@ function wpip_classic_editor_hide_others_posts_render() {
 	if ( false === $options || ! is_array( $options ) || empty( $options['wpip_classic_editor_hide_others_posts'] ) ) {
 		$options = wpip_set_defaults();
 	}
-dl($options);
 	?>
 	<input type='radio' name='wpip_settings[wpip_classic_editor_hide_others_posts]' <?php checked( $options['wpip_classic_editor_hide_others_posts'], 'enabled' ); ?> id="wpip_classic_editor_hide_others_posts_enabled" value='enabled'><label for="wpip_classic_editor_hide_others_posts_enabled">Authors and Contributors only see their own content to insert.</label><br />
 	<input type='radio' name='wpip_settings[wpip_classic_editor_hide_others_posts]' <?php checked( $options['wpip_classic_editor_hide_others_posts'], 'disabled' ); ?> id="wpip_classic_editor_hide_others_posts_disabled" value='disabled'><label for="wpip_classic_editor_hide_others_posts_disabled">Authors and Contributors see all published content to insert.</label><br />
