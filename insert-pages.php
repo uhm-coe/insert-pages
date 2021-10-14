@@ -725,6 +725,7 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 						'post_status' => $attributes['public'] ? array( 'publish', 'private' ) : array( 'publish' ),
 					);
 				}
+
 				// We save the previous query state here instead of using
 				// wp_reset_query() because wp_reset_query() only has a single stack
 				// variable ($GLOBALS['wp_the_query']). This allows us to support
@@ -1004,7 +1005,6 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 					}
 				}
 			}
-
 
 			return $content;
 		}
