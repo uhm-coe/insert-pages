@@ -423,6 +423,15 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 				$inserted_page = get_post( intval( $attributes['page'] ) );
 			}
 
+			// Prevent unprivileged users from inserting private posts from others.
+			if ( is_object( $inserted_page ) && 'publish' !== $inserted_page->post_status ) {
+				$post_type = get_post_type_object( $inserted_page->post_type );
+				$parent_post_author_id = intval( get_the_author_meta( 'ID' ) );
+				if ( ! user_can( $parent_post_author_id, $post_type->cap->read_post, $inserted_page->ID ) ) {
+					$inserted_page = null;
+				}
+			}
+
 			// If inserted page's status is private, don't show to anonymous users
 			// unless 'public' option is set.
 			if ( is_object( $inserted_page ) && 'private' === $inserted_page->post_status && ! $attributes['public'] ) {
@@ -732,6 +741,23 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 				// pages inserted into other pages (multiple nested pages).
 				$old_query = $GLOBALS['wp_query'];
 				$posts = query_posts( $args );
+
+				// Prevent unprivileged users from inserting private posts from others.
+				if ( have_posts() ) {
+					$can_read = true;
+					$parent_post_author_id = intval( get_the_author_meta( 'ID' ) );
+					foreach ( $posts as $post ) {
+						$post_type = get_post_type_object( $post->post_type );
+						if ( ! user_can( $parent_post_author_id, $post_type->cap->read_post, $post->ID ) ) {
+							$can_read = false;
+						}
+					}
+					if ( ! $can_read ) {
+						// Force an empty query so we don't show any posts.
+						$posts = query_posts( array( 'post__in' => array( 0 ) ) );
+					}
+				}
+
 				if ( have_posts() ) {
 					// Start output buffering so we can save the output to string.
 					ob_start();
@@ -1425,6 +1451,13 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 			// Build results.
 			$results = array();
 			foreach ( $posts as $post ) {
+				// Prevent unprivileged users (e.g., Contributors) from seeing and
+				// inserting other user's private posts.
+				$post_type = get_post_type_object( $post->post_type );
+				if ( 'publish' !== $post->post_status && ! current_user_can( $post_type->cap->read_post, $post->ID ) ) {
+					continue;
+				}
+
 				if ( 'post' === $post->post_type ) {
 					$info = mysql2date( 'Y/m/d', $post->post_date );
 				} else {
