@@ -110,6 +110,11 @@ Just one! The plugin prevents you from embedding a page in itself, but you can t
 
 == Changelog ==
 
+= 3.7.0 =
+* Security: Prevent unprivileged users from inserting private posts by others.
+* Security: Filter out possible XSS in post meta using wp_kses_post() when using display=all.
+* New Setting: Only show Authors and Contributors their own content in the TinyMCE Insert Pages popup.
+
 = 3.6.1 =
 * Fix TinyMCE dialog not closing properly. Props @astaryne for the report!
 
@@ -459,3 +464,8 @@ Added retina toolbar icon.
 
 = 1.0 =
 Upgrade to v1.0 to get the first stable version.
+
+== Upgrade Notice ==
+
+= 3.7.0 =
+Note: if you insert private pages/posts, please review the post authors of the pages containing the inserted page and confirm they have the capability to read the private content. This upgrade enforces private page visibility based on the role of the author of the page that inserts any private content.
