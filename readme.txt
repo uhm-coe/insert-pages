@@ -108,11 +108,6 @@ Just one! The plugin prevents you from embedding a page in itself, but you can t
 2. Insert Pages browser.
 3. Insert Pages shortcode example.
 
-== Upgrade Notice ==
-
-= 3.7.0 =
-Note: if you insert private pages/posts, please review the post authors of the pages containing the inserted page and confirm they have the capability to read the private content. This upgrade enforces private page visibility based on the role of the author of the page that inserts any private content.
-
 == Changelog ==
 
 = 3.7.0 =
@@ -457,6 +452,9 @@ add_action( 'init', 'theme_init' );`
 * Development release.
 
 == Upgrade Notice ==
+
+= 3.7.0 =
+Note: if you insert private pages/posts, please review the post authors of the pages containing the inserted page and confirm they have the capability to read the private content. This upgrade enforces private page visibility based on the role of the author of the page that inserts any private content.
 
 = 3.2.4 =
 Security notice: this update fixes a potential directory traversal attack where a WordPress user with Editor role or higher could include any php file by specifying it as a custom template in the Insert Pages shortcode. This vulnerability is limited because the attacker already needs to be an Editor or higher on your WordPress site. Example: [insert page='your-page' display='../../../../../../../../xampp/apache/logs/access.log']
