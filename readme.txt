@@ -108,6 +108,11 @@ Just one! The plugin prevents you from embedding a page in itself, but you can t
 2. Insert Pages browser.
 3. Insert Pages shortcode example.
 
+== Upgrade Notice ==
+
+= 3.7.0 =
+Note: if you insert private pages/posts, please review the post authors of the pages containing the inserted page and confirm they have the capability to read the private content. This upgrade enforces private page visibility based on the role of the author of the page that inserts any private content.
+
 == Changelog ==
 
 = 3.7.0 =
@@ -464,8 +469,3 @@ Added retina toolbar icon.
 
 = 1.0 =
 Upgrade to v1.0 to get the first stable version.
-
-== Upgrade Notice ==
-
-= 3.7.0 =
-Note: if you insert private pages/posts, please review the post authors of the pages containing the inserted page and confirm they have the capability to read the private content. This upgrade enforces private page visibility based on the role of the author of the page that inserts any private content.
