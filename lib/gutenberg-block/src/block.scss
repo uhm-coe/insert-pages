@@ -16,7 +16,9 @@
 }
 
 // Constrain the URLInput field in the InspectorControls sidebar.
-.width-100,
-.width-100 input {
-	width: 100% !important;
+.wp-block-insert-pages-block__inspector-controls {
+	.width-100,
+	.width-100 input {
+		width: 100% !important;
+	}
 }
