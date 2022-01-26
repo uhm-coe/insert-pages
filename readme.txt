@@ -110,6 +110,11 @@ Just one! The plugin prevents you from embedding a page in itself, but you can t
 
 == Changelog ==
 
+= 3.7.1 =
+* Fix Insert Pages block styles affecting other blocks. Props @drsdre for the report!
+* Fix gutenberg block deprecation notices.
+* Tested up to WordPress 5.9.
+
 = 3.7.0 =
 * Security: Prevent unprivileged users from inserting private posts by others.
 * Security: Filter out possible XSS in post meta using wp_kses_post() when using display=all.
