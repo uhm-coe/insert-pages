@@ -93,14 +93,7 @@ function wpip_set_defaults() {
 	}
 
 	if ( ! array_key_exists( 'wpip_insert_method', $options ) ) {
-		$options['wpip_insert_method'] = 'legacy';
-
-		// Set default to 'normal' if gutenberg plugin is enabled (legacy insert
-		// method will cause the gutenberg editor to load only the inserted page if
-		// an insert page shortcode exists in a Shortcode block anywhere on the page.
-		if ( function_exists( 'gutenberg_init' ) ) {
-			$options['wpip_insert_method'] = 'normal';
-		}
+		$options['wpip_insert_method'] = 'normal';
 	}
 
 	if ( ! array_key_exists( 'wpip_tinymce_filter', $options ) ) {
