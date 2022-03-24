@@ -492,6 +492,7 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 				// Note: Temporarily set the global $post->ID to the inserted page ID,
 				// since both builders rely on the id to load the appropriate styles.
 				if (
+					class_exists( 'UAGB_Post_Assets' ) ||
 					class_exists( 'FLBuilder' ) ||
 					class_exists( 'SiteOrigin_Panels' ) ||
 					class_exists( '\Elementor\Post_CSS_File' ) ||
@@ -508,6 +509,13 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 					} else {
 						$old_post_id = $post->ID;
 						$post->ID = $inserted_page->ID;
+					}
+
+					// Enqueue assets for Ultimate Addons for Gutenberg.
+					// See: https://ultimategutenberg.com/docs/assets-api-third-party-plugins/.
+					if ( class_exists( 'UAGB_Post_Assets' ) ) {
+						$post_assets_instance = new UAGB_Post_Assets( $inserted_page->ID );
+						$post_assets_instance->enqueue_scripts();
 					}
 
 					if ( class_exists( 'FLBuilder' ) ) {
@@ -768,6 +776,7 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 					// Note: Temporarily set the global $post->ID to the inserted page ID,
 					// since both builders rely on the id to load the appropriate styles.
 					if (
+						class_exists( 'UAGB_Post_Assets' ) ||
 						class_exists( 'FLBuilder' ) ||
 						class_exists( 'SiteOrigin_Panels' ) ||
 						class_exists( '\Elementor\Post_CSS_File' ) ||
@@ -784,6 +793,13 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 						} else {
 							$old_post_id = $post->ID;
 							$post->ID = $inserted_page->ID;
+						}
+
+						// Enqueue assets for Ultimate Addons for Gutenberg.
+						// See: https://ultimategutenberg.com/docs/assets-api-third-party-plugins/.
+						if ( class_exists( 'UAGB_Post_Assets' ) ) {
+							$post_assets_instance = new UAGB_Post_Assets( $inserted_page->ID );
+							$post_assets_instance->enqueue_scripts();
 						}
 
 						if ( class_exists( 'FLBuilder' ) ) {
