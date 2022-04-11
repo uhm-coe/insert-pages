@@ -5,8 +5,8 @@
 	"license": "GPL-2.0-or-later",
 	"main": "build/index.js",
 	"devDependencies": {
-		"@wordpress/components": "^19.2.0",
-		"@wordpress/scripts": "^22.3.0"
+		"@wordpress/components": "^19.8.0",
+		"@wordpress/scripts": "^22.4.0"
 	},
 	"scripts": {
 		"build": "wp-scripts build",
