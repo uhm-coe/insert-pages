@@ -110,6 +110,11 @@ Just one! The plugin prevents you from embedding a page in itself, but you can t
 
 == Changelog ==
 
+= 3.7.3 =
+* Fix missing Visual Composer script/style enqueues.
+* Tested up to WordPress 6.0.
+* Bump gutenberg npm development dependencies.
+
 = 3.7.2 =
 * Add custom CSS/JS enqueue for inserted pages with blocks from the Ultimate Addons for Gutenberg plugin.
 * Default to "normal" insert method instead of "legacy."
