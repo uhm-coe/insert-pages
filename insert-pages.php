@@ -534,6 +534,10 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 
 					// Enqueue custom style from WPBakery Page Builder (Visual Composer).
 					if ( defined( 'VCV_VERSION' ) ) {
+						wp_enqueue_style( 'vcv:assets:front:style' );
+						wp_enqueue_script( 'vcv:assets:runtime:script' );
+						wp_enqueue_script( 'vcv:assets:front:script' );
+
 						$bundle_url = get_post_meta( $inserted_page->ID, 'vcvSourceCssFileUrl', true );
 						if ( $bundle_url ) {
 							$version = get_post_meta( $inserted_page->ID, 'vcvSourceCssFileHash', true );
@@ -818,6 +822,10 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 
 						// Enqueue custom style from WPBakery Page Builder (Visual Composer).
 						if ( defined( 'VCV_VERSION' ) ) {
+							wp_enqueue_style( 'vcv:assets:front:style' );
+							wp_enqueue_script( 'vcv:assets:runtime:script' );
+							wp_enqueue_script( 'vcv:assets:front:script' );
+
 							$bundle_url = get_post_meta( $inserted_page->ID, 'vcvSourceCssFileUrl', true );
 							if ( $bundle_url ) {
 								$version = get_post_meta( $inserted_page->ID, 'vcvSourceCssFileHash', true );
