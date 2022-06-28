@@ -1513,12 +1513,16 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 		/**
 		 * Add Insert Page quicktag button to Text editor.
 		 *
+		 * @hook admin_print_footer_scripts
+		 *
 		 * @return void
 		 */
 		public function insert_pages_add_quicktags() {
 			if ( wp_script_is( 'quicktags' ) ) : ?>
 				<script type="text/javascript">
-					QTags.addButton( 'ed_insert_page', '[insert page]', "[insert page='your-page-slug' display='title|link|excerpt|excerpt-only|content|post-thumbnail|all']\n", '', '', 'Insert Page', 999 );
+					window.onload = function() {
+						QTags.addButton( 'ed_insert_page', '[insert page]', "[insert page='your-page-slug' display='title|link|excerpt|excerpt-only|content|post-thumbnail|all']\n", '', '', 'Insert Page', 999 );
+					}
 				</script>
 				<?php
 			endif;
