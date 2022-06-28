@@ -438,6 +438,17 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 				$inserted_page = null;
 			}
 
+			// Integration: if Simple Membership plugin is used, check that the
+			// current user has permission to see the inserted post.
+			// See: https://simple-membership-plugin.com/simple-membership-miscellaneous-php-tweaks/
+			if ( class_exists( 'SwpmAccessControl' ) ) {
+				$access_ctrl = SwpmAccessControl::get_instance();
+				if ( ! $access_ctrl->can_i_read_post( $inserted_page ) && ! current_user_can( 'edit_files' ) ) {
+					$inserted_page = null;
+					$content = wp_kses_post( $access_ctrl->why() );
+				}
+			}
+
 			// Loop detection: check if the page we are inserting has already been
 			// inserted; if so, short circuit here.
 			if ( ! is_array( $this->inserted_page_ids ) ) {
