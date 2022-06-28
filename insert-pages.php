@@ -759,9 +759,11 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 					$can_read = true;
 					$parent_post_author_id = intval( get_the_author_meta( 'ID' ) );
 					foreach ( $posts as $post ) {
-						$post_type = get_post_type_object( $post->post_type );
-						if ( ! user_can( $parent_post_author_id, $post_type->cap->read_post, $post->ID ) ) {
-							$can_read = false;
+						if ( is_object( $post ) && 'publish' !== $post->post_status ) {
+							$post_type = get_post_type_object( $post->post_type );
+							if ( ! user_can( $parent_post_author_id, $post_type->cap->read_post, $post->ID ) ) {
+								$can_read = false;
+							}
 						}
 					}
 					if ( ! $can_read ) {
