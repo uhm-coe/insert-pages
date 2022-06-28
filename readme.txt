@@ -110,6 +110,10 @@ Just one! The plugin prevents you from embedding a page in itself, but you can t
 
 == Changelog ==
 
+= 3.7.4 =
+* Fixes quicktag button missing in WordPress 6.0 (also fixes "QTags is not defined) javascript error while editing posts).
+* Add Simple WP Membership integration (content protected with Simple WP Membership will only be shown to authorized users or admins when inserted).
+
 = 3.7.3 =
 * Fix missing Visual Composer script/style enqueues.
 * Tested up to WordPress 6.0.
