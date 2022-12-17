@@ -36,7 +36,7 @@ class InsertPagesWidget extends WP_Widget {
 	 * Load javascript for interacting with the Insert Page widget.
 	 */
 	public function widget_admin_js() {
-		wp_enqueue_script( 'insertpages_widget', plugins_url( '/js/widget.js', __FILE__ ), array( 'jquery' ), '20160429' );
+		wp_enqueue_script( 'insertpages_widget', plugins_url( '/js/widget.js', __FILE__ ), array( 'jquery' ), '20221115' );
 	}
 
 	/**
@@ -73,6 +73,9 @@ class InsertPagesWidget extends WP_Widget {
 		}
 		if ( array_key_exists( 'querystring', $instance ) ) {
 			$atts['querystring'] = $instance['querystring'];
+		}
+		if ( array_key_exists( 'size', $instance ) && 'post-thumbnail' === $instance['display'] ) {
+			$atts['size'] = $instance['size'];
 		}
 		if ( array_key_exists( 'public', $instance ) ) {
 			$atts['public'] = '1' === $instance['public'];
@@ -114,6 +117,7 @@ class InsertPagesWidget extends WP_Widget {
 			'id' => '',
 			'inline' => '',
 			'querystring' => '',
+			'size' => '',
 			'public' => '',
 		)); ?>
 		<p>
@@ -137,6 +141,18 @@ class InsertPagesWidget extends WP_Widget {
 				<?php if ( function_exists( 'page_template_dropdown' ) ) :
 					page_template_dropdown( $instance['template'] );
 				endif; ?>
+			</select>
+			<select class="insertpage-size-select" name="<?php echo esc_attr( $this->get_field_name( 'size' ) ); ?>" id="<?php echo esc_attr( $this->get_field_id( 'size' ) ); ?>" disabled="disabled">
+				<option value="post-thumbnail"><?php esc_html_e( 'post-thumbnail', 'insert-pages' ); ?></option>
+				<?php if ( function_exists( 'wp_get_registered_image_subsizes' ) ) : ?>
+					<?php foreach ( wp_get_registered_image_subsizes() as $size_name => $size_data ) : ?>
+						<option value="<?php echo esc_attr( $size_name ); ?>" <?php selected( $instance['size'], $size_name ); ?>><?php echo esc_html( $size_name ); ?></option>
+					<?php endforeach; ?>
+				<?php else : ?>
+					<?php foreach ( get_intermediate_image_sizes() as $size_name ) : ?>
+						<option value="<?php echo esc_attr( $size_name ); ?>" <?php selected( $instance['size'], $size_name ); ?>><?php echo esc_html( $size_name ); ?></option>
+					<?php endforeach; ?>
+				<?php endif; ?>
 			</select>
 		</p>
 		<p>
@@ -178,6 +194,7 @@ class InsertPagesWidget extends WP_Widget {
 		$instance['id'] = array_key_exists( 'id', $new_instance ) ? strip_tags( $new_instance['id'] ) : '';
 		$instance['inline'] = array_key_exists( 'inline', $new_instance ) ? strip_tags( $new_instance['inline'] ) : '';
 		$instance['querystring'] = array_key_exists( 'querystring', $new_instance ) ? strip_tags( $new_instance['querystring'] ) : '';
+		$instance['size'] = array_key_exists( 'size', $new_instance ) ? strip_tags( $new_instance['size'] ) : '';
 		$instance['public'] = array_key_exists( 'public', $new_instance ) ? strip_tags( $new_instance['public'] ) : '';
 
 		return $instance;

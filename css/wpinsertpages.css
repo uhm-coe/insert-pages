@@ -142,6 +142,10 @@
 	white-space: nowrap;
 }
 
+#insertpage-options-panel #insertpage-size-select {
+	max-width: 12rem;
+}
+
 #wp-insertpage input[type="text"] {
 	box-sizing: border-box;
 }

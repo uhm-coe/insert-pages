@@ -37,6 +37,9 @@
 			// Custom template select field.
 			inputs.template = $( '#insertpage-template-select' );
 
+			// Custom post thumbnail size select field.
+			inputs.size = $( '#insertpage-size-select' );
+
 			// Custom format field (title, link, content, all, choose a custom template ->).
 			inputs.format = $( '#insertpage-format-select' );
 
@@ -95,10 +98,20 @@
 			// Custom: enable template dropdown if "Custom Template" is chosen as the display.
 			inputs.format.on( 'change', function() {
 				if ( inputs.format.val() == 'template' ) {
+					inputs.size.hide();
+					inputs.template.show();
 					inputs.template.removeAttr( 'disabled' );
 					inputs.template.focus();
+				} else if ( inputs.format.val() == 'post-thumbnail' ) {
+					inputs.template.hide();
+					inputs.size.show();
+					inputs.size.removeAttr( 'disabled' );
+					inputs.size.focus();
 				} else {
+					inputs.template.show();
 					inputs.template.attr( 'disabled', 'disabled' );
+					inputs.size.hide();
+					inputs.size.attr( 'disabled', 'disabled' );
 				}
 				// Save last selected display for this user.
 				$.post( ajaxurl, {
@@ -113,6 +126,15 @@
 				$.post( ajaxurl, {
 					action : 'insertpage_save_presets',
 					template : inputs.template.val(),
+					'_ajax_inserting_nonce' : $('#_ajax_inserting_nonce').val(),
+				}, function (r) {}, 'json' );
+			});
+
+			// Custom: save last selected thumbnail size for this user.
+			inputs.size.on( 'change', function() {
+				$.post( ajaxurl, {
+					action : 'insertpage_save_presets',
+					size : inputs.size.val(),
 					'_ajax_inserting_nonce' : $('#_ajax_inserting_nonce').val(),
 				}, function (r) {}, 'json' );
 			});
@@ -293,6 +315,15 @@
 					inputs.format.trigger( 'change' );
 				}
 
+				// Update thumbnail size dropdown to match the selected shortcode.
+				regexp = /size=['"]([^['"]*)['"]/;
+				matches = regexp.exec( shortcode );
+				if ( matches && matches.length > 1 ) {
+					inputs.size.val( matches[1] );
+				} else {
+					inputs.extraClasses.val( wpInsertPagesL10n.hasOwnProperty( 'tinymce_state' ) ? wpInsertPagesL10n.tinymce_state.size : '' );
+				}
+
 				// Update extra classes.
 				regexp = /class=['"]([^['"]*)['"]/;
 				matches = regexp.exec( shortcode );
@@ -382,6 +413,7 @@
 				inline: inputs.extraInline.is( ':checked' ),
 				public: inputs.extraPublic.is( ':checked' ),
 				querystring: inputs.extraQuerystring.val(),
+				size: inputs.size.val(),
 			};
 		},
 
@@ -411,6 +443,7 @@
 			editor.selection.setContent("[insert " +
 				"page='" + attrs.page +"' " +
 				"display='" + attrs.display + "'" +
+				( attrs['display'] == 'post-thumbnail' && attrs['size'].length > 0 ? " size='" + attrs['size'] + "'" : "" ) +
 				( attrs['class'].length > 0 ? " class='" + attrs['class'] + "'" : "" ) +
 				( attrs['id'].length > 0 ? " id='" + attrs['id'] + "'" : "" ) +
 				( attrs.inline ? " inline" : "" ) +
@@ -454,8 +487,20 @@
 			// Enable template dropdown if display format is set to 'template'.
 			if ( inputs.format.val() == 'template' ) {
 				inputs.template.removeAttr( 'disabled' );
+				inputs.template.show();
+				inputs.size.hide();
 			} else {
 				inputs.template.attr( 'disabled', 'disabled' );
+			}
+
+			// Enable size dropdown if display format is set to 'post-thumbnail'.
+			if ( inputs.format.val() == 'post-thumbnail' ) {
+				inputs.size.removeAttr( 'disabled' );
+				inputs.size.show();
+				inputs.template.hide();
+			} else {
+				inputs.size.attr( 'disabled', 'disabled' );
+				inputs.size.hide();
 			}
 		},
 
