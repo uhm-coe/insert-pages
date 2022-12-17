@@ -226,7 +226,7 @@
 
 			// Get the existing shortcode the cursor is in (or get the entire node if cursor not in one)
 			shortcode = '';
-			content = editor.selection.getNode().innerHTML.replace( /&amp;/g, '&' );
+			content = editor.selection.getNode().innerHTML.replace( /&amp;/g, '&' ).replace( /&nbsp;/g, ' ' );
 			if ( content.indexOf( '[insert page=' ) >= 0 ) {
 				// Find occurrences of shortcode in current node and see if the cursor
 				// position is inside one of them.
