@@ -480,7 +480,12 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 				$_REQUEST[ $param ] = $value;
 			}
 			$original_wp_query_vars = $GLOBALS['wp']->query_vars;
-			if ( ! empty( $querystring ) && isset( $GLOBALS['wp'] ) && method_exists( $GLOBALS['wp'], 'parse_request' ) ) {
+			if (
+				! empty( $querystring ) &&
+				isset( $GLOBALS['wp'] ) &&
+				method_exists( $GLOBALS['wp'], 'parse_request' ) &&
+				empty( $GLOBALS['wp']->query_vars['rest_route'] )
+			) {
 				$GLOBALS['wp']->parse_request( $querystring );
 			}
 
