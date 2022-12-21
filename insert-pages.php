@@ -172,6 +172,10 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 								'type' => 'string',
 								'default' => '',
 							),
+							'size' => array(
+								'type' => 'string',
+								'default' => '',
+							),
 						),
 						'render_callback' => array( $this, 'block_render_callback' ),
 					)
@@ -199,12 +203,13 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 			}
 
 			$shortcode = sprintf(
-				'[insert page="%1$s" display="%2$s"%3$s%4$s%5$s%6$s%7$s]',
+				'[insert page="%1$s" display="%2$s"%3$s%4$s%5$s%6$s%7$s%8$s]',
 				isset( $attr['page'] ) && strlen( $attr['page'] ) > 0 ? esc_attr( $attr['page'] ) : '0',
 				$display,
 				isset( $attr['class'] ) && strlen( $attr['class'] ) > 0 ? ' class="' . esc_attr( $attr['class'] ) . '"' : '',
 				isset( $attr['id'] ) && strlen( $attr['id'] ) > 0 ? ' id="' . esc_attr( $attr['id'] ) . '"' : '',
 				isset( $attr['querystring'] ) && strlen( $attr['querystring'] ) > 0 ? ' querystring="' . esc_attr( $attr['querystring'] ) . '"' : '',
+				isset( $attr['size'] ) && strlen( $attr['size'] ) > 0 ? ' size="' . esc_attr( $attr['size'] ) . '"' : '',
 				isset( $attr['inline'] ) && 'true' === $attr['inline'] ? ' inline' : '',
 				isset( $attr['public'] ) && 'true' === $attr['public'] ? ' public' : ''
 			);
@@ -245,7 +250,7 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 				'wpinsertpages',
 				plugins_url( '/js/wpinsertpages.js', __FILE__ ),
 				array( 'wpdialogs' ),
-				'20210528',
+				'20221216',
 				false
 			);
 			wp_localize_script(
@@ -268,7 +273,7 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 				'wpinsertpagescss',
 				plugins_url( '/css/wpinsertpages.css', __FILE__ ),
 				array( 'wp-jquery-ui-dialog' ),
-				'20210408'
+				'20221216'
 			);
 
 			/**
@@ -312,6 +317,7 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 					'class'       => '',
 					'id'          => '',
 					'querystring' => '',
+					'size'        => '',
 					'inline'      => false,
 					'public'      => false,
 				),
@@ -665,7 +671,8 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 						break;
 
 					case 'post-thumbnail':
-						?><a href="<?php echo esc_url( get_permalink( $inserted_page->ID ) ); ?>"><?php echo get_the_post_thumbnail( $inserted_page->ID ); ?></a>
+						$size = empty( $attributes['size'] ) ? 'post-thumbnail' : $attributes['size'];
+						?><a href="<?php echo esc_url( get_permalink( $inserted_page->ID ) ); ?>"><?php echo get_the_post_thumbnail( $inserted_page->ID, $size ); ?></a>
 						<?php
 						break;
 
@@ -967,7 +974,8 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 							) );
 							break;
 						case 'post-thumbnail':
-							?><a href="<?php echo esc_url( get_permalink( $inserted_page->ID ) ); ?>"><?php echo get_the_post_thumbnail( $inserted_page->ID ); ?></a>
+							$size = empty( $attributes['size'] ) ? 'post-thumbnail' : $attributes['size'];
+							?><a href="<?php echo esc_url( get_permalink( $inserted_page->ID ) ); ?>"><?php echo get_the_post_thumbnail( $inserted_page->ID, $size ); ?></a>
 							<?php
 							break;
 						case 'all':
@@ -1233,6 +1241,8 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 				$templates[ $file ] = $name;
 			}
 
+			$sizes = function_exists( 'wp_get_registered_image_subsizes' ) ? array_keys( wp_get_registered_image_subsizes() ) : get_intermediate_image_sizes();
+
 			/**
 			 * Filter the available templates shown in the template dropdown.
 			 *
@@ -1304,6 +1314,11 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 						<select name="insertpage-template-select" id="insertpage-template-select" disabled="true">
 							<?php foreach ( $templates as $template => $label ) : ?>
 								<option value='<?php echo esc_attr( $template ); ?>' <?php selected( $tinymce_state['template'], $template ); ?>><?php echo esc_html( $label ); ?></option>
+							<?php endforeach; ?>
+						</select>
+						<select name="insertpage-size-select" id="insertpage-size-select" disabled="true">
+							<?php foreach ( $sizes as $size ) : ?>
+								<option value='<?php echo esc_attr( $size ); ?>' <?php selected( $tinymce_state['size'], $size ); ?>><?php echo esc_html( $size ); ?></option>
 							<?php endforeach; ?>
 						</select>
 					</div>
@@ -1583,6 +1598,7 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 					'class'            => '',
 					'id'               => '',
 					'querystring'      => '',
+					'size'             => '',
 					'inline'           => false,
 					'public'           => false,
 					'hide_querystring' => false,
@@ -1599,6 +1615,7 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 			 *  'class'            (string) HTML wrapper class. Default ''.
 			 *  'id'               (string) HTML wrapper id. Default ''.
 			 *  'querystring'      (string) Querystring params. Default ''.
+			 *  'size'             (string) Image size when using format='thumbnail'.
 			 *  'inline'           (bool)   Use <span> element for wrapper. Default false.
 			 *  'public'           (bool)   Whether anonymous users can see this page if
 			 *                              its status is Private. Default false.
