@@ -615,6 +615,10 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 						}
 					}
 
+					// GoodLayers page builder content (retrieved from post meta).
+					// See: https://docs.goodlayers.com/add-page-builder-in-product/.
+					do_action( 'gdlr_core_print_page_builder' );
+
 					if ( is_null( $old_post_id ) ) {
 						$post = null; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 					} else {
@@ -905,6 +909,10 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 								echo '</style>';
 							}
 						}
+
+						// GoodLayers page builder content (retrieved from post meta).
+						// See: https://docs.goodlayers.com/add-page-builder-in-product/.
+						do_action( 'gdlr_core_print_page_builder' );
 
 						if ( is_null( $old_post_id ) ) {
 							$post = null; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
