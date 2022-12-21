@@ -1102,8 +1102,14 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 		 * @return string             Content to replace shortcode.
 		 */
 		public function insert_pages_wrap_content( $content, $posts, $attributes ) {
-			$maybe_id = isset( $attributes['id'] ) && strlen( $attributes['id'] ) > 0 ? ' id="' . esc_attr( $attributes['id'] ) . '"' : '';
-			return "<{$attributes['wrapper_tag']} data-post-id='{$attributes['page']}' class='insert-page insert-page-{$attributes['page']} {$attributes['class']}'$maybe_id>{$content}</{$attributes['wrapper_tag']}>";
+			return sprintf(
+				'<%1$s data-post-id="%2$s" class="insert-page insert-page-%2$s %3$s"%4$s>%5$s</%1$s>',
+				esc_attr( $attributes['wrapper_tag'] ),
+				esc_attr( $attributes['page'] ),
+				esc_attr( $attributes['class'] ),
+				empty( $attributes['id'] ) ? '' : ' id="' . esc_attr( $attributes['id'] ) . '"',
+				$content
+			);
 		}
 
 		/**
