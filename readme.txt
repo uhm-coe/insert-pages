@@ -110,6 +110,14 @@ Just one! The plugin prevents you from embedding a page in itself, but you can t
 
 == Changelog ==
 
+= 3.7.5 =
+* Security: fix improper escaping of class attribute. Lower-privileged users like Contributors can potentially insert javascript into the Insert Pages shortcode that can run when an Administrator previews their post, creating a vector for cross-site scripting. We recommend updating to this version immediately. Props @wpscan for the report.
+* Add size attribute to change post-thumbnail size. Example: `[insert page='sample-page' display='post-thumbnail' size='large']`
+* Fix for shortcodes with extra spaces breaking classic editor toolbar button highlight.
+* Don’t reparse querystring during a rest request (gutenberg block refresh). Props @robbymacdonell for finding the bug!
+* Support GoodLayers page builder. Props @rehanahmed38 for the request.
+* Update gutenberg block dev dependencies.
+
 = 3.7.4 =
 * Fixes quicktag button missing in WordPress 6.0 (also fixes "QTags is not defined) javascript error while editing posts).
 * Add Simple WP Membership integration (content protected with Simple WP Membership will only be shown to authorized users or admins when inserted).
