@@ -32,7 +32,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 /**
  * Shortcode Format:
- * [insert page='{slug}|{id}' display='title|link|excerpt|excerpt-only|content|post-thumbnail|all|{custom-template.php}' class='any-classes' id='any-id' [inline] [public] querystring='{url-encoded-values}' size='post-thumbnail|thumbnail|medium|large|full|{custom-size}']
+ * [insert page='{slug}|{id}|{url}' display='title|link|excerpt|excerpt-only|content|post-thumbnail|all|{custom-template.php}' class='any-classes' id='any-id' [inline] [public] querystring='{url-encoded-values}' size='post-thumbnail|thumbnail|medium|large|full|{custom-size}']
  */
 
 if ( ! class_exists( 'InsertPagesPlugin' ) ) {
@@ -398,7 +398,12 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 			 */
 			$attributes['display'] = apply_filters( 'insert_pages_override_display', $attributes['display'] );
 
-			// Get the WP_Post object from the provided slug or ID.
+			// If a URL is provided, translate it to a post ID.
+			if ( filter_var( $attributes['page'], FILTER_VALIDATE_URL ) ) {
+				$attributes['page'] = url_to_postid( $attributes['page'] );
+			}
+
+			// Get the WP_Post object from the provided slug, or ID.
 			if ( ! is_numeric( $attributes['page'] ) ) {
 				// Get list of post types that can be inserted (page, post, custom
 				// types), excluding builtin types (nav_menu_item, attachment).
@@ -1391,6 +1396,16 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 		public function insert_pages_insert_page_callback() {
 			check_ajax_referer( 'internal-inserting', '_ajax_inserting_nonce' );
 			$args = array();
+
+			// If a URL is provided, translate it to a post ID and search on that.
+			if ( filter_var( $_POST['search'], FILTER_VALIDATE_URL ) ) {
+				$post_id = url_to_postid( $_POST['search'] );
+				if ( ! empty( $post_id ) ) {
+					$_POST['search'] = $post_id;
+					$_POST['type'] = 'post_id';
+				}
+			}
+
 			if ( isset( $_POST['search'] ) ) {
 				$args['s'] = wp_unslash( $_POST['search'] ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 			}
