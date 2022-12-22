@@ -110,6 +110,9 @@ Just one! The plugin prevents you from embedding a page in itself, but you can t
 
 == Changelog ==
 
+= 3.7.6 =
+* Allow full URLs in insert page shortcode. Props @woodhall2k for the suggestion.
+
 = 3.7.5 =
 * Security: fix improper escaping of class attribute. Lower-privileged users like Contributors can potentially insert javascript into the Insert Pages shortcode that can run when an Administrator previews their post, creating a vector for cross-site scripting. We recommend updating to this version immediately. Props @wpscan for the report.
 * Add size attribute to change post-thumbnail size. Example: `[insert page='sample-page' display='post-thumbnail' size='large']`
