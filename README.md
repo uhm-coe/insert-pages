@@ -63,13 +63,13 @@ add_filter( 'insert_pages_available_post_types', 'only_insert_posts' );
 
 No! You can type out the shortcode yourself if you'd like, it's easy. Here's the format:
 
-`[insert page='{slug}|{id}' display='title|link|content|all|{custom-template.php}']`
+`[insert page='{slug}|{id}' display='title|link|excerpt|excerpt-only|content|post-thumbnail|all|{custom-template.php}']`
 
 Examples:
 
 * `[insert page='your-page-slug' display='link']`
 * `[insert page='your-page-slug' display='your-custom-template.php']`
-* `[insert page='123' display='all']`
+* `[insert page='123' display='content']`
 
 ## Screenshots
 
