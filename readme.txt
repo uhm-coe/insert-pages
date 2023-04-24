@@ -110,6 +110,11 @@ Just one! The plugin prevents you from embedding a page in itself, but you can t
 
 == Changelog ==
 
+= 3.7.7 =
+* Update block dev dependencies and rebuild block.
+* Tested up to WordPress 6.2.
+* Update readme.
+
 = 3.7.6 =
 * Allow full URLs in insert page shortcode. Props @woodhall2k for the suggestion.
 
