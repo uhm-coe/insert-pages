@@ -1398,7 +1398,7 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 			$args = array();
 
 			// If a URL is provided, translate it to a post ID and search on that.
-			if ( filter_var( $_POST['search'], FILTER_VALIDATE_URL ) ) {
+			if ( ! empty( $_POST['search'] ) && filter_var( $_POST['search'], FILTER_VALIDATE_URL ) ) {
 				$post_id = url_to_postid( $_POST['search'] );
 				if ( ! empty( $post_id ) ) {
 					$_POST['search'] = $post_id;
