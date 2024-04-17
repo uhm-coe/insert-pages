@@ -128,6 +128,7 @@ class InsertPagesWidget extends WP_Widget {
 			<label for="<?php echo esc_attr( $this->get_field_id( 'display' ) ); ?>"><?php esc_html_e( 'Display', 'insert-pages' ); ?>:</label><br />
 			<select class="insertpage-format-select" name="<?php echo esc_attr( $this->get_field_name( 'display' ) ); ?>" id="<?php echo esc_attr( $this->get_field_id( 'display' ) ); ?>">
 				<option value='title' <?php selected( $instance['display'], 'title' ); ?>><?php esc_html_e( 'Title', 'insert-pages' ); ?></option>
+				<option value='title-content' <?php selected( $instance['display'], 'title-content' ); ?>><?php esc_html_e( 'Title and content', 'insert-pages' ); ?></option>
 				<option value='link' <?php selected( $instance['display'], 'link' ); ?>><?php esc_html_e( 'Link', 'insert-pages' ); ?></option>
 				<option value='excerpt' <?php selected( $instance['display'], 'excerpt' ); ?>><?php esc_html_e( 'Excerpt', 'insert-pages' ); ?></option>
 				<option value='excerpt-only' <?php selected( $instance['display'], 'excerpt-only' ); ?>><?php esc_html_e( 'Excerpt only (no title)', 'insert-pages' ); ?></option>

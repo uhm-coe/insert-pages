@@ -32,7 +32,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 /**
  * Shortcode Format:
- * [insert page='{slug}|{id}|{url}' display='title|link|excerpt|excerpt-only|content|post-thumbnail|all|{custom-template.php}' class='any-classes' id='any-id' [inline] [public] querystring='{url-encoded-values}' size='post-thumbnail|thumbnail|medium|large|full|{custom-size}']
+ * [insert page='{slug}|{id}|{url}' display='title|link|excerpt|excerpt-only|content|title-content|post-thumbnail|all|{custom-template.php}' class='any-classes' id='any-id' [inline] [public] querystring='{url-encoded-values}' size='post-thumbnail|thumbnail|medium|large|full|{custom-size}']
  */
 
 if ( ! class_exists( 'InsertPagesPlugin' ) ) {
@@ -651,6 +651,29 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 						echo "</$title_tag>";
 						break;
 
+					case 'title-content':
+						// Title.
+						$title_tag = $attributes['inline'] ? 'span' : 'h1';
+						echo "<$title_tag class='insert-page-title'>";
+						echo get_the_title( $inserted_page->ID );
+						echo "</$title_tag>";
+						// Content.
+						// If Elementor is installed, try to render the page with it. If there is no Elementor content, fall back to normal rendering.
+						if ( class_exists( '\Elementor\Plugin' ) ) {
+							$elementor_content = \Elementor\Plugin::$instance->frontend->get_builder_content( $inserted_page->ID );
+							if ( strlen( $elementor_content ) > 0 ) {
+								echo $elementor_content;
+								break;
+							}
+						}
+						// Render the content normally.
+						$content = get_post_field( 'post_content', $inserted_page->ID );
+						if ( $attributes['should_apply_the_content_filter'] ) {
+							$content = apply_filters( 'the_content', $content );
+						}
+						echo $content;
+						break;
+
 					case 'link':
 						?><a href="<?php echo esc_url( get_permalink( $inserted_page->ID ) ); ?>"><?php echo get_the_title( $inserted_page->ID ); ?></a>
 						<?php
@@ -945,6 +968,34 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 							echo "<$title_tag class='insert-page-title'>";
 							the_title();
 							echo "</$title_tag>";
+							break;
+						case 'title-content':
+							// Title.
+							the_post();
+							$title_tag = $attributes['inline'] ? 'span' : 'h1';
+							echo "<$title_tag class='insert-page-title'>";
+							the_title();
+							echo "</$title_tag>";
+							// Content.
+							// If Elementor is installed, try to render the page with it. If there is no Elementor content, fall back to normal rendering.
+							if ( class_exists( '\Elementor\Plugin' ) ) {
+								$elementor_content = \Elementor\Plugin::$instance->frontend->get_builder_content( $inserted_page->ID );
+								if ( strlen( $elementor_content ) > 0 ) {
+									echo $elementor_content;
+									break;
+								}
+							}
+							// Render the content normally.
+							if ( $attributes['should_apply_the_content_filter'] ) {
+								the_content();
+							} else {
+								echo get_the_content();
+							}
+							// Render any <!--nextpage--> pagination links.
+							wp_link_pages( array(
+								'before' => '<div class="page-links">' . __( 'Pages:', 'twentynineteen' ),
+								'after'  => '</div>',
+							) );
 							break;
 						case 'link':
 							the_post();
@@ -1249,6 +1300,7 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 
 			$formats = array(
 				'title'          => __( 'Title', 'insert-pages' ),
+				'title-content'  => __( 'Title and content', 'insert-pages' ),
 				'link'           => __( 'Link', 'insert-pages' ),
 				'excerpt'        => __( 'Excerpt with title', 'insert-pages' ),
 				'excerpt-only'   => __( 'Excerpt only (no title)', 'insert-pages' ),
