@@ -110,6 +110,12 @@ Just one! The plugin prevents you from embedding a page in itself, but you can t
 
 == Changelog ==
 
+= 3.8 =
+* Add `display='title-content'` to render both Title and Content in the same shortcode or block. Props dregad for the [request](https://github.com/dregad)!
+* Update block dev dependencies and rebuild block.
+* Fix: Verify search param exists before checking.
+* Tested up to WordPress 6.5.
+
 = 3.7.7 =
 * Update block dev dependencies and rebuild block.
 * Tested up to WordPress 6.2.
