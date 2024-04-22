@@ -8,7 +8,7 @@
  * Domain Path: /languages
  * License: GPL2
  * Requires at least: 3.0.1
- * Version: 3.8
+ * Version: 3.8.1
  *
  * @package insert-pages
  */
