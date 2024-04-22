@@ -434,6 +434,15 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 				$inserted_page = get_post( intval( $attributes['page'] ) );
 			}
 
+			// Integration: If WPML is enabled, ensure the inserted page matches the
+			// language of the parent page.
+			if ( is_object( $inserted_page ) && class_exists( 'Sitepress' ) ) {
+				$translated_inserted_page = apply_filters( 'wpml_object_id', $inserted_page->ID, 'any' );
+				if ( ! empty( $translated_inserted_page ) && $inserted_page->ID !== intval( $translated_inserted_page ) ) {
+					$inserted_page = get_post( intval( $translated_inserted_page ) );
+				}
+			}
+
 			// Prevent unprivileged users from inserting private posts from others.
 			if ( is_object( $inserted_page ) && 'publish' !== $inserted_page->post_status ) {
 				$post_type = get_post_type_object( $inserted_page->post_type );
