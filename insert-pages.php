@@ -332,11 +332,9 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 
 			// Short circuit if trying to embed same page in itself.
 			if (
-				! is_null( $post ) && property_exists( $post, 'ID' ) &&
-				(
-					( intval( $attributes['page'] ) > 0 && intval( $attributes['page'] ) === $post->ID ) ||
-					$attributes['page'] === $post->post_name
-				)
+				( is_object( $post ) && property_exists( $post, 'ID' ) && intval( $attributes['page'] ) === $post->ID ) ||
+				( is_object( $post ) && property_exists( $post, 'post_name' ) && $attributes['page'] === $post->post_name ) ||
+				( is_int( $post ) && intval( $attributes['page'] ) === $post )
 			) {
 				return $content;
 			}
