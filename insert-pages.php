@@ -214,7 +214,28 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 				isset( $attr['public'] ) && 'true' === $attr['public'] ? ' public' : ''
 			);
 
-			return do_shortcode( $shortcode );
+			$rendered_shortcode = do_shortcode( $shortcode );
+
+			// If we're in the block editor, enqueue any layout styles for blocks
+			// (normally this is done in core but since we're not in the main context,
+			// we need to do so manually). For example, the Grid block uses layout
+			// styles to set the number of columns.
+			// See: https://github.com/WordPress/WordPress/blob/6.6.2/wp-includes/block-supports/layout.php#L539-L551.
+			// See: https://developer.wordpress.org/reference/functions/wp_style_engine_get_stylesheet_from_css_rules/.
+			// See: https://developer.wordpress.org/reference/functions/wp_add_inline_style/.
+			$current_screen = function_exists( 'get_current_screen' ) ? get_current_screen() : null;
+			if (
+				! empty( $current_screen ) && $current_screen->is_block_editor() &&
+				! in_array( $display, array( 'title', 'link', 'post-thumbnail' ), true ) &&
+				function_exists( 'wp_style_engine_get_stylesheet_from_context' )
+			) {
+				$layout_styles = wp_style_engine_get_stylesheet_from_context( 'block-supports' );
+				if ( ! empty( $layout_styles ) ) {
+					wp_add_inline_style( 'wp-block-library', $layout_styles );
+				}
+			}
+
+			return $rendered_shortcode;
 		}
 
 
