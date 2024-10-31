@@ -2,7 +2,7 @@
 Contributors: figureone, the_magician
 Tags: insert, pages, shortcode, embed
 Tested up to: 6.7
-Stable tag: 3.9.0
+Stable tag: 3.9.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -109,6 +109,10 @@ Just one! The plugin prevents you from embedding a page in itself, but you can t
 3. Insert Pages shortcode example.
 
 == Changelog ==
+
+= 3.9.1 =
+* Additional fixes for error in some Woocommerce contexts.
+* Fix for legacy widgets with custom css from builder plugins having the css escaped and printed.
 
 = 3.9.0 =
 * Fix error in some Woocommerce contexts. Props @osositno for the [report](https://wordpress.org/support/topic/fatal-error-4761)!
