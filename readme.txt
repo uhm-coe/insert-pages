@@ -498,10 +498,10 @@ add_action( 'init', 'theme_init' );`
 == Upgrade Notice ==
 
 = 3.7.0 =
-Note: if you insert private pages/posts, please review the post authors of the pages containing the inserted page and confirm they have the capability to read the private content. This upgrade enforces private page visibility based on the role of the author of the page that inserts any private content.
+If you insert private pages/posts, please review the post authors of the pages containing the inserted page and confirm they have the capability to read the private content. This upgrade enforces private page visibility based on the role of the author of the page that inserts any private content.
 
 = 3.2.4 =
-Security notice: this update fixes a potential directory traversal attack where a WordPress user with Editor role or higher could include any php file by specifying it as a custom template in the Insert Pages shortcode. This vulnerability is limited because the attacker already needs to be an Editor or higher on your WordPress site. Example: [insert page='your-page' display='../../../../../../../../xampp/apache/logs/access.log']
+Security: fixes a directory traversal attack where an Editor role or higher could include any php file by specifying it as a custom template in the Insert Pages shortcode. Example: [insert page='your-page' display='../../../../../../../../xampp/apache/logs/access.log']
 
 = 2.3 =
 Warning: If you apply CSS rules to #insertPages_Content, this update will require you to modify those styles. The element id "insertPages_Content" was removed so multiple pages can be embedded on a single page. You may apply styles instead to the "insert-page" class.
