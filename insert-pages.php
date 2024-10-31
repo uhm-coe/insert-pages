@@ -564,6 +564,9 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 					if ( is_null( $post ) ) {
 						$old_post_id = null;
 						$post = $inserted_page; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
+					} elseif ( is_int( $post ) ) {
+						$old_post_id = $post;
+						$post = $inserted_page->ID;
 					} else {
 						$old_post_id = $post->ID;
 						$post->ID = $inserted_page->ID;
@@ -880,6 +883,9 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 						if ( is_null( $post ) ) {
 							$old_post_id = null;
 							$post = $inserted_page; // phpcs:ignore WordPress.WP.GlobalVariablesOverride
+						} elseif ( is_int( $post ) ) {
+							$old_post_id = $post;
+							$post = $inserted_page->ID;
 						} else {
 							$old_post_id = $post->ID;
 							$post->ID = $inserted_page->ID;
@@ -973,6 +979,8 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 
 						if ( is_null( $old_post_id ) ) {
 							$post = null; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
+						} elseif ( is_int( $post ) ) {
+							$post = $old_post_id;
 						} else {
 							$post->ID = $old_post_id;
 						}
