@@ -1,8 +1,8 @@
 === Insert Pages ===
 Contributors: figureone, the_magician
 Tags: insert, pages, shortcode, embed
-Stable tag: trunk
 Tested up to: 6.7
+Stable tag: 3.9.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -109,6 +109,12 @@ Just one! The plugin prevents you from embedding a page in itself, but you can t
 3. Insert Pages shortcode example.
 
 == Changelog ==
+
+= 3.9.0 =
+* Fix error in some Woocommerce contexts. Props @osositno for the [report](https://wordpress.org/support/topic/fatal-error-4761)!
+* Fix block layout styles not appearing in the block editor inside an insert page block. Props @davidpotter for the [report](https://wordpress.org/support/topic/block-properties-not-always-honored-in-the-gutenberg-editor/)!
+* Fix issues reported by Plugin Check, including securing output data (escaping).
+* Minor fixes to adhere to WordPress Coding Standards.
 
 = 3.8.1 =
 * Fix WPML compatibility: inserted pages will now match the language of the parent page.
