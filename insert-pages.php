@@ -114,13 +114,16 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 				! WP_Block_Type_Registry::get_instance()->is_registered( 'insert-pages/block' )
 			) {
 				// Automatically load dependencies and version.
-				$asset_file = include( plugin_dir_path( __FILE__ ) . 'lib/gutenberg-block/build/index.asset.php');
+				$asset_file = include plugin_dir_path( __FILE__ ) . 'lib/gutenberg-block/build/index.asset.php';
 
 				wp_register_script(
 					'insert-pages-gutenberg-block',
 					plugins_url( 'lib/gutenberg-block/build/index.js', __FILE__ ),
 					$asset_file['dependencies'],
-					$asset_file['version']
+					$asset_file['version'],
+					array(
+						'in_footer' => false,
+					)
 				);
 
 				wp_register_style(
@@ -198,7 +201,7 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 			if ( isset( $attr['display'] ) && strlen( $attr['display'] ) > 0 ) {
 				$display = esc_attr( $attr['display'] );
 			}
-			if ( 'custom' === $display && isset( $attr['template'] ) && strlen( $attr['template'] ) > 0) {
+			if ( 'custom' === $display && isset( $attr['template'] ) && strlen( $attr['template'] ) > 0 ) {
 				$display = esc_attr( $attr['template'] );
 			}
 
@@ -284,7 +287,7 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 					'noMatchesFound' => __( 'No matches found.', 'insert-pages' ),
 					'l10n_print_after' => 'try{convertEntities(wpInsertPagesL10n);}catch(e){};',
 					'format' => $options['wpip_format'],
-					'private' => __( 'Private' ),
+					'private' => __( 'Private', 'insert-pages' ),
 					'tinymce_state' => $this->get_tinymce_state(),
 				)
 			);
@@ -313,7 +316,7 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 			load_plugin_textdomain(
 				'insert-pages',
 				false,
-				plugin_basename( dirname( __FILE__ ) ) . '/languages'
+				plugin_basename( __DIR__ ) . '/languages'
 			);
 
 			self::$is_admin_initialized = true;
@@ -457,7 +460,7 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 			// language of the parent page.
 			if ( is_object( $inserted_page ) && class_exists( 'Sitepress' ) ) {
 				$translated_inserted_page = apply_filters( 'wpml_object_id', $inserted_page->ID, 'any' );
-				if ( ! empty( $translated_inserted_page ) && $inserted_page->ID !== intval( $translated_inserted_page ) ) {
+				if ( ! empty( $translated_inserted_page ) && intval( $translated_inserted_page ) !== $inserted_page->ID ) {
 					$inserted_page = get_post( intval( $translated_inserted_page ) );
 				}
 			}
@@ -495,7 +498,7 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 				$this->inserted_page_ids = array( get_the_ID() );
 			}
 			if ( isset( $inserted_page->ID ) ) {
-				if ( ! in_array( $inserted_page->ID, $this->inserted_page_ids ) ) {
+				if ( ! in_array( $inserted_page->ID, $this->inserted_page_ids, true ) ) {
 					// Add the page being inserted to the stack.
 					$this->inserted_page_ids[] = $inserted_page->ID;
 				} else {
@@ -633,17 +636,15 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 						// Post custom CSS.
 						$post_custom_css = get_post_meta( $inserted_page->ID, '_wpb_post_custom_css', true );
 						if ( ! empty( $post_custom_css ) ) {
-							$post_custom_css = wp_strip_all_tags( $post_custom_css );
 							echo '<style type="text/css" data-type="vc_custom-css">';
-							echo $post_custom_css;
+							echo esc_html( wp_strip_all_tags( $post_custom_css ) );
 							echo '</style>';
 						}
 						// Shortcodes custom CSS.
 						$shortcodes_custom_css = get_post_meta( $inserted_page->ID, '_wpb_shortcodes_custom_css', true );
 						if ( ! empty( $shortcodes_custom_css ) ) {
-							$shortcodes_custom_css = wp_strip_all_tags( $shortcodes_custom_css );
 							echo '<style type="text/css" data-type="vc_shortcodes-custom-css">';
-							echo $shortcodes_custom_css;
+							echo esc_html( wp_strip_all_tags( $shortcodes_custom_css ) );
 							echo '</style>';
 						}
 					}
@@ -674,17 +675,17 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 				switch ( $attributes['display'] ) {
 					case 'title':
 						$title_tag = $attributes['inline'] ? 'span' : 'h1';
-						echo "<$title_tag class='insert-page-title'>";
-						echo get_the_title( $inserted_page->ID );
-						echo "</$title_tag>";
+						echo wp_kses_post( "<$title_tag class='insert-page-title'>" );
+						echo esc_html( get_the_title( $inserted_page->ID ) );
+						echo wp_kses_post( "</$title_tag>" );
 						break;
 
 					case 'title-content':
 						// Title.
 						$title_tag = $attributes['inline'] ? 'span' : 'h1';
-						echo "<$title_tag class='insert-page-title'>";
-						echo get_the_title( $inserted_page->ID );
-						echo "</$title_tag>";
+						echo wp_kses_post( "<$title_tag class='insert-page-title'>" );
+						echo esc_html( get_the_title( $inserted_page->ID ) );
+						echo wp_kses_post( "</$title_tag>" );
 						// Content.
 						// If Elementor is installed, try to render the page with it. If there is no Elementor content, fall back to normal rendering.
 						if ( class_exists( '\Elementor\Plugin' ) ) {
@@ -744,9 +745,9 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 					case 'all':
 						// Title.
 						$title_tag = $attributes['inline'] ? 'span' : 'h1';
-						echo "<$title_tag class='insert-page-title'>";
-						echo get_the_title( $inserted_page->ID );
-						echo "</$title_tag>";
+						echo wp_kses_post( "<$title_tag class='insert-page-title'>" );
+						echo wp_kses_post( get_the_title( $inserted_page->ID ) );
+						echo wp_kses_post( "</$title_tag>" );
 						// Content.
 						$content = get_post_field( 'post_content', $inserted_page->ID );
 						if ( $attributes['should_apply_the_content_filter'] ) {
@@ -799,7 +800,7 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 							);
 							if ( strlen( $template ) > 0 && $path_in_theme_or_childtheme_or_compat ) {
 								include $template; // Execute the template code.
-							} else { // Couldn't find template, so fall back to printing a link to the page.
+							} else { // Bad path, so fall back to printing a link to the page.
 								the_post();
 								?><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a>
 								<?php
@@ -929,7 +930,7 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 									// Enqueue custom css/js stored in vcvSourceAssetsFiles postmeta.
 									$vc = new \VisualComposer\Helpers\AssetsEnqueue;
 									if ( method_exists( $vc, 'enqueueAssets' ) ) {
-										$vc->enqueueAssets($inserted_page->ID);
+										$vc->enqueueAssets( $inserted_page->ID );
 									}
 									// Enqueue custom CSS stored in vcvSourceCssFileUrl postmeta.
 									$upload_dir = wp_upload_dir();
@@ -1020,10 +1021,12 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 								echo get_the_content();
 							}
 							// Render any <!--nextpage--> pagination links.
-							wp_link_pages( array(
-								'before' => '<div class="page-links">' . __( 'Pages:', 'twentynineteen' ),
-								'after'  => '</div>',
-							) );
+							wp_link_pages(
+								array(
+									'before' => '<div class="page-links">' . __( 'Pages:', 'insert-pages' ),
+									'after'  => '</div>',
+								)
+							);
 							break;
 						case 'link':
 							the_post();
@@ -1065,10 +1068,12 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 								echo get_the_content();
 							}
 							// Render any <!--nextpage--> pagination links.
-							wp_link_pages( array(
-								'before' => '<div class="page-links">' . __( 'Pages:', 'twentynineteen' ),
-								'after'  => '</div>',
-							) );
+							wp_link_pages(
+								array(
+									'before' => '<div class="page-links">' . __( 'Pages:', 'insert-pages' ),
+									'after'  => '</div>',
+								)
+							);
 							break;
 						case 'post-thumbnail':
 							$size = empty( $attributes['size'] ) ? 'post-thumbnail' : $attributes['size'];
@@ -1089,7 +1094,7 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 							$this->the_meta();
 							// Render any <!--nextpage--> pagination links.
 							wp_link_pages( array(
-								'before' => '<div class="page-links">' . __( 'Pages:', 'twentynineteen' ),
+								'before' => '<div class="page-links">' . __( 'Pages:', 'insert-pages' ),
 								'after'  => '</div>',
 							) );
 							break;
@@ -1369,13 +1374,13 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 			<form id="wp-insertpage" tabindex="-1">
 			<?php wp_nonce_field( 'internal-inserting', '_ajax_inserting_nonce', false ); ?>
 			<input type="hidden" id="insertpage-parent-page-id" value="<?php echo esc_attr( $post_id ); ?>" />
-			<h1 id="insertpage-modal-title"><?php _e( 'Insert page', 'insert-pages' ); ?></h1>
-			<button type="button" id="wp-insertpage-close"><span class="screen-reader-text"><?php _e( 'Close' ); ?></span></button>
+			<h1 id="insertpage-modal-title"><?php esc_html_e( 'Insert page', 'insert-pages' ); ?></h1>
+			<button type="button" id="wp-insertpage-close"><span class="screen-reader-text"><?php esc_html_e( 'Close', 'insert-pages' ); ?></span></button>
 			<div id="insertpage-selector">
 				<div id="insertpage-search-panel">
 					<div class="insertpage-search-wrapper">
 						<label>
-							<span class="search-label"><?php _e( 'Search', 'insert-pages' ); ?></span>
+							<span class="search-label"><?php esc_html_e( 'Search', 'insert-pages' ); ?></span>
 							<input type="search" id="insertpage-search-field" class="insertpage-search-field" autocomplete="off" />
 							<span class="spinner"></span>
 						</label>
@@ -1388,8 +1393,8 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 					</div>
 					<div id="insertpage-most-recent-results" class="query-results" tabindex="0">
 						<div class="query-notice" id="insertpage-query-notice-message">
-							<em class="query-notice-default"><?php _e( 'No search term specified. Showing recent items.', 'insert-pages' ); ?></em>
-							<em class="query-notice-hint screen-reader-text"><?php _e( 'Search or use up and down arrow keys to select an item.' ); ?></em>
+							<em class="query-notice-default"><?php esc_html_e( 'No search term specified. Showing recent items.', 'insert-pages' ); ?></em>
+							<em class="query-notice-hint screen-reader-text"><?php esc_html_e( 'Search or use up and down arrow keys to select an item.', 'insert-pages' ); ?></em>
 						</div>
 						<ul></ul>
 						<div class="river-waiting">
@@ -1397,18 +1402,18 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 						</div>
 					</div>
 				</div>
-				<p class="howto" id="insertpage-options-toggle"><?php _e( 'Options', 'insert-pages' ); ?></p>
+				<p class="howto" id="insertpage-options-toggle"><?php esc_html_e( 'Options', 'insert-pages' ); ?></p>
 				<div id="insertpage-options-panel">
 					<div class="insertpage-options-wrapper">
 						<label for="insertpage-slug-field">
-							<span><?php _e( 'Slug or ID', 'insert-pages' ); ?></span>
+							<span><?php esc_html_e( 'Slug or ID', 'insert-pages' ); ?></span>
 							<input id="insertpage-slug-field" type="text" autocomplete="off" />
 							<input id="insertpage-page-id" type="hidden" />
 						</label>
 					</div>
 					<div class="insertpage-format">
 						<label for="insertpage-format-select">
-							<?php _e( 'Display', 'insert-pages' ); ?>
+							<?php esc_html_e( 'Display', 'insert-pages' ); ?>
 						</label>
 						<select name="insertpage-format-select" id="insertpage-format-select">
 							<?php foreach ( $formats as $format => $label ) : ?>
@@ -1428,33 +1433,33 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 					</div>
 					<div class="insertpage-extra">
 						<label for="insertpage-extra-classes">
-							<?php _e( 'Extra Classes', 'insert-pages' ); ?>
+							<?php esc_html_e( 'Extra Classes', 'insert-pages' ); ?>
 							<input id="insertpage-extra-classes" type="text" autocomplete="off" value="<?php echo empty( $tinymce_state['class'] ) ? '' : esc_attr( $tinymce_state['class'] ); ?>" />
 						</label>
 						<label for="insertpage-extra-id">
-							<?php _e( 'ID', 'insert-pages' ); ?>
+							<?php esc_html_e( 'ID', 'insert-pages' ); ?>
 							<input id="insertpage-extra-id" type="text" autocomplete="off" value="<?php echo empty( $tinymce_state['id'] ) ? '' : esc_attr( $tinymce_state['id'] ); ?>" />
 						</label>
 						<label for="insertpage-extra-inline">
-							<?php _e( 'Inline?', 'insert-pages' ); ?>
+							<?php esc_html_e( 'Inline?', 'insert-pages' ); ?>
 							<input id="insertpage-extra-inline" type="checkbox" <?php checked( $tinymce_state['inline'] ); ?> />
 						</label>
 						<br class="<?php echo empty( $tinymce_state['hide_querystring'] ) ? '' : 'hidden'; ?>" />
 						<label for="insertpage-extra-querystring" class="<?php echo empty( $tinymce_state['hide_querystring'] ) ? '' : 'hidden'; ?>">
-							<?php _e( 'Querystring', 'insert-pages' ); ?>
+							<?php esc_html_e( 'Querystring', 'insert-pages' ); ?>
 							<input id="insertpage-extra-querystring" type="text" autocomplete="off" value="<?php echo empty( $tinymce_state['querystring'] ) ? '' : esc_attr( $tinymce_state['querystring'] ); ?>" />
 						</label>
 						<br class="<?php echo empty( $tinymce_state['hide_public'] ) ? '' : 'hidden'; ?>" />
 						<label for="insertpage-extra-public" class="<?php echo empty( $tinymce_state['hide_public'] ) ? '' : 'hidden'; ?>">
 							<input id="insertpage-extra-public" type="checkbox" <?php checked( $tinymce_state['public'] ); ?> />
-							<?php _e( 'Anonymous users can see this inserted even if its status is private', 'insert-pages' ); ?>
+							<?php esc_html_e( 'Anonymous users can see this inserted even if its status is private', 'insert-pages' ); ?>
 						</label>
 					</div>
 				</div>
 			</div>
 			<div class="submitbox">
 				<div id="wp-insertpage-cancel">
-					<button type="button" class="button"><?php _e( 'Cancel', 'insert-pages' ); ?></button>
+					<button type="button" class="button"><?php esc_html_e( 'Cancel', 'insert-pages' ); ?></button>
 				</div>
 				<div id="wp-insertpage-update">
 					<input type="submit" value="<?php esc_attr_e( 'Insert Page', 'insert-pages' ); ?>" class="button button-primary" id="wp-insertpage-submit" name="wp-insertpage-submit">
@@ -1478,8 +1483,8 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 			$args = array();
 
 			// If a URL is provided, translate it to a post ID and search on that.
-			if ( ! empty( $_POST['search'] ) && filter_var( $_POST['search'], FILTER_VALIDATE_URL ) ) {
-				$post_id = url_to_postid( $_POST['search'] );
+			if ( ! empty( $_POST['search'] ) && filter_var( wp_unslash( $_POST['search'] ), FILTER_VALIDATE_URL ) ) {
+				$post_id = url_to_postid( sanitize_url( wp_unslash( $_POST['search'] ) ) );
 				if ( ! empty( $post_id ) ) {
 					$_POST['search'] = $post_id;
 					$_POST['type'] = 'post_id';
@@ -1578,14 +1583,12 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 
 			$query = array(
 				'post_type' => $post_types,
-				'suppress_filters' => true,
 				'update_post_term_cache' => false,
 				'update_post_meta_cache' => false,
 				'post_status' => array( 'publish', 'private' ),
 				'order' => 'DESC',
 				'orderby' => 'post_date',
 				'posts_per_page' => 20,
-				// 'post__not_in' => array( $args['pageID'] ), // Remove?
 			);
 
 			// Show non-admins only their own posts if the option is enabled.
@@ -1686,7 +1689,7 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 					'customize_changeset',
 					'oembed_cache',
 					// Exclude Flamingo messages (created via Contact Form 7 submissions).
-					// See: https://wordpress.org/support/topic/plugin-hacked-14/
+					// See: https://wordpress.org/support/topic/plugin-hacked-14/.
 					'flamingo_inbound',
 				),
 				true
@@ -1754,7 +1757,7 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 		 * Render post meta as an unordered list.
 		 *
 		 * Note: This function sanitizes postmeta value via wp_kses_post(); the
- 		 * core WordPress function the_meta() does not.
+		 * core WordPress function the_meta() does not.
 		 *
 		 * @see https://developer.wordpress.org/reference/functions/the_meta/
 		 *
@@ -1783,7 +1786,7 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 					$html = sprintf(
 						"<li><span class='post-meta-key'>%s</span> %s</li>\n",
 						/* translators: %s: Post custom field name. */
-						sprintf( _x( '%s:', 'Post custom field name' ), $key ),
+						sprintf( _x( '%s:', 'Post custom field name', 'insert-pages' ), $key ),
 						$value
 					);
 
@@ -1804,7 +1807,6 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 				}
 			}
 		}
-
 	}
 }
 
@@ -1816,7 +1818,7 @@ if ( class_exists( 'InsertPagesPlugin' ) ) {
 // Actions and Filters handled by InsertPagesPlugin class.
 if ( isset( $insert_pages_plugin ) ) {
 	// Include the code that generates the options page.
-	require_once dirname( __FILE__ ) . '/options.php';
+	require_once __DIR__ . '/options.php';
 
 	// Get options set in WordPress dashboard (Settings > Insert Pages).
 	$options = get_option( 'wpip_settings' );
@@ -1860,6 +1862,6 @@ if ( isset( $insert_pages_plugin ) ) {
 	}
 
 	// Register Insert Pages shortcode widget.
-	require_once dirname( __FILE__ ) . '/widget.php';
+	require_once __DIR__ . '/widget.php';
 	add_action( 'widgets_init', array( $insert_pages_plugin, 'insert_pages_widgets_init' ) );
 }
