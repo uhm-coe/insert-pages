@@ -85,7 +85,7 @@ class InsertPagesWidget extends WP_Widget {
 		$content = $insert_pages_plugin->insert_pages_handle_shortcode_insert( $atts );
 
 		// Print inserted page.
-		echo wp_kses_post( $content );
+		echo $content;
 
 		// Print widget wrapper.
 		echo wp_kses_post( $args['after_widget'] );
