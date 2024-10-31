@@ -7,7 +7,7 @@
  * Text Domain: insert-pages
  * Domain Path: /languages
  * License: GPL2
- * Requires at least: 3.0.1
+ * Requires at least: 3.3.0
  * Version: 3.8.1
  *
  * @package insert-pages
