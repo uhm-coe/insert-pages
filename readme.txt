@@ -1,8 +1,8 @@
 === Insert Pages ===
 Contributors: figureone, the_magician
 Tags: insert, pages, shortcode, embed
-Tested up to: 6.6
 Stable tag: trunk
+Tested up to: 6.7
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
