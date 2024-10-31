@@ -749,7 +749,7 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 						// Title.
 						$title_tag = $attributes['inline'] ? 'span' : 'h1';
 						echo wp_kses_post( "<$title_tag class='insert-page-title'>" );
-						echo wp_kses_post( get_the_title( $inserted_page->ID ) );
+						echo esc_html( get_the_title( $inserted_page->ID ) );
 						echo wp_kses_post( "</$title_tag>" );
 						// Content.
 						$content = get_post_field( 'post_content', $inserted_page->ID );
