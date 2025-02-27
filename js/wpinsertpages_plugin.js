@@ -41,7 +41,7 @@
 
 		editor.addButton( 'wpInsertPages_button', {
 			image: url + '/../img/insertpages_toolbar_icon' + ( isRetinaDisplay() ? '-2x' : '' ) + '.png',
-			tooltip: wpInsertPagesL10n.save,
+			tooltip: wpInsertPagesL10n ? wpInsertPagesL10n.save : 'Insert Page',
 			cmd: 'WP_InsertPages',
 
 			onPostRender: function() {
