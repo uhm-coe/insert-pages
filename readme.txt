@@ -2,7 +2,7 @@
 Contributors: figureone, the_magician
 Tags: insert, pages, shortcode, embed
 Tested up to: 6.8
-Stable tag: 3.9.1
+Stable tag: 3.9.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -109,6 +109,10 @@ Just one! The plugin prevents you from embedding a page in itself, but you can t
 3. Insert Pages shortcode example.
 
 == Changelog ==
+
+= 3.9.2 =
+* Fix error when tinymce is used outside of admin context (e.g., in other plugins like Gravity Forms).
+* Tested up to WordPress 6.8.1.
 
 = 3.9.1 =
 * Additional fixes for error in some Woocommerce contexts.
