@@ -491,6 +491,20 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 				}
 			}
 
+			// Integration: if the Otter Blocks plugin is active, enqueue any assets
+			// for blocks in the inserted page.
+			// See: https://github.com/Codeinwp/otter-blocks/blob/master/inc/css/class-block-frontend.php#L662.
+			add_filter(
+				'themeisle_gutenberg_blocks_enqueue_assets',
+				function ( $posts ) use ( $inserted_page ) {
+					if ( ! empty( $inserted_page ) ) {
+						$posts[] = $inserted_page;
+					}
+
+					return $posts;
+				}
+			);
+
 			// Loop detection: check if the page we are inserting has already been
 			// inserted; if so, short circuit here.
 			if ( ! is_array( $this->inserted_page_ids ) ) {
