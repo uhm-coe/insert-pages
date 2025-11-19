@@ -418,7 +418,7 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 
 			// Integration: if Simple Membership plugin is used, check that the
 			// current user has permission to see the inserted post.
-			// See: https://simple-membership-plugin.com/simple-membership-miscellaneous-php-tweaks/
+			// See: https://simple-membership-plugin.com/simple-membership-miscellaneous-php-tweaks/.
 			if ( class_exists( 'SwpmAccessControl' ) ) {
 				$access_ctrl = SwpmAccessControl::get_instance();
 				if ( ! $access_ctrl->can_i_read_post( $inserted_page ) && ! current_user_can( 'edit_files' ) ) {
@@ -565,9 +565,9 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 							} elseif ( class_exists( 'VisualComposer\Helpers\AssetsEnqueue' ) ) {
 								// These methods should work for Visual Composer 26.0.
 								// Enqueue custom css/js stored in vcvSourceAssetsFiles postmeta.
-								$vc = new \VisualComposer\Helpers\AssetsEnqueue;
+								$vc = new \VisualComposer\Helpers\AssetsEnqueue();
 								if ( method_exists( $vc, 'enqueueAssets' ) ) {
-									$vc->enqueueAssets($inserted_page->ID);
+									$vc->enqueueAssets( $inserted_page->ID );
 								}
 								// Enqueue custom CSS stored in vcvSourceCssFileUrl postmeta.
 								$upload_dir = wp_upload_dir();
@@ -884,7 +884,7 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 								} elseif ( class_exists( 'VisualComposer\Helpers\AssetsEnqueue' ) ) {
 									// These methods should work for Visual Composer 26.0.
 									// Enqueue custom css/js stored in vcvSourceAssetsFiles postmeta.
-									$vc = new \VisualComposer\Helpers\AssetsEnqueue;
+									$vc = new \VisualComposer\Helpers\AssetsEnqueue();
 									if ( method_exists( $vc, 'enqueueAssets' ) ) {
 										$vc->enqueueAssets( $inserted_page->ID );
 									}
@@ -1051,10 +1051,12 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 							}
 							$this->the_meta();
 							// Render any <!--nextpage--> pagination links.
-							wp_link_pages( array(
-								'before' => '<div class="page-links">' . __( 'Pages:', 'insert-pages' ),
-								'after'  => '</div>',
-							) );
+							wp_link_pages(
+								array(
+									'before' => '<div class="page-links">' . __( 'Pages:', 'insert-pages' ),
+									'after'  => '</div>',
+								)
+							);
 							break;
 						default: // Display is either invalid, or contains a template file to use.
 							$template = locate_template( $attributes['display'] );
