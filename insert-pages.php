@@ -113,73 +113,9 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 				class_exists( 'WP_Block_Type_Registry' ) &&
 				! WP_Block_Type_Registry::get_instance()->is_registered( 'insert-pages/block' )
 			) {
-				// Automatically load dependencies and version.
-				$asset_file = include plugin_dir_path( __FILE__ ) . 'lib/gutenberg-block/build/index.asset.php';
-
-				wp_register_script(
-					'insert-pages-gutenberg-block',
-					plugins_url( 'lib/gutenberg-block/build/index.js', __FILE__ ),
-					$asset_file['dependencies'],
-					$asset_file['version'],
-					array(
-						'in_footer' => false,
-					)
-				);
-
-				wp_register_style(
-					'insert-pages-gutenberg-block',
-					plugins_url( 'lib/gutenberg-block/build/index.css', __FILE__ ),
-					array(),
-					$asset_file['version']
-				);
-
 				register_block_type(
-					'insert-pages/block',
+					__DIR__ . '/lib/gutenberg-block/build',
 					array(
-						'editor_style' => 'insert-pages-gutenberg-block',
-						'editor_script' => 'insert-pages-gutenberg-block',
-						'attributes' => array(
-							'url' => array(
-								'type' => 'string',
-								'default' => '',
-							),
-							'page' => array(
-								'type' => 'number',
-								'default' => 0,
-							),
-							'display' => array(
-								'type' => 'string',
-								'default' => 'title',
-							),
-							'template' => array(
-								'type' => 'string',
-								'default' => '',
-							),
-							'class' => array(
-								'type' => 'string',
-								'default' => '',
-							),
-							'id' => array(
-								'type' => 'string',
-								'default' => '',
-							),
-							'inline' => array(
-								'type' => 'bool',
-								'default' => false,
-							),
-							'public' => array(
-								'type' => 'bool',
-								'default' => false,
-							),
-							'querystring' => array(
-								'type' => 'string',
-								'default' => '',
-							),
-							'size' => array(
-								'type' => 'string',
-								'default' => '',
-							),
-						),
 						'render_callback' => array( $this, 'block_render_callback' ),
 					)
 				);
