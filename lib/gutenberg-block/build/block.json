@@ -1,0 +1,62 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "insert-pages/block",
+  "version": "2.0.0",
+  "title": "Insert Page",
+  "category": "widgets",
+  "icon": "media-default",
+  "description": "Insert a page, post, or custom post type.",
+  "keywords": [
+    "insert",
+    "embed",
+    "shortcode"
+  ],
+  "example": {},
+  "attributes": {
+    "url": {
+      "type": "string",
+      "default": ""
+    },
+    "page": {
+      "type": "number",
+      "default": 0
+    },
+    "display": {
+      "type": "string",
+      "default": "title"
+    },
+    "template": {
+      "type": "string",
+      "default": ""
+    },
+    "class": {
+      "type": "string",
+      "default": ""
+    },
+    "id": {
+      "type": "string",
+      "default": ""
+    },
+    "inline": {
+      "type": "boolean",
+      "default": false
+    },
+    "public": {
+      "type": "boolean",
+      "default": false
+    },
+    "querystring": {
+      "type": "string",
+      "default": ""
+    },
+    "size": {
+      "type": "string",
+      "default": ""
+    }
+  },
+  "supports": {},
+  "textdomain": "insert-pages",
+  "editorScript": "file:./index.js",
+  "editorStyle": "file:./style-index.css"
+}
