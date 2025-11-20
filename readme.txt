@@ -2,7 +2,7 @@
 Contributors: figureone, the_magician
 Tags: insert, pages, shortcode, embed
 Tested up to: 6.9
-Stable tag: 3.9.3
+Stable tag: 3.10.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -109,6 +109,11 @@ Just one! The plugin prevents you from embedding a page in itself, but you can t
 3. Insert Pages shortcode example.
 
 == Changelog ==
+
+= 3.10.0 =
+* Fix URLInput in Insert Pages block (render URLInput in a Popover component to prevent overflow issues).
+* Migrate Insert Pages block to API version 3 (WordPress 6.3 or greater). Allows [block editor to be iframed](https://developer.wordpress.org/block-editor/reference-guides/block-api/block-api-versions/).
+* Tested up to WordPress 6.9 (6.9-RC2).
 
 = 3.9.3 =
 * Support Otter Blocks in inserted pages. Props @joeb2880 for the [request](https://wordpress.org/support/topic/otter-accordions-not-displaying-properly-when-inserted/)!
