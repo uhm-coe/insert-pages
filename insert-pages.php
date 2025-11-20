@@ -141,9 +141,19 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 				$display = esc_attr( $attr['template'] );
 			}
 
+			// Allow specifying page by ID (if user selected a page from searching in
+			// the URLInput component), or by URL (if user pasted a URL into the
+			// URLInput component).
+			$page = '0';
+			if ( isset( $attr['page'] ) && intval( $attr['page'] ) > 0 ) {
+				$page = esc_attr( $attr['page'] );
+			} elseif ( isset( $attr['url'] ) && strlen( $attr['url'] ) > 0 ) {
+				$page = esc_attr( $attr['url'] );
+			}
+
 			$shortcode = sprintf(
 				'[insert page="%1$s" display="%2$s"%3$s%4$s%5$s%6$s%7$s%8$s]',
-				isset( $attr['page'] ) && strlen( $attr['page'] ) > 0 ? esc_attr( $attr['page'] ) : '0',
+				$page,
 				$display,
 				isset( $attr['class'] ) && strlen( $attr['class'] ) > 0 ? ' class="' . esc_attr( $attr['class'] ) . '"' : '',
 				isset( $attr['id'] ) && strlen( $attr['id'] ) > 0 ? ' id="' . esc_attr( $attr['id'] ) . '"' : '',
