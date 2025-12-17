@@ -70,6 +70,13 @@ function wpip_settings_init() {
 		'wpipSettings',
 		'wpip_section'
 	);
+	add_settings_field(
+		'wpip_public_post_statuses',
+		__( 'Allow anyone to see inserted pages with these statuses', 'insert-pages' ),
+		'wpip_public_post_statuses_render',
+		'wpipSettings',
+		'wpip_section'
+	);
 }
 add_action( 'admin_init', 'wpip_settings_init' );
 
@@ -106,6 +113,10 @@ function wpip_set_defaults() {
 
 	if ( empty( $options['wpip_classic_editor_hide_others_posts'] ) ) {
 		$options['wpip_classic_editor_hide_others_posts'] = 'disabled';
+	}
+
+	if ( empty( $options['wpip_public_post_statuses'] ) || ! is_array( $options['wpip_public_post_statuses'] ) ) {
+		$options['wpip_public_post_statuses'] = array();
 	}
 
 	update_option( 'wpip_settings', $options );
@@ -238,5 +249,28 @@ function wpip_classic_editor_hide_others_posts_render() {
 	<input type='radio' name='wpip_settings[wpip_classic_editor_hide_others_posts]' <?php checked( $options['wpip_classic_editor_hide_others_posts'], 'enabled' ); ?> id="wpip_classic_editor_hide_others_posts_enabled" value='enabled'><label for="wpip_classic_editor_hide_others_posts_enabled">Authors and Contributors only see their own content to insert.</label><br />
 	<input type='radio' name='wpip_settings[wpip_classic_editor_hide_others_posts]' <?php checked( $options['wpip_classic_editor_hide_others_posts'], 'disabled' ); ?> id="wpip_classic_editor_hide_others_posts_disabled" value='disabled'><label for="wpip_classic_editor_hide_others_posts_disabled">Authors and Contributors see all published content to insert.</label><br />
 	<small><em>Note: this option only restricts Contributors and Authors (i.e., the roles without the <code>edit_others_posts</code> capability) from seeing other's content in the TinyMCE Insert Page popup; they can still insert any published content if they know the page slug.</em></small>
+	<?php
+}
+
+/**
+ * Print 'Insertable post statuses' setting.
+ *
+ * @return void
+ */
+function wpip_public_post_statuses_render() {
+	$options = get_option( 'wpip_settings' );
+	if ( false === $options || ! is_array( $options ) || empty( $options['wpip_public_post_statuses'] ) || ! is_array( $options['wpip_public_post_statuses'] ) ) {
+		$options = wpip_set_defaults();
+	}
+	?>
+	<input type='checkbox' disabled checked id="wpip_public_post_statuses_publish" value='publish'><label for="wpip_public_post_statuses_publish">Published</label><br />
+
+	<input type='checkbox' name='wpip_settings[wpip_public_post_statuses][]' <?php checked( in_array( 'private', $options['wpip_public_post_statuses'], true ) ); ?> id="wpip_public_post_statuses_private" value='private'><label for="wpip_public_post_statuses_private">Private, authored by anyone (normally only visible to site admins and editors)</label><br />
+	<input type='checkbox' name='wpip_settings[wpip_public_post_statuses][]' <?php checked( in_array( 'private_self', $options['wpip_public_post_statuses'], true ) ); ?> id="wpip_public_post_statuses_private_self" value='private_self'><label for="wpip_public_post_statuses_private_self">Private, only where inserted page and parent page have the same author (normally only visible to site admins and editors)</label><br />
+	<input type='checkbox' name='wpip_settings[wpip_public_post_statuses][]' <?php checked( in_array( 'draft', $options['wpip_public_post_statuses'], true ) ); ?> id="wpip_public_post_statuses_draft" value='draft'><label for="wpip_public_post_statuses_draft">Draft (not ready to publish)</label><br />
+	<input type='checkbox' name='wpip_settings[wpip_public_post_statuses][]' <?php checked( in_array( 'pending', $options['wpip_public_post_statuses'], true ) ); ?> id="wpip_public_post_statuses_pending" value='pending'><label for="wpip_public_post_statuses_pending">Pending (waiting for review before publishing)</label><br />
+	<input type='checkbox' name='wpip_settings[wpip_public_post_statuses][]' <?php checked( in_array( 'future', $options['wpip_public_post_statuses'], true ) ); ?> id="wpip_public_post_statuses_future" value='future'><label for="wpip_public_post_statuses_future">Scheduled (scheduled to be published on a future date)</label><br />
+	<input type='checkbox' name='wpip_settings[wpip_public_post_statuses][]' <?php checked( in_array( 'has_password', $options['wpip_public_post_statuses'], true ) ); ?> id="wpip_public_post_statuses_has_password" value='has_password'><label for="wpip_public_post_statuses_has_password">Password-protected (normally only visible to those who know the password)</label><br />
+	<small><em>Note: there are security considerations when making these statuses publicly viewable, such as unintentional information disclosure when inserting private pages. If enabling them, please review accordingly.</em></small>
 	<?php
 }

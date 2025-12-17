@@ -309,7 +309,7 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 
 			// Get options set in WordPress dashboard (Settings > Insert Pages).
 			$options = get_option( 'wpip_settings' );
-			if ( false === $options || ! is_array( $options ) || ! array_key_exists( 'wpip_format', $options ) || ! array_key_exists( 'wpip_wrapper', $options ) || ! array_key_exists( 'wpip_insert_method', $options ) || ! array_key_exists( 'wpip_tinymce_filter', $options ) ) {
+			if ( false === $options || ! is_array( $options ) || ! array_key_exists( 'wpip_format', $options ) || ! array_key_exists( 'wpip_wrapper', $options ) || ! array_key_exists( 'wpip_insert_method', $options ) || ! array_key_exists( 'wpip_tinymce_filter', $options ) || ! array_key_exists( 'wpip_public_post_statuses', $options ) ) {
 				$options = wpip_set_defaults();
 			}
 
@@ -408,13 +408,6 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 				}
 			}
 
-			// Prevent unprivileged users from inserting private posts from others.
-			if ( is_object( $inserted_page ) && 'publish' !== $inserted_page->post_status ) {
-				$post_type = get_post_type_object( $inserted_page->post_type );
-				$parent_post_author_id = intval( get_the_author_meta( 'ID' ) );
-				if ( ! user_can( $parent_post_author_id, $post_type->cap->read_post, $inserted_page->ID ) ) {
-					$inserted_page = null;
-				}
 			// Prevent inserting post types not allowed.
 			if ( is_object( $inserted_page ) && ! in_array( $inserted_page->post_type, $insertable_post_types, true ) ) {
 				$inserted_page = null;
@@ -424,6 +417,32 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 			// and pages in the trash (security).
 			if ( is_object( $inserted_page ) && in_array( $inserted_page->post_status, array( 'inherit', 'auto-draft', 'trash' ), true ) ) {
 				$inserted_page = null;
+			}
+
+			// Prevent inserting password-protected pages unless explicity enabled.
+			if ( is_object( $inserted_page ) && ! empty( $inserted_page->post_password ) && ! in_array( 'has_password', $options['wpip_public_post_statuses'], true ) ) {
+				$inserted_page = null;
+			}
+
+			// Prevent inserting unpublished post statuses unless explicitly enabled,
+			// or the current user has privileges to see it.
+			if ( is_object( $inserted_page ) && 'publish' !== $inserted_page->post_status && ! in_array( $inserted_page->post_status, $options['wpip_public_post_statuses'], true ) ) {
+				if ( 'private' === $inserted_page->post_status && in_array( 'private_self', $options['wpip_public_post_statuses'], true ) ) {
+					// If a private page is inserted and "private_self" posts are
+					// explicitly enabled (i.e., the page author can insert their own
+					// private pages), prevent seeing private posts owned by others.
+					$parent_post_author_id = get_the_author_meta( 'ID' );
+					if ( empty( $inserted_page->post_author ) || intval( $parent_post_author_id ) !== intval( $inserted_page->post_author ) ) {
+						$inserted_page = null;
+					}
+				} elseif ( ! is_user_logged_in() ) {
+					// Anonymous users can't see unpublished posts not explicitly enabled.
+					$inserted_page = null;
+				} elseif ( ! current_user_can( 'read', $inserted_page->ID ) ) {
+					// Logged-in users without permission can't see unpublished posts not
+					// explicitly enabled.
+					$inserted_page = null;
+				}
 			}
 
 			// Integration: if Simple Membership plugin is used, check that the
@@ -1547,7 +1566,7 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 				'post_type' => $post_types,
 				'update_post_term_cache' => false,
 				'update_post_meta_cache' => false,
-				'post_status' => array( 'publish', 'private' ),
+				'post_status' => array( 'publish' ),
 				'order' => 'DESC',
 				'orderby' => 'post_date',
 				'posts_per_page' => 20,
