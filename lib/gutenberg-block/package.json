@@ -6,9 +6,9 @@
 	"main": "build/index.js",
 	"prettier": "@wordpress/prettier-config",
 	"devDependencies": {
-		"@wordpress/components": "^30.8.0",
-		"@wordpress/prettier-config": "^4.35.0",
-		"@wordpress/scripts": "^31.0.0",
+		"@wordpress/components": "^30.9.0",
+		"@wordpress/prettier-config": "^4.36.0",
+		"@wordpress/scripts": "^31.1.0",
 		"clsx": "^2.1.1"
 	},
 	"scripts": {
