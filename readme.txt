@@ -2,7 +2,7 @@
 Contributors: figureone, the_magician
 Tags: insert, pages, shortcode, embed
 Tested up to: 6.9
-Stable tag: 3.10.0
+Stable tag: 3.11.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -109,6 +109,11 @@ Just one! The plugin prevents you from embedding a page in itself, but you can t
 3. Insert Pages shortcode example.
 
 == Changelog ==
+
+= 3.11.0 =
+* Add plugin option to choose post statuses other than "published" that can be publicly viewable.
+* Remove the "Reveal Private Pages?" block attribute (and the "public" shortcode attribute) that allowed inserted private pages to be publicly viewable, since it can be controlled by lower-privilege users. Use the new plugin option above to set this behavior.
+* Prevent inserting pages with trash or revision post statuses (security).
 
 = 3.10.0 =
 * Fix URLInput in Insert Pages block (render URLInput in a Popover component to prevent overflow issues).
@@ -518,6 +523,9 @@ add_action( 'init', 'theme_init' );`
 * Development release.
 
 == Upgrade Notice ==
+
+= 3.11.0 =
+If you intentionally insert unpublished content (e.g., future, draft, pending, or private), go to Insert Pages Settings after installing this update and enable that functionality in "Allow anonymous users to see inserted pages with these statuses." This version changes the plugin behavior to only allow inserting the "publish" post status by default (more secure).
 
 = 3.7.0 =
 If you insert private pages/posts, please review the post authors of the pages containing the inserted page and confirm they have the capability to read the private content. This upgrade enforces private page visibility based on the role of the author of the page that inserts any private content.
