@@ -32,7 +32,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 /**
  * Shortcode Format:
- * [insert page='{slug}|{id}|{url}' display='title|link|excerpt|excerpt-only|content|title-content|post-thumbnail|all|{custom-template.php}' class='any-classes' id='any-id' [inline] [public] querystring='{url-encoded-values}' size='post-thumbnail|thumbnail|medium|large|full|{custom-size}']
+ * [insert page='{slug}|{id}|{url}' display='title|link|excerpt|excerpt-only|content|title-content|post-thumbnail|all|{custom-template.php}' class='any-classes' id='any-id' [inline] querystring='{url-encoded-values}' size='post-thumbnail|thumbnail|medium|large|full|{custom-size}']
  */
 
 if ( ! class_exists( 'InsertPagesPlugin' ) ) {
@@ -152,7 +152,7 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 			}
 
 			$shortcode = sprintf(
-				'[insert page="%1$s" display="%2$s"%3$s%4$s%5$s%6$s%7$s%8$s]',
+				'[insert page="%1$s" display="%2$s"%3$s%4$s%5$s%6$s%7$s]',
 				$page,
 				$display,
 				isset( $attr['class'] ) && strlen( $attr['class'] ) > 0 ? ' class="' . esc_attr( $attr['class'] ) . '"' : '',
@@ -160,7 +160,6 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 				isset( $attr['querystring'] ) && strlen( $attr['querystring'] ) > 0 ? ' querystring="' . esc_attr( $attr['querystring'] ) . '"' : '',
 				isset( $attr['size'] ) && strlen( $attr['size'] ) > 0 ? ' size="' . esc_attr( $attr['size'] ) . '"' : '',
 				isset( $attr['inline'] ) && 'true' === $attr['inline'] ? ' inline' : '',
-				isset( $attr['public'] ) && 'true' === $attr['public'] ? ' public' : ''
 			);
 
 			$rendered_shortcode = do_shortcode( $shortcode );
@@ -220,7 +219,7 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 				'wpinsertpages',
 				plugins_url( '/js/wpinsertpages.js', __FILE__ ),
 				array( 'wpdialogs' ),
-				'20221216',
+				'20251217',
 				false
 			);
 			wp_localize_script(
@@ -243,7 +242,7 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 				'wpinsertpagescss',
 				plugins_url( '/css/wpinsertpages.css', __FILE__ ),
 				array( 'wp-jquery-ui-dialog' ),
-				'20221216'
+				'20251217'
 			);
 
 			/**
@@ -289,7 +288,6 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 					'querystring' => '',
 					'size'        => '',
 					'inline'      => false,
-					'public'      => false,
 				),
 				$atts,
 				'insert'
@@ -323,8 +321,6 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 			 */
 			$attributes['inline'] = apply_filters( 'insert_pages_use_inline_wrapper', $attributes['inline'] );
 			$attributes['wrapper_tag'] = $attributes['inline'] ? 'span' : 'div';
-
-			$attributes['public'] = ( false !== $attributes['public'] && 'false' !== $attributes['public'] ) || array_search( 'public', $atts, true ) === 0 || is_user_logged_in();
 
 			/**
 			 * Filter the querystring values applied to every inserted page. Useful
@@ -420,9 +416,9 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 				}
 			}
 
-			// If inserted page's status is private, don't show to anonymous users
-			// unless 'public' option is set.
-			if ( is_object( $inserted_page ) && 'private' === $inserted_page->post_status && ! $attributes['public'] ) {
+			// Prevent inserting page revisions (inherit), auto saves (auto-draft),
+			// and pages in the trash (security).
+			if ( is_object( $inserted_page ) && in_array( $inserted_page->post_status, array( 'inherit', 'auto-draft', 'trash' ), true ) ) {
 				$inserted_page = null;
 			}
 
@@ -784,13 +780,11 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 					$args = array(
 						'p' => intval( $attributes['page'] ),
 						'post_type' => get_post_types(),
-						'post_status' => $attributes['public'] ? array( 'publish', 'private' ) : array( 'publish' ),
 					);
 				} else {
 					$args = array(
 						'name' => esc_attr( $attributes['page'] ),
 						'post_type' => get_post_types(),
-						'post_status' => $attributes['public'] ? array( 'publish', 'private' ) : array( 'publish' ),
 					);
 				}
 
@@ -1116,7 +1110,6 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 			 *   class: Extra classes to add to inserted page wrapper element.
 			 *   id: Optional ID for the inserted page wrapper element.
 			 *   inline: Boolean indicating wrapper element should be a span.
-			 *   public: Boolean indicating anonymous users can see private inserted pages.
 			 *   querystring: Extra querystring values provided to the custom template.
 			 *   should_apply_the_content_filter: Whether to apply the_content filter to post contents and excerpts.
 			 *   wrapper_tag: Tag to use for the wrapper element (e.g., div, span).
@@ -1340,7 +1333,7 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 			// display: none is required here, see #WP27605.
 			?>
 			<div id="wp-insertpage-backdrop" style="display: none"></div>
-			<div id="wp-insertpage-wrap" class="wp-core-ui<?php echo 1 === intval( get_user_setting( 'wpinsertpage', 0 ) ) ? ' options-panel-visible' : ''; ?><?php echo empty( $tinymce_state['hide_querystring'] ) ? '' : ' querystring-hidden'; ?><?php echo empty( $tinymce_state['hide_public'] ) ? '' : ' public-hidden'; ?>" style="display: none;" role="dialog" aria-labelledby="insertpage-modal-title">
+			<div id="wp-insertpage-wrap" class="wp-core-ui<?php echo 1 === intval( get_user_setting( 'wpinsertpage', 0 ) ) ? ' options-panel-visible' : ''; ?><?php echo empty( $tinymce_state['hide_querystring'] ) ? '' : ' querystring-hidden'; ?>" style="display: none;" role="dialog" aria-labelledby="insertpage-modal-title">
 			<form id="wp-insertpage" tabindex="-1">
 			<?php wp_nonce_field( 'internal-inserting', '_ajax_inserting_nonce', false ); ?>
 			<input type="hidden" id="insertpage-parent-page-id" value="<?php echo esc_attr( $post_id ); ?>" />
@@ -1418,11 +1411,6 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 						<label for="insertpage-extra-querystring" class="<?php echo empty( $tinymce_state['hide_querystring'] ) ? '' : 'hidden'; ?>">
 							<?php esc_html_e( 'Querystring', 'insert-pages' ); ?>
 							<input id="insertpage-extra-querystring" type="text" autocomplete="off" value="<?php echo empty( $tinymce_state['querystring'] ) ? '' : esc_attr( $tinymce_state['querystring'] ); ?>" />
-						</label>
-						<br class="<?php echo empty( $tinymce_state['hide_public'] ) ? '' : 'hidden'; ?>" />
-						<label for="insertpage-extra-public" class="<?php echo empty( $tinymce_state['hide_public'] ) ? '' : 'hidden'; ?>">
-							<input id="insertpage-extra-public" type="checkbox" <?php checked( $tinymce_state['public'] ); ?> />
-							<?php esc_html_e( 'Anonymous users can see this inserted even if its status is private', 'insert-pages' ); ?>
 						</label>
 					</div>
 				</div>
@@ -1687,9 +1675,7 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 					'querystring'      => '',
 					'size'             => '',
 					'inline'           => false,
-					'public'           => false,
 					'hide_querystring' => false,
-					'hide_public'      => false,
 				)
 			);
 
@@ -1704,10 +1690,7 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 			 *  'querystring'      (string) Querystring params. Default ''.
 			 *  'size'             (string) Image size when using format='thumbnail'.
 			 *  'inline'           (bool)   Use <span> element for wrapper. Default false.
-			 *  'public'           (bool)   Whether anonymous users can see this page if
-			 *                              its status is Private. Default false.
 			 *  'hide_querystring' (bool)   Skip rendering querystring field. Default false.
-			 *  'hide_public'      (bool)   Skip rendering public field. Default false.
 			 */
 			$tinymce_state = apply_filters( 'insert_pages_tinymce_state', $tinymce_state );
 

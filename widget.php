@@ -77,9 +77,6 @@ class InsertPagesWidget extends WP_Widget {
 		if ( array_key_exists( 'size', $instance ) && 'post-thumbnail' === $instance['display'] ) {
 			$atts['size'] = $instance['size'];
 		}
-		if ( array_key_exists( 'public', $instance ) ) {
-			$atts['public'] = '1' === $instance['public'];
-		}
 
 		// Render the inserted page using the plugin's shortcode handler.
 		$content = $insert_pages_plugin->insert_pages_handle_shortcode_insert( $atts );
@@ -120,7 +117,6 @@ class InsertPagesWidget extends WP_Widget {
 				'inline' => '',
 				'querystring' => '',
 				'size' => '',
-				'public' => '',
 			)
 		); ?>
 		<p>
@@ -175,10 +171,6 @@ class InsertPagesWidget extends WP_Widget {
 			<label for="<?php echo esc_attr( $this->get_field_id( 'querystring' ) ); ?>"><?php esc_html_e( 'Querystring', 'insert-pages' ); ?>:</label>
 			<input type="text" class="widefat" autocomplete="off" name="<?php echo esc_attr( $this->get_field_name( 'querystring' ) ); ?>" id="<?php echo esc_attr( $this->get_field_id( 'querystring' ) ); ?>" value="<?php echo esc_attr( $instance['querystring'] ); ?>" />
 		</p>
-		<p>
-			<input class="checkbox" type="checkbox" name="<?php echo esc_attr( $this->get_field_name( 'public' ) ); ?>" id="<?php echo esc_attr( $this->get_field_id( 'public' ) ); ?>" value="1" <?php checked( $instance['public'], '1' ); ?> />
-			<label for="<?php echo esc_attr( $this->get_field_id( 'public' ) ); ?>"><?php esc_html_e( 'Anonymous users can see this inserted even if its status is private', 'insert-pages' ); ?></label>
-		</p>
 		<?php
 	}
 
@@ -199,7 +191,6 @@ class InsertPagesWidget extends WP_Widget {
 		$instance['inline'] = array_key_exists( 'inline', $new_instance ) ? wp_strip_all_tags( $new_instance['inline'] ) : '';
 		$instance['querystring'] = array_key_exists( 'querystring', $new_instance ) ? wp_strip_all_tags( $new_instance['querystring'] ) : '';
 		$instance['size'] = array_key_exists( 'size', $new_instance ) ? wp_strip_all_tags( $new_instance['size'] ) : '';
-		$instance['public'] = array_key_exists( 'public', $new_instance ) ? wp_strip_all_tags( $new_instance['public'] ) : '';
 
 		return $instance;
 	}

@@ -47,7 +47,6 @@
 			inputs.extraClasses = $( '#insertpage-extra-classes' );
 			inputs.extraID = $( '#insertpage-extra-id' );
 			inputs.extraInline = $( '#insertpage-extra-inline' );
-			inputs.extraPublic = $( '#insertpage-extra-public' );
 			inputs.extraQuerystring = $( '#insertpage-extra-querystring' );
 
 			// Build rivers.
@@ -351,15 +350,6 @@
 					inputs.extraInline.attr( 'checked', wpInsertPagesL10n.hasOwnProperty( 'tinymce_state' ) ? wpInsertPagesL10n.tinymce_state.inline : false );
 				}
 
-				// If this is a private page, reveal the checkbox "Visible to everyone?"
-				regexp = /[\s]public[\s\]]/;
-				matches = regexp.exec( shortcode );
-				if ( matches && matches.length > 0 ) {
-					inputs.extraPublic.attr( 'checked', true );
-				} else {
-					inputs.extraPublic.attr( 'checked', wpInsertPagesL10n.hasOwnProperty( 'tinymce_state' ) ? wpInsertPagesL10n.tinymce_state.public : false );
-				}
-
 				// Update extra querystring.
 				regexp = /querystring=['"]([^['"]*)['"]/;
 				matches = regexp.exec( shortcode );
@@ -411,7 +401,6 @@
 				class: inputs.extraClasses.val(),
 				id: inputs.extraID.val(),
 				inline: inputs.extraInline.is( ':checked' ),
-				public: inputs.extraPublic.is( ':checked' ),
 				querystring: inputs.extraQuerystring.val(),
 				size: inputs.size.val(),
 			};
@@ -447,7 +436,6 @@
 				( attrs['class'].length > 0 ? " class='" + attrs['class'] + "'" : "" ) +
 				( attrs['id'].length > 0 ? " id='" + attrs['id'] + "'" : "" ) +
 				( attrs.inline ? " inline" : "" ) +
-				( attrs.public ? " public" : "" ) +
 				( attrs.querystring ? " querystring='" +
 					attrs['querystring'].replace( /&/g, '&amp;' ).replace( /\[/g, '{' ).replace( /\]/g, '}' )
 					+ "'" : ""
@@ -482,7 +470,6 @@
 			inputs.extraID.val( wpInsertPagesL10n.hasOwnProperty( 'tinymce_state' ) ? wpInsertPagesL10n.tinymce_state.id : '' );
 			inputs.extraQuerystring.val( wpInsertPagesL10n.hasOwnProperty( 'tinymce_state' ) ? wpInsertPagesL10n.tinymce_state.querystring : '' );
 			inputs.extraInline.attr( 'checked', wpInsertPagesL10n.hasOwnProperty( 'tinymce_state' ) ? wpInsertPagesL10n.tinymce_state.inline : false );
-			inputs.extraPublic.attr( 'checked', wpInsertPagesL10n.hasOwnProperty( 'tinymce_state' ) ? wpInsertPagesL10n.tinymce_state.public : false );
 
 			// Enable template dropdown if display format is set to 'template'.
 			if ( inputs.format.val() == 'template' ) {

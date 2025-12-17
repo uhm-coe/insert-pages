@@ -42,10 +42,6 @@
 			"type": "boolean",
 			"default": false
 		},
-		"public": {
-			"type": "boolean",
-			"default": false
-		},
 		"querystring": {
 			"type": "string",
 			"default": ""
