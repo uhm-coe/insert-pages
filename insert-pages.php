@@ -367,14 +367,15 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 				$attributes['page'] = url_to_postid( $attributes['page'] );
 			}
 
+			// Get list of post types that can be inserted (page, post, custom
+			// types), excluding builtin types (nav_menu_item, attachment).
+			$insertable_post_types = array_filter(
+				get_post_types(),
+				array( $this, 'is_post_type_insertable' )
+			);
+
 			// Get the WP_Post object from the provided slug, or ID.
 			if ( ! is_numeric( $attributes['page'] ) ) {
-				// Get list of post types that can be inserted (page, post, custom
-				// types), excluding builtin types (nav_menu_item, attachment).
-				$insertable_post_types = array_filter(
-					get_post_types(),
-					array( $this, 'is_post_type_insertable' )
-				);
 				$inserted_page = get_page_by_path( $attributes['page'], OBJECT, $insertable_post_types );
 
 				// If get_page_by_path() didn't find the page, check to see if the slug
@@ -414,6 +415,9 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 				if ( ! user_can( $parent_post_author_id, $post_type->cap->read_post, $inserted_page->ID ) ) {
 					$inserted_page = null;
 				}
+			// Prevent inserting post types not allowed.
+			if ( is_object( $inserted_page ) && ! in_array( $inserted_page->post_type, $insertable_post_types, true ) ) {
+				$inserted_page = null;
 			}
 
 			// Prevent inserting page revisions (inherit), auto saves (auto-draft),
@@ -730,12 +734,12 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 						if ( is_numeric( $attributes['page'] ) ) {
 							$args = array(
 								'p' => intval( $attributes['page'] ),
-								'post_type' => get_post_types(),
+								'post_type' => $insertable_post_types,
 							);
 						} else {
 							$args = array(
 								'name' => esc_attr( $attributes['page'] ),
-								'post_type' => get_post_types(),
+								'post_type' => $insertable_post_types,
 							);
 						}
 						// We save the previous query state here instead of using
@@ -779,12 +783,11 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 				if ( is_numeric( $attributes['page'] ) ) {
 					$args = array(
 						'p' => intval( $attributes['page'] ),
-						'post_type' => get_post_types(),
+						'post_type' => $insertable_post_types,
 					);
 				} else {
 					$args = array(
 						'name' => esc_attr( $attributes['page'] ),
-						'post_type' => get_post_types(),
 					);
 				}
 
@@ -1649,6 +1652,7 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 					// Exclude Flamingo messages (created via Contact Form 7 submissions).
 					// See: https://wordpress.org/support/topic/plugin-hacked-14/.
 					'flamingo_inbound',
+					'wp_global_styles',
 				),
 				true
 			);
