@@ -111,6 +111,7 @@ Just one! The plugin prevents you from embedding a page in itself, but you can t
 == Changelog ==
 
 = 3.11.0 =
+* NOTICE: If you intentionally insert unpublished content (e.g., future, draft, pending, or private), go to Insert Pages Settings after installing this update and enable that functionality in "Allow anonymous users to see inserted pages with these statuses." This version changes the plugin behavior to only allow inserting the "publish" post status by default (more secure).
 * Add plugin option to choose post statuses other than "published" that can be publicly viewable.
 * Remove the "Reveal Private Pages?" block attribute (and the "public" shortcode attribute) that allowed inserted private pages to be publicly viewable, since it can be controlled by lower-privilege users. Use the new plugin option above to set this behavior.
 * Prevent inserting pages with trash or revision post statuses (security).
