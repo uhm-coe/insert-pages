@@ -429,7 +429,7 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 			// Integration: if Simple Membership plugin is used, check that the
 			// current user has permission to see the inserted post.
 			// See: https://simple-membership-plugin.com/simple-membership-miscellaneous-php-tweaks/.
-			if ( class_exists( 'SwpmAccessControl' ) ) {
+			if ( is_object( $inserted_page ) && class_exists( 'SwpmAccessControl' ) ) {
 				$access_ctrl = SwpmAccessControl::get_instance();
 				if ( ! $access_ctrl->can_i_read_post( $inserted_page ) && ! current_user_can( 'edit_files' ) ) {
 					$inserted_page = null;
@@ -440,16 +440,18 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 			// Integration: if the Otter Blocks plugin is active, enqueue any assets
 			// for blocks in the inserted page.
 			// See: https://github.com/Codeinwp/otter-blocks/blob/master/inc/css/class-block-frontend.php#L662.
-			add_filter(
-				'themeisle_gutenberg_blocks_enqueue_assets',
-				function ( $posts ) use ( $inserted_page ) {
-					if ( ! empty( $inserted_page ) ) {
-						$posts[] = $inserted_page;
-					}
+			if ( is_object( $inserted_page ) ) {
+				add_filter(
+					'themeisle_gutenberg_blocks_enqueue_assets',
+					function ( $posts ) use ( $inserted_page ) {
+						if ( ! empty( $inserted_page ) ) {
+							$posts[] = $inserted_page;
+						}
 
-					return $posts;
-				}
-			);
+						return $posts;
+					}
+				);
+			}
 
 			// Loop detection: check if the page we are inserting has already been
 			// inserted; if so, short circuit here.
@@ -468,38 +470,42 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 			}
 
 			// Set any querystring params included in the shortcode.
-			parse_str( $attributes['querystring'], $querystring );
-			$original_get = $_GET; // phpcs:ignore WordPress.Security.NonceVerification
-			$original_request = $_REQUEST; // phpcs:ignore WordPress.Security.NonceVerification
-			foreach ( $querystring as $param => $value ) {
-				$_GET[ $param ] = $value;
-				$_REQUEST[ $param ] = $value;
+			if ( is_object( $inserted_page ) ) {
+				parse_str( $attributes['querystring'], $querystring );
+				$original_get = $_GET; // phpcs:ignore WordPress.Security.NonceVerification
+				$original_request = $_REQUEST; // phpcs:ignore WordPress.Security.NonceVerification
+				foreach ( $querystring as $param => $value ) {
+					$_GET[ $param ] = $value;
+					$_REQUEST[ $param ] = $value;
+				}
+				$original_wp_query_vars = $GLOBALS['wp']->query_vars;
+				if (
+					! empty( $querystring ) &&
+					isset( $GLOBALS['wp'] ) &&
+					method_exists( $GLOBALS['wp'], 'parse_request' ) &&
+					empty( $GLOBALS['wp']->query_vars['rest_route'] )
+				) {
+					$GLOBALS['wp']->parse_request( $querystring );
+				}
 			}
-			$original_wp_query_vars = $GLOBALS['wp']->query_vars;
-			if (
-				! empty( $querystring ) &&
-				isset( $GLOBALS['wp'] ) &&
-				method_exists( $GLOBALS['wp'], 'parse_request' ) &&
-				empty( $GLOBALS['wp']->query_vars['rest_route'] )
-			) {
-				$GLOBALS['wp']->parse_request( $querystring );
+
+			// If we couldn't retrieve the page, fire the filter hook showing a
+			// not-found message.
+			if ( null === $inserted_page ) {
+				/**
+				 * Filter the html that should be displayed if an inserted page was not found.
+				 *
+				 * @param string $content html to be displayed. Defaults to an empty string.
+				 */
+				$content = apply_filters( 'insert_pages_not_found_message', $content );
+
+				// Short-circuit since we didn't find the page, or it wasn't allowed to
+				// be inserted.
+				return $content;
 			}
 
 			// Use "Normal" insert method (get_post).
 			if ( 'legacy' !== $options['wpip_insert_method'] ) {
-
-				// If we couldn't retrieve the page, fire the filter hook showing a not-found message.
-				if ( null === $inserted_page ) {
-					/**
-					 * Filter the html that should be displayed if an inserted page was not found.
-					 *
-					 * @param string $content html to be displayed. Defaults to an empty string.
-					 */
-					$content = apply_filters( 'insert_pages_not_found_message', $content );
-
-					// Short-circuit since we didn't find the page.
-					return $content;
-				}
 
 				// Start output buffering so we can save the output to a string.
 				ob_start();
@@ -780,14 +786,14 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 			} else { // Use "Legacy" insert method (query_posts).
 
 				// Construct query_posts arguments.
-				if ( is_numeric( $attributes['page'] ) ) {
+				if ( is_object( $inserted_page ) ) {
 					$args = array(
-						'p' => intval( $attributes['page'] ),
+						'p' => $inserted_page->ID,
 						'post_type' => $insertable_post_types,
 					);
 				} else {
 					$args = array(
-						'name' => esc_attr( $attributes['page'] ),
+						'post__in' => array( 0 ),
 					);
 				}
 
@@ -1089,13 +1095,6 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 					}
 					// Save output buffer contents.
 					$content = ob_get_clean();
-				} else {
-					/**
-					 * Filter the html that should be displayed if an inserted page was not found.
-					 *
-					 * @param string $content html to be displayed. Defaults to an empty string.
-					 */
-					$content = apply_filters( 'insert_pages_not_found_message', $content );
 				}
 				// Restore previous query and update the global template variables.
 				$GLOBALS['wp_query'] = $old_query; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
@@ -1120,9 +1119,11 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 			$content = apply_filters( 'insert_pages_wrap_content', $content, $inserted_page, $attributes );
 
 			// Unset any querystring params included in the shortcode.
-			$_GET = $original_get;
-			$_REQUEST = $original_request;
-			$GLOBALS['wp']->query_vars = $original_wp_query_vars;
+			if ( is_object( $inserted_page ) ) {
+				$_GET = $original_get;
+				$_REQUEST = $original_request;
+				$GLOBALS['wp']->query_vars = $original_wp_query_vars;
+			}
 
 			// Loop detection: remove the page from the stack (so we can still insert
 			// the same page multiple times on another page, but prevent it from being
