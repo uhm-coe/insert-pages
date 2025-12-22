@@ -394,6 +394,20 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 					}
 				}
 
+				// If we didn't find the page by path or slug, try one more time with a
+				// title search.
+				if ( is_null( $inserted_page ) ) {
+					$inserted_pages = get_posts( array(
+						'title'          => sanitize_text_field( $attributes['page'] ),
+						'post_type'      => 'any',
+						'post_status'    => 'any',
+						'posts_per_page' => 1,
+					) );
+					if ( ! empty( $inserted_pages ) ) {
+						$inserted_page = $inserted_pages[0];
+					}
+				}
+
 				$attributes['page'] = $inserted_page ? $inserted_page->ID : $attributes['page'];
 			} else {
 				$inserted_page = get_post( intval( $attributes['page'] ) );
