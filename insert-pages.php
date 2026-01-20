@@ -397,12 +397,14 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 				// If we didn't find the page by path or slug, try one more time with a
 				// title search.
 				if ( is_null( $inserted_page ) ) {
-					$inserted_pages = get_posts( array(
-						'title'          => sanitize_text_field( $attributes['page'] ),
-						'post_type'      => 'any',
-						'post_status'    => 'any',
-						'posts_per_page' => 1,
-					) );
+					$inserted_pages = get_posts(
+						array(
+							'title'          => sanitize_text_field( $attributes['page'] ),
+							'post_type'      => 'any',
+							'post_status'    => 'any',
+							'posts_per_page' => 1,
+						)
+					);
 					if ( ! empty( $inserted_pages ) ) {
 						$inserted_page = $inserted_pages[0];
 					}
@@ -565,7 +567,7 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 						$post = $inserted_page; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 					} elseif ( is_int( $post ) ) {
 						$old_post_id = $post;
-						$post = $inserted_page->ID;
+						$post = $inserted_page->ID; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 					} else {
 						$old_post_id = $post->ID;
 						$post->ID = $inserted_page->ID;
@@ -976,7 +978,7 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 						if ( is_null( $old_post_id ) ) {
 							$post = null; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 						} elseif ( is_int( $post ) ) {
-							$post = $old_post_id;
+							$post = $old_post_id; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 						} else {
 							$post->ID = $old_post_id;
 						}
