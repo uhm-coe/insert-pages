@@ -278,6 +278,13 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 		public function insert_pages_handle_shortcode_insert( $atts, $content = null ) {
 			global $post, $current_screen;
 
+			if ( is_admin() && isset( $current_screen->base ) && 'post' === $current_screen->base ) {
+				// Note: some page builders (e.g., Divi) may try to process shortcodes
+				// while in the editor, causing a redirect to load the inserted page for
+				// editing. Exit early here if in the editor context.
+				return $content;
+			}
+
 			// Shortcode attributes.
 			$attributes = shortcode_atts(
 				array(
@@ -562,13 +569,7 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 					// temporarily populate it with the post to be inserted so we can
 					// retrieve generated styles for that post. Reset $post to null
 					// after we're done.
-					if ( isset( $current_screen->base ) && 'post' === $current_screen->base ) {
-						// Note: some page builders (e.g., Divi) will try to process
-						// shortcodes while in the editor, and overwriting the global $post
-						// can cause issues where the editor will load the inserted page.
-						// Skip overwriting $post if we are in the editor.
-						assert( true ); // No-op.
-					} elseif ( is_null( $post ) ) {
+					if ( is_null( $post ) ) {
 						$old_post_id = null;
 						$post = $inserted_page; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 					} elseif ( is_int( $post ) ) {
@@ -663,13 +664,7 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 					// See: https://docs.goodlayers.com/add-page-builder-in-product/.
 					do_action( 'gdlr_core_print_page_builder' );
 
-					if ( isset( $current_screen->base ) && 'post' === $current_screen->base ) {
-						// Note: some page builders (e.g., Divi) will try to process
-						// shortcodes while in the editor, and overwriting the global $post
-						// can cause issues where the editor will load the inserted page. Skip
-						// this if we are in the editor.
-						assert( true ); // No-op.
-					} elseif ( is_null( $old_post_id ) ) {
+					if ( is_null( $old_post_id ) ) {
 						$post = null; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 					} else {
 						$post->ID = $old_post_id;
@@ -890,13 +885,7 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 						// temporarily populate it with the post to be inserted so we can
 						// retrieve generated styles for that post. Reset $post to null
 						// after we're done.
-						if ( isset( $current_screen->base ) && 'post' === $current_screen->base ) {
-							// Note: some page builders (e.g., Divi) will try to process
-							// shortcodes while in the editor, and overwriting the global $post
-							// can cause issues where the editor will load the inserted page.
-							// Skip overwriting $post if we are in the editor.
-							assert( true ); // No-op.
-						} elseif ( is_null( $post ) ) {
+						if ( is_null( $post ) ) {
 							$old_post_id = null;
 							$post = $inserted_page; // phpcs:ignore WordPress.WP.GlobalVariablesOverride
 						} elseif ( is_int( $post ) ) {
@@ -993,13 +982,7 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 						// See: https://docs.goodlayers.com/add-page-builder-in-product/.
 						do_action( 'gdlr_core_print_page_builder' );
 
-						if ( isset( $current_screen->base ) && 'post' === $current_screen->base ) {
-							// Note: some page builders (e.g., Divi) will try to process
-							// shortcodes while in the editor, and overwriting the global $post
-							// can cause issues where the editor will load the inserted page.
-							// Skip overwriting $post if we are in the editor.
-							assert( true ); // No-op.
-						} elseif ( is_null( $old_post_id ) ) {
+						if ( is_null( $old_post_id ) ) {
 							$post = null; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 						} elseif ( is_int( $post ) ) {
 							$post = $old_post_id; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
