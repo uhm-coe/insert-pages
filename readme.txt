@@ -2,7 +2,7 @@
 Contributors: figureone, the_magician
 Tags: insert, pages, shortcode, embed
 Tested up to: 7.0
-Stable tag: 3.11.4
+Stable tag: 3.11.5
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -109,6 +109,9 @@ Just one! The plugin prevents you from embedding a page in itself, but you can t
 3. Insert Pages shortcode example.
 
 == Changelog ==
+
+= 3.11.5 =
+* Medium security fix when inserting a page with malicious post meta key values and using display="all". Props Athiwat Tiprasaharn for responsibly reporting via Wordfence!
 
 = 3.11.4 =
 * Tested up to WordPress 7.0.
