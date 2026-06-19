@@ -1780,9 +1780,6 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 					$values = array_map( 'trim', get_post_custom_values( $key, $post_id ) );
 					$value  = implode( ', ', $values );
 
-					// Sanitize post meta values.
-					$value = wp_kses_post( $value );
-
 					$html = sprintf(
 						"<li><span class='post-meta-key'>%s</span> %s</li>\n",
 						/* translators: %s: Post custom field name. */
@@ -1802,8 +1799,9 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 					$li_html .= apply_filters( 'the_meta_key', $html, $key, $value );
 				}
 
+				// Sanitize and print post meta values.
 				if ( $li_html ) {
-					echo "<ul class='post-meta'>\n{$li_html}</ul>\n";
+					echo '<ul class="post-meta">' . wp_kses_post( $li_html ) . '</ul>' . PHP_EOL;
 				}
 			}
 		}
