@@ -461,7 +461,7 @@ if ( ! class_exists( 'InsertPagesPlugin' ) ) {
 				} elseif ( ! is_user_logged_in() ) {
 					// Anonymous users can't see unpublished posts not explicitly enabled.
 					$inserted_page = null;
-				} elseif ( ! current_user_can( 'read', $inserted_page->ID ) ) {
+				} elseif ( ! current_user_can( 'read_post', $inserted_page->ID ) ) {
 					// Logged-in users without permission can't see unpublished posts not
 					// explicitly enabled.
 					$inserted_page = null;
