@@ -112,7 +112,7 @@ Just one! The plugin prevents you from embedding a page in itself, but you can t
 
 = 3.11.6 =
 * Released Fri Nov 20, 2026.
-* Security fix preventing lesser privileged users from reading private inserted posts from other users. Props Wade Sparks at VulnCheck for responsibly disclosing!
+* Security fix preventing lesser privileged users from reading private inserted posts from other users. Props buihh for responsibly disclosing via VulnCheck!
 * Tested up to WordPress 7.1.
 
 = 3.11.5 =
